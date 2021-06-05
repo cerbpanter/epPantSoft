@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.pantsoft.eppantsoft.pm.PmTemporada;
+import com.pantsoft.eppantsoft.pm.PmUsuario;
 import com.pantsoft.eppantsoft.serializable.SerTemporada;
 import com.pantsoft.eppantsoft.util.ClsEpUtil;
 
@@ -46,12 +47,14 @@ public class EpCatalogos extends HttpServlet {
 			// ep.objectEnBody(lstSer);
 			// return;
 			// }
-			// if (ep.esMetodo("produccion_eliminar") && ep.esVersion("v1")) {
-			// ep.addPar("empresa", "String").addPar("temporada", "Long").addPar("numOrden", "Long");
-			// new PmProduccion().eliminar(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"), ep.dameParametroLong("numOrden"));
-			// ep.voidEnBody();
-			// return;
-			// }
+
+			// Usuarios
+			if (ep.esMetodo("usuario_eliminar") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("usuario", "String");
+				new PmUsuario().eliminar(ep.dameParametroString("empresa"), ep.dameParametroString("usuario"));
+				ep.voidEnBody();
+				return;
+			}
 			ep.notFoundEnBody();
 		} catch (Exception e) {
 			ep.exceptionEnBody(e);
