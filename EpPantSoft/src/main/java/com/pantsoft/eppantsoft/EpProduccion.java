@@ -1,6 +1,7 @@
 package com.pantsoft.eppantsoft;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.annotation.WebServlet;
@@ -28,7 +29,11 @@ public class EpProduccion extends HttpServlet {
 				ep.addPar("mensaje", "String").addPar("tam", "Long");
 				Respuesta respuesta = ep.getObjetFromBody(Respuesta.class);
 				respuesta.setCadena("El mensaje es: " + ep.dameParametroString("mensaje") + ", tam: " + ep.dameParametroLong("tam"));
-				ep.objectEnBody(respuesta);
+				List<Long> lst = new ArrayList<Long>();
+				lst.add(25L);
+				lst.add(87L);
+				lst.add(38L);
+				ep.objectEnBody(lst);
 				return;
 			}
 			if (ep.esMetodo("produccion_agregar") && ep.esVersion("v1")) {
@@ -45,8 +50,15 @@ public class EpProduccion extends HttpServlet {
 			}
 			if (ep.esMetodo("produccion_actualizarEstatus") && ep.esVersion("v1")) {
 				ep.addPar("empresa", "String").addPar("temporada", "Long").addPar("estatus", "Int");
-				List<Long> lstOrdenes = ep.getObjetFromBody(List.class);
-				new PmProduccion().actualizarEstatus(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"), ep.dameParametroInt("estatus"), lstOrdenes);
+				Respuesta resp = ep.getObjetFromBody(Respuesta.class);
+				new PmProduccion().actualizarEstatus(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"), ep.dameParametroInt("estatus"), resp.lstLong);
+				ep.voidEnBody();
+				return;
+			}
+			if (ep.esMetodo("produccion_cambiarTemporada") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("temporada", "Long").addPar("nuevaTemporada", "Long");
+				Respuesta resp = ep.getObjetFromBody(Respuesta.class);
+				new PmProduccion().cambiarTemporada(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"), ep.dameParametroLong("nuevaTemporada"), resp.lstLong);
 				ep.voidEnBody();
 				return;
 			}

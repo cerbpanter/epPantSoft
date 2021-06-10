@@ -1,6 +1,7 @@
 package com.pantsoft.eppantsoft.pm;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.google.appengine.api.datastore.DatastoreService;
@@ -12,6 +13,7 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.api.datastore.Transaction;
 import com.pantsoft.eppantsoft.entidades.DbProduccion;
 import com.pantsoft.eppantsoft.serializable.SerProduccion;
 import com.pantsoft.eppantsoft.util.ClsEntidad;
@@ -84,6 +86,10 @@ public class PmProduccion {
 			dbProduccion.setObservaciones(serProduccion.getObservaciones());
 			dbProduccion.setRevisado(serProduccion.getRevisado());
 			dbProduccion.setIsaac(serProduccion.getIsaac());
+			dbProduccion.setMes(serProduccion.getMes());
+			dbProduccion.setUsuarioModifico(serProduccion.getUsuario());
+			dbProduccion.setFechaModifico(new Date());
+			dbProduccion.setHabilitacionEnviada(serProduccion.getHabilitacionEnviada());
 			dbProduccion.guardar(datastore);
 		} catch (EntityNotFoundException e) {
 			throw new Exception("La orden '" + serProduccion.getNumOrden() + "' no existe.");
@@ -103,6 +109,38 @@ public class PmProduccion {
 				}
 			} catch (EntityNotFoundException e) {
 				throw new Exception("La orden '" + orden + "' no existe.");
+			}
+		}
+	}
+
+	public void cambiarTemporada(String empresa, long temporada, long nuevaTemporada, List<Long> lstOrdenes) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Transaction tx = null;
+		for (long orden : lstOrdenes) {
+			try {
+				tx = ClsEntidad.iniciarTransaccion(datastore);
+
+				// Busco y elimino la entidad original
+				Key key = KeyFactory.createKey("DbProduccion", empresa + "-" + temporada + "-" + orden);
+				DbProduccion dbProduccion = new DbProduccion(datastore.get(key));
+				SerProduccion serProduccion = dbProduccion.toSerProduccion();
+				dbProduccion.eliminar(datastore, tx);
+
+				// Asigno la nueva temporada
+				serProduccion.setTemporada(nuevaTemporada);
+
+				// Creo y grabo el nuevo registro
+				dbProduccion = new DbProduccion(serProduccion);
+				if (ClsEntidad.existeEntidad(datastore, "DbProduccion", dbProduccion.getKey().getName()))
+					throw new ExcepcionControlada("La orden '" + serProduccion.getNumOrden() + "' ya existe.");
+				dbProduccion.guardar(datastore);
+
+				tx.commit();
+			} catch (EntityNotFoundException e) {
+				throw new Exception("La orden '" + orden + "' no existe.");
+			} finally {
+				if (tx != null && tx.isActive())
+					tx.rollback();
 			}
 		}
 	}

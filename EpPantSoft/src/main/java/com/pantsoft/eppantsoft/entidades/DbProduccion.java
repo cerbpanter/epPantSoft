@@ -60,6 +60,10 @@ public class DbProduccion extends ClsEntidad {
 	private final ClsCampo observaciones = new ClsCampo("observaciones", Tipo.Text, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo revisado = new ClsCampo("revisado", Tipo.Boolean, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_FALSE, 0, SUSTITUIR_NULL);
 	private final ClsCampo isaac = new ClsCampo("isaac", Tipo.Boolean, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_FALSE, 0, SUSTITUIR_NULL);
+	private final ClsCampo mes = new ClsCampo("mes", Tipo.String, NO_INDEXADO, PERMITIR_NULL, 0, 3, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo usuarioModifico = new ClsCampo("usuarioModifico", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "Sin usuario", 0, SUSTITUIR_NULL);
+	private final ClsCampo fechaModifico = new ClsCampo("fechaModifico", Tipo.Date, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_HOY, 0, SUSTITUIR_NULL);
+	private final ClsCampo habilitacionEnviada = new ClsCampo("habilitacionEnviada", Tipo.Boolean, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_FALSE, 0, SUSTITUIR_NULL);
 
 	public DbProduccion(SerProduccion serProduccion) throws Exception {
 		Key key = KeyFactory.createKey("DbProduccion", serProduccion.getEmpresa() + "-" + serProduccion.getTemporada() + "-" + serProduccion.getNumOrden());
@@ -108,6 +112,10 @@ public class DbProduccion extends ClsEntidad {
 		setMtsEnviados3(serProduccion.getMtsEnviados3());
 		setDiferencia3(serProduccion.getDiferencia3());
 		setObservaciones(serProduccion.getObservaciones());
+		setMes(serProduccion.getMes());
+		setHabilitacionEnviada(serProduccion.getHabilitacionEnviada());
+		setUsuarioModifico(serProduccion.getUsuario());
+		setFechaModifico(new Date());
 	}
 
 	public DbProduccion(Entity entidad) throws ExcepcionControlada {
@@ -120,7 +128,7 @@ public class DbProduccion extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, temporada, numOrden, maquileroCorte, cliente, departamento, descripcion, estatus, fechaProgramada, modelo, cantidad, corteSobreTela, cantidadCorte, cantidadEntrega, faltanteMaquilero, faltanteCorte, taller, precio, total, precioFaltante, totalPorPagar, fechaSalida, fechaEntrega, proceso1, tallerProceso1, precioProceso1, proceso2, tallerProceso2, precioProceso2, consumo1, mtsSolicitados1, mtsEnviados1, mtsDevolucion1, mtsFaltante1, diferencia1, consumo2, mtsSolicitados2, mtsEnviados2, diferencia2, consumo3, mtsSolicitados3, mtsEnviados3, diferencia3, observaciones, revisado, isaac);
+		return Arrays.asList(empresa, temporada, numOrden, maquileroCorte, cliente, departamento, descripcion, estatus, fechaProgramada, modelo, cantidad, corteSobreTela, cantidadCorte, cantidadEntrega, faltanteMaquilero, faltanteCorte, taller, precio, total, precioFaltante, totalPorPagar, fechaSalida, fechaEntrega, proceso1, tallerProceso1, precioProceso1, proceso2, tallerProceso2, precioProceso2, consumo1, mtsSolicitados1, mtsEnviados1, mtsDevolucion1, mtsFaltante1, diferencia1, consumo2, mtsSolicitados2, mtsEnviados2, diferencia2, consumo3, mtsSolicitados3, mtsEnviados3, diferencia3, observaciones, revisado, isaac, mes, usuarioModifico, fechaModifico, habilitacionEnviada);
 	}
 
 	public SerProduccion toSerProduccion() throws ExcepcionControlada {
@@ -481,5 +489,37 @@ public class DbProduccion extends ClsEntidad {
 
 	public void setIsaac(boolean isaac) throws ExcepcionControlada {
 		setBoolean(this.isaac, isaac);
+	}
+
+	public String getMes() throws ExcepcionControlada {
+		return getString(observaciones);
+	}
+
+	public void setMes(String mes) throws ExcepcionControlada {
+		setString(this.mes, mes);
+	}
+
+	public String getUsuarioModifico() throws ExcepcionControlada {
+		return getString(usuarioModifico);
+	}
+
+	public void setUsuarioModifico(String usuarioModifico) throws ExcepcionControlada {
+		setString(this.usuarioModifico, usuarioModifico);
+	}
+
+	public Date getFechaModifico() throws ExcepcionControlada {
+		return getDate(fechaModifico);
+	}
+
+	public void setFechaModifico(Date fechaModifico) throws ExcepcionControlada {
+		setDate(this.fechaModifico, fechaModifico);
+	}
+
+	public boolean getHabilitacionEnviada() throws ExcepcionControlada {
+		return getBoolean(habilitacionEnviada);
+	}
+
+	public void setHabilitacionEnviada(boolean habilitacionEnviada) throws ExcepcionControlada {
+		setBoolean(this.habilitacionEnviada, habilitacionEnviada);
 	}
 }

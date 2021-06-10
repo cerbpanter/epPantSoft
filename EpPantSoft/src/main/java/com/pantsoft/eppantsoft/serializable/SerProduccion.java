@@ -49,6 +49,11 @@ public class SerProduccion {
 	private String observaciones;
 	private boolean revisado;
 	private boolean isaac;
+	private String mes;
+	private String usuarioModifico;
+	private Date fechaModifico;
+	private boolean habilitacionEnviada;
+	private String usuario;
 
 	public SerProduccion() {
 	}
@@ -468,5 +473,45 @@ public class SerProduccion {
 
 	public void setIsaac(boolean isaac) {
 		this.isaac = isaac;
+	}
+
+	public String getMes() {
+		return mes;
+	}
+
+	public void setMes(String mes) {
+		this.mes = mes;
+	}
+
+	public String getUsuarioModifico() {
+		return usuarioModifico;
+	}
+
+	public void setUsuarioModifico(String usuarioModifico) {
+		this.usuarioModifico = usuarioModifico;
+	}
+
+	public Date getFechaModifico() {
+		return fechaModifico;
+	}
+
+	public void setFechaModifico(Date fechaModifico) {
+		this.fechaModifico = fechaModifico;
+	}
+
+	public boolean getHabilitacionEnviada() {
+		return habilitacionEnviada;
+	}
+
+	public void setHabilitacionEnviada(boolean habilitacionEnviada) {
+		this.habilitacionEnviada = habilitacionEnviada;
+	}
+
+	public String getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(String usuario) {
+		this.usuario = usuario;
 	}
 }
