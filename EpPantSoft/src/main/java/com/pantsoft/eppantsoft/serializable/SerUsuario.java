@@ -5,15 +5,17 @@ public class SerUsuario {
 	private String usuario;
 	private String password;
 	private long[] permisos;
+	private String[] talleres;
 
 	public SerUsuario() {
 	}
 
-	public SerUsuario(String empresa, String usuario, String password, long[] permisos) {
+	public SerUsuario(String empresa, String usuario, String password, long[] permisos, String[] talleres) {
 		this.empresa = empresa;
 		this.usuario = usuario;
 		this.password = password;
 		this.permisos = permisos;
+		this.setTalleres(talleres);
 	}
 
 	public String getEmpresa() {
@@ -46,5 +48,13 @@ public class SerUsuario {
 
 	public void setPermisos(long[] permisos) {
 		this.permisos = permisos;
+	}
+
+	public String[] getTalleres() {
+		return talleres;
+	}
+
+	public void setTalleres(String[] talleres) {
+		this.talleres = talleres;
 	}
 }

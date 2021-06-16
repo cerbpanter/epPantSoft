@@ -114,7 +114,7 @@ public class DbProduccion extends ClsEntidad {
 		setObservaciones(serProduccion.getObservaciones());
 		setMes(serProduccion.getMes());
 		setHabilitacionEnviada(serProduccion.getHabilitacionEnviada());
-		setUsuarioModifico(serProduccion.getUsuario());
+		setUsuarioModifico(serProduccion.getUsuarioModifico());
 		setFechaModifico(new Date());
 	}
 
@@ -132,7 +132,7 @@ public class DbProduccion extends ClsEntidad {
 	}
 
 	public SerProduccion toSerProduccion() throws ExcepcionControlada {
-		return new SerProduccion(getEmpresa(), getTemporada(), getNumOrden(), getMaquileroCorte(), getCliente(), getDepartamento(), getDescripcion(), getEstatus(), getFechaProgramada(), getModelo(), getCantidad(), getCorteSobreTela(), getCantidadCorte(), getCantidadEntrega(), getFaltanteMaquilero(), getFaltanteCorte(), getTaller(), getPrecio(), getTotal(), getPrecioFaltante(), getTotalPorPagar(), getFechaSalida(), getFechaEntrega(), getProceso1(), getTallerProceso1(), getPrecioProceso1(), getProceso2(), getTallerProceso2(), getPrecioProceso2(), getConsumo1(), getMtsSolicitados1(), getMtsEnviados1(), getMtsDevolucion1(), getMtsFaltante1(), getDiferencia1(), getConsumo2(), getMtsSolicitados2(), getMtsEnviados2(), getDiferencia2(), getConsumo3(), getMtsSolicitados3(), getMtsEnviados3(), getDiferencia3(), getObservaciones(), getRevisado(), getIsaac());
+		return new SerProduccion(getEmpresa(), getTemporada(), getNumOrden(), getMaquileroCorte(), getCliente(), getDepartamento(), getDescripcion(), getEstatus(), getFechaProgramada(), getModelo(), getCantidad(), getCorteSobreTela(), getCantidadCorte(), getCantidadEntrega(), getFaltanteMaquilero(), getFaltanteCorte(), getTaller(), getPrecio(), getTotal(), getPrecioFaltante(), getTotalPorPagar(), getFechaSalida(), getFechaEntrega(), getProceso1(), getTallerProceso1(), getPrecioProceso1(), getProceso2(), getTallerProceso2(), getPrecioProceso2(), getConsumo1(), getMtsSolicitados1(), getMtsEnviados1(), getMtsDevolucion1(), getMtsFaltante1(), getDiferencia1(), getConsumo2(), getMtsSolicitados2(), getMtsEnviados2(), getDiferencia2(), getConsumo3(), getMtsSolicitados3(), getMtsEnviados3(), getDiferencia3(), getObservaciones(), getRevisado(), getIsaac(), getMes(), getUsuarioModifico(), getFechaModifico(), getHabilitacionEnviada());
 	}
 
 	public String getEmpresa() throws ExcepcionControlada {
@@ -492,7 +492,7 @@ public class DbProduccion extends ClsEntidad {
 	}
 
 	public String getMes() throws ExcepcionControlada {
-		return getString(observaciones);
+		return getString(mes);
 	}
 
 	public void setMes(String mes) throws ExcepcionControlada {

@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.pantsoft.eppantsoft.pm.PmTemporada;
 import com.pantsoft.eppantsoft.pm.PmUsuario;
 import com.pantsoft.eppantsoft.serializable.SerTemporada;
+import com.pantsoft.eppantsoft.serializable.SerUsuario;
 import com.pantsoft.eppantsoft.util.ClsEpUtil;
 
 @SuppressWarnings("serial")
@@ -49,6 +50,18 @@ public class EpCatalogos extends HttpServlet {
 			// }
 
 			// Usuarios
+			if (ep.esMetodo("usuario_dameUsuarios") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String");
+				SerUsuario[] lstSer = new PmUsuario().dameUsuarios(ep.dameParametroString("empresa"));
+				ep.objectEnBody(lstSer);
+				return;
+			}
+			if (ep.esMetodo("usuario_actualizarTalleres") && ep.esVersion("v1")) {
+				SerUsuario serUsuario = ep.getObjetFromBody(SerUsuario.class);
+				new PmUsuario().actualizarTalleres(serUsuario);
+				ep.voidEnBody();
+				return;
+			}
 			if (ep.esMetodo("usuario_eliminar") && ep.esVersion("v1")) {
 				ep.addPar("empresa", "String").addPar("usuario", "String");
 				new PmUsuario().eliminar(ep.dameParametroString("empresa"), ep.dameParametroString("usuario"));

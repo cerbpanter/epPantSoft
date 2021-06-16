@@ -12,8 +12,6 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.pantsoft.eppantsoft.entidades.DbUsuario;
 import com.pantsoft.eppantsoft.serializable.SerUsuario;
 import com.pantsoft.eppantsoft.util.ClsEntidad;
@@ -46,6 +44,19 @@ public class PmUsuario {
 		}
 	}
 
+	public void actualizarTalleres(SerUsuario serUsuario) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		try {
+			Key key = KeyFactory.createKey("DbUsuario", serUsuario.getEmpresa() + "-" + serUsuario.getUsuario());
+			DbUsuario dbUsuario = new DbUsuario(datastore.get(key));
+
+			dbUsuario.setTalleres(serUsuario.getTalleres());
+			dbUsuario.guardar(datastore);
+		} catch (EntityNotFoundException e) {
+			throw new Exception("El usuario '" + serUsuario.getUsuario() + "' no existe.");
+		}
+	}
+
 	public SerUsuario[] dameUsuarios(String empresa) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
@@ -59,34 +70,6 @@ public class PmUsuario {
 			arr[i] = new DbUsuario(lstUsuarios.get(i)).toSerUsuario();
 		}
 		return arr;
-	}
-
-	public String dameUsuariosPost(String empresa) throws Exception {
-		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-
-		List<Filter> lstFiltros = new ArrayList<Filter>();
-		lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, empresa));
-		List<Entity> lstUsuarios = ClsEntidad.ejecutarConsulta(datastore, "DbUsuario", lstFiltros);
-		if (lstUsuarios == null || lstUsuarios.size() == 0)
-			return "{\"items\": []}";
-		String json = "{\"items\": [";
-		boolean agregarComa = false;
-		for (Entity entidad : lstUsuarios) {
-			DbUsuario dbUsuario = new DbUsuario(entidad);
-			GsonBuilder builder = new GsonBuilder();
-			builder.setPrettyPrinting();
-
-			Gson gson = builder.create();
-
-			String jsonElement = gson.toJson(dbUsuario.toSerUsuario());
-			if (agregarComa)
-				json += ",";
-			else
-				agregarComa = true;
-			json += jsonElement;
-		}
-		json += "]}";
-		return json;
 	}
 
 	public void eliminar(String empresa, String usuario) throws Exception {
@@ -120,33 +103,6 @@ public class PmUsuario {
 			throw new Exception("Contraseña incorrecta");
 
 		return dbUsuario.toSerUsuario();
-	}
-
-	public String dameUsuarioPost(String empresa, String usuario, String password) throws Exception {
-		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-		DbUsuario dbUsuario;
-		try {
-			Key key = KeyFactory.createKey("DbUsuario", empresa + "-" + usuario);
-			dbUsuario = new DbUsuario(datastore.get(key));
-		} catch (EntityNotFoundException e) {
-			throw new Exception("El usuario '" + usuario + "' no existe.");
-		}
-
-		if (!dbUsuario.getPassword().equals(password))
-			throw new Exception("Contraseña incorrecta");
-
-		String json = "{\"items\": [";
-		GsonBuilder builder = new GsonBuilder();
-		builder.setPrettyPrinting();
-
-		Gson gson = builder.create();
-		SerUsuario serUsuario = dbUsuario.toSerUsuario();
-		serUsuario.setPassword("");
-		String jsonElement = gson.toJson(serUsuario);
-		json += jsonElement;
-
-		json += "]}";
-		return json;
 	}
 
 }

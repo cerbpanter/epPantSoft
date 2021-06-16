@@ -25,6 +25,7 @@ public class PmProduccion {
 	public void agregar(SerProduccion serProduccion) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
+		serProduccion.setEstatus(0);
 		DbProduccion dbProduccion = new DbProduccion(serProduccion);
 
 		if (ClsEntidad.existeEntidad(datastore, "DbProduccion", dbProduccion.getKey().getName()))
@@ -38,6 +39,22 @@ public class PmProduccion {
 		try {
 			Key key = KeyFactory.createKey("DbProduccion", serProduccion.getEmpresa() + "-" + serProduccion.getTemporada() + "-" + serProduccion.getNumOrden());
 			DbProduccion dbProduccion = new DbProduccion(datastore.get(key));
+
+			// Cambios de estatus automáticos
+			if (dbProduccion.getEstatus() == 0 && ClsUtil.esNulo(dbProduccion.getTaller()) && !ClsUtil.esNulo(serProduccion.getTaller())) {
+				serProduccion.setEstatus(1);
+			} else if (dbProduccion.getEstatus() == 1 && dbProduccion.getMtsEnviados1() == 0 && serProduccion.getMtsEnviados1() != 0) {
+				serProduccion.setEstatus(2);
+			} else if (dbProduccion.getEstatus() == 2 && dbProduccion.getHabilitacionEnviada() == false && serProduccion.getHabilitacionEnviada() == true) {
+				serProduccion.setEstatus(3);
+			} else if (dbProduccion.getEstatus() == 3 && dbProduccion.getCantidadCorte() == 0 && serProduccion.getCantidadCorte() != 0) {
+				serProduccion.setEstatus(4);
+			} else if (dbProduccion.getEstatus() == 4 && dbProduccion.getCantidadEntrega() == 0 && serProduccion.getCantidadEntrega() != 0) {
+				if (serProduccion.getCantidadEntrega() < (serProduccion.getCantidadCorte() * .9))
+					serProduccion.setEstatus(5);
+				else
+					serProduccion.setEstatus(6);
+			}
 
 			if (!ClsUtil.esIgualConNulo(dbProduccion.getMaquileroCorte(), serProduccion.getMaquileroCorte()))
 				dbProduccion.setMaquileroCorte(serProduccion.getMaquileroCorte());
@@ -87,7 +104,7 @@ public class PmProduccion {
 			dbProduccion.setRevisado(serProduccion.getRevisado());
 			dbProduccion.setIsaac(serProduccion.getIsaac());
 			dbProduccion.setMes(serProduccion.getMes());
-			dbProduccion.setUsuarioModifico(serProduccion.getUsuario());
+			dbProduccion.setUsuarioModifico(serProduccion.getUsuarioModifico());
 			dbProduccion.setFechaModifico(new Date());
 			dbProduccion.setHabilitacionEnviada(serProduccion.getHabilitacionEnviada());
 			dbProduccion.guardar(datastore);

@@ -53,12 +53,12 @@ public class SerProduccion {
 	private String usuarioModifico;
 	private Date fechaModifico;
 	private boolean habilitacionEnviada;
-	private String usuario;
 
 	public SerProduccion() {
 	}
 
-	public SerProduccion(String empresa, long temporada, long numOrden, String maquileroCorte, String cliente, String departamento, String descripcion, int estatus, Date fechaProgramada, String modelo, long cantidad, long corteSobreTela, long cantidadCorte, long cantidadEntrega, long faltanteMaquilero, long faltanteCorte, String taller, double precio, double total, double precioFaltante, double totalPorPagar, Date fechaSalida, Date fechaEntrega, String proceso1, String tallerProceso1, double precioProceso1, String proceso2, String tallerProceso2, double precioProceso2, double consumo1, double mtsSolicitados1, double mtsEnviados1, double mtsDevolucion1, double mtsFaltante1, double diferencia1, double consumo2, double mtsSolicitados2, double mtsEnviados2, double diferencia2, double consumo3, double mtsSolicitados3, double mtsEnviados3, double diferencia3, String observaciones, boolean revisado, boolean isaac) {
+	public SerProduccion(String empresa, long temporada, long numOrden, String maquileroCorte, String cliente, String departamento, String descripcion, int estatus, Date fechaProgramada, String modelo, long cantidad, long corteSobreTela, long cantidadCorte, long cantidadEntrega, long faltanteMaquilero, long faltanteCorte, String taller, double precio, double total, double precioFaltante, double totalPorPagar, Date fechaSalida, Date fechaEntrega, String proceso1, String tallerProceso1, double precioProceso1, String proceso2, String tallerProceso2, double precioProceso2, double consumo1, double mtsSolicitados1, double mtsEnviados1, double mtsDevolucion1, double mtsFaltante1, double diferencia1, double consumo2, double mtsSolicitados2, double mtsEnviados2, double diferencia2, double consumo3, double mtsSolicitados3, double mtsEnviados3, double diferencia3, String observaciones, boolean revisado, boolean isaac, String mes, String usuarioModifico, Date fechaModifico,
+			boolean habilitacionEnviada) {
 		this.empresa = empresa;
 		this.temporada = temporada;
 		this.numOrden = numOrden;
@@ -105,6 +105,10 @@ public class SerProduccion {
 		this.observaciones = observaciones;
 		this.revisado = revisado;
 		this.isaac = isaac;
+		this.mes = mes;
+		this.usuarioModifico = usuarioModifico;
+		this.fechaModifico = fechaModifico;
+		this.habilitacionEnviada = habilitacionEnviada;
 	}
 
 	public String getEmpresa() {
@@ -505,13 +509,5 @@ public class SerProduccion {
 
 	public void setHabilitacionEnviada(boolean habilitacionEnviada) {
 		this.habilitacionEnviada = habilitacionEnviada;
-	}
-
-	public String getUsuario() {
-		return usuario;
-	}
-
-	public void setUsuario(String usuario) {
-		this.usuario = usuario;
 	}
 }

@@ -18,6 +18,7 @@ public class DbUsuario extends ClsEntidad {
 	private final ClsCampo usuario = new ClsCampo("usuario", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 2, NO_SUSTITUIR_NULL);
 	private final ClsCampo password = new ClsCampo("password", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo permisos = new ClsCampo("permisos", Tipo.ArrayLong, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo talleres = new ClsCampo("talleres", Tipo.ArrayString, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 
 	public DbUsuario(SerUsuario serUsuario) throws ExcepcionControlada {
 		Key key = KeyFactory.createKey("DbUsuario", serUsuario.getEmpresa() + "-" + serUsuario.getUsuario());
@@ -39,11 +40,11 @@ public class DbUsuario extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, usuario, password, permisos);
+		return Arrays.asList(empresa, usuario, password, permisos, talleres);
 	}
 
 	public SerUsuario toSerUsuario() throws ExcepcionControlada {
-		return new SerUsuario(getEmpresa(), getUsuario(), getPassword(), getPermisos());
+		return new SerUsuario(getEmpresa(), getUsuario(), getPassword(), getPermisos(), getTalleres());
 	}
 
 	public String getEmpresa() throws ExcepcionControlada {
@@ -83,6 +84,30 @@ public class DbUsuario extends ClsEntidad {
 				lstPermisos.add(permiso);
 			}
 			setArrayLong(this.permisos, lstPermisos);
+		}
+	}
+
+	public String[] getTalleres() throws ExcepcionControlada {
+		ArrayList<String> lstTalleres = getArrayString(this.talleres);
+		if (lstTalleres == null) {
+			return null;
+		} else {
+			String[] arr = new String[lstTalleres.size()];
+			for (int i = 0; i < lstTalleres.size(); i++)
+				arr[i] = lstTalleres.get(i);
+			return arr;
+		}
+	}
+
+	public void setTalleres(String[] talleres) throws ExcepcionControlada {
+		if (talleres == null || talleres.length == 0) {
+			setArrayString(this.talleres, null);
+		} else {
+			ArrayList<String> lstTalleres = new ArrayList<String>();
+			for (String taller : talleres) {
+				lstTalleres.add(taller);
+			}
+			setArrayString(this.talleres, lstTalleres);
 		}
 	}
 }
