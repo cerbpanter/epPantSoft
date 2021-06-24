@@ -105,4 +105,21 @@ public class PmUsuario {
 		return dbUsuario.toSerUsuario();
 	}
 
+	public SerUsuario dameTalleresUsuario(String empresa, String usuario) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		DbUsuario dbUsuario;
+		try {
+			Key key = KeyFactory.createKey("DbUsuario", empresa + "-" + usuario);
+			dbUsuario = new DbUsuario(datastore.get(key));
+		} catch (EntityNotFoundException e) {
+			throw new Exception("El usuario '" + usuario + "' no existe.");
+		}
+
+		SerUsuario serUsuario = new SerUsuario();
+		serUsuario.setUsuario(dbUsuario.getUsuario());
+		serUsuario.setTalleres(dbUsuario.getTalleres());
+
+		return serUsuario;
+	}
+
 }

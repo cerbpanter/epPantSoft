@@ -58,34 +58,6 @@ public class PmVista {
 		return arr;
 	}
 
-	// public String dameVistasPost(String empresa) throws Exception {
-	// DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-	//
-	// List<Filter> lstFiltros = new ArrayList<Filter>();
-	// lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, empresa));
-	// List<Entity> lstVistas = ClsEntidad.ejecutarConsulta(datastore, "DbVista", lstFiltros);
-	// if (lstVistas == null || lstVistas.size() == 0)
-	// return "{\"items\": []}";
-	// String json = "{\"items\": [";
-	// boolean agregarComa = false;
-	// for (Entity entidad : lstVistas) {
-	// DbVista dbVista = new DbVista(entidad);
-	// GsonBuilder builder = new GsonBuilder();
-	// builder.setPrettyPrinting();
-	//
-	// Gson gson = builder.create();
-	//
-	// String jsonElement = gson.toJson(dbVista.toSerVista());
-	// if (agregarComa)
-	// json += ",";
-	// else
-	// agregarComa = true;
-	// json += jsonElement;
-	// }
-	// json += "]}";
-	// return json;
-	// }
-
 	public void eliminar(String empresa, String vista) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		try {
@@ -102,41 +74,5 @@ public class PmVista {
 			throw new ExcepcionControlada("La vista '" + vista + "' no existe.");
 		}
 	}
-
-	// public SerVista dameVista(String empresa, String vista, String password) throws Exception {
-	// DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-	// DbVista dbVista;
-	// try {
-	// Key key = KeyFactory.createKey("DbVista", empresa + "-" + vista);
-	// dbVista = new DbVista(datastore.get(key));
-	// } catch (EntityNotFoundException e) {
-	// throw new Exception("El vista '" + vista + "' no existe.");
-	// }
-	//
-	// return dbVista.toSerVista();
-	// }
-
-	// public String dameVistaPost(String empresa, String vista, String password) throws Exception {
-	// DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-	// DbVista dbVista;
-	// try {
-	// Key key = KeyFactory.createKey("DbVista", empresa + "-" + vista);
-	// dbVista = new DbVista(datastore.get(key));
-	// } catch (EntityNotFoundException e) {
-	// throw new Exception("El vista '" + vista + "' no existe.");
-	// }
-	//
-	// String json = "{\"items\": [";
-	// GsonBuilder builder = new GsonBuilder();
-	// builder.setPrettyPrinting();
-	//
-	// Gson gson = builder.create();
-	// SerVista serVista = dbVista.toSerVista();
-	// String jsonElement = gson.toJson(serVista);
-	// json += jsonElement;
-	//
-	// json += "]}";
-	// return json;
-	// }
 
 }

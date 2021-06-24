@@ -44,8 +44,8 @@ public class EpProduccion extends HttpServlet {
 			}
 			if (ep.esMetodo("produccion_actualizar") && ep.esVersion("v1")) {
 				SerProduccion serProduccion = ep.getObjetFromBody(SerProduccion.class);
-				new PmProduccion().actualizar(serProduccion);
-				ep.voidEnBody();
+				serProduccion = new PmProduccion().actualizar(serProduccion);
+				ep.objectEnBody(serProduccion);
 				return;
 			}
 			if (ep.esMetodo("produccion_actualizarEstatus") && ep.esVersion("v1")) {

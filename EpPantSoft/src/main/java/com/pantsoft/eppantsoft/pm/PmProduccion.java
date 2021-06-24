@@ -34,7 +34,7 @@ public class PmProduccion {
 		dbProduccion.guardar(datastore);
 	}
 
-	public void actualizar(SerProduccion serProduccion) throws Exception {
+	public SerProduccion actualizar(SerProduccion serProduccion) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		try {
 			Key key = KeyFactory.createKey("DbProduccion", serProduccion.getEmpresa() + "-" + serProduccion.getTemporada() + "-" + serProduccion.getNumOrden());
@@ -108,6 +108,8 @@ public class PmProduccion {
 			dbProduccion.setFechaModifico(new Date());
 			dbProduccion.setHabilitacionEnviada(serProduccion.getHabilitacionEnviada());
 			dbProduccion.guardar(datastore);
+
+			return dbProduccion.toSerProduccion();
 		} catch (EntityNotFoundException e) {
 			throw new Exception("La orden '" + serProduccion.getNumOrden() + "' no existe.");
 		}

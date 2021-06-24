@@ -12,8 +12,6 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.pantsoft.eppantsoft.entidades.DbTemporada;
 import com.pantsoft.eppantsoft.serializable.SerTemporada;
 import com.pantsoft.eppantsoft.util.ClsEntidad;
@@ -78,33 +76,6 @@ public class PmTemporada {
 			arr[i] = new DbTemporada(lstTemporadas.get(i)).toSerTemporada();
 		}
 		return arr;
-	}
-
-	public String dameTemporadasPost(String empresa) throws Exception {
-		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-
-		List<Filter> lstFiltros = new ArrayList<Filter>();
-		lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, empresa));
-		List<Entity> lstTemporadas = ClsEntidad.ejecutarConsulta(datastore, "DbTemporada", lstFiltros);
-		if (lstTemporadas == null || lstTemporadas.size() == 0)
-			return null;
-		String json = "{\"items\": [";
-		boolean agregarComa = false;
-		for (Entity entidad : lstTemporadas) {
-			DbTemporada dbTemporada = new DbTemporada(entidad);
-			GsonBuilder builder = new GsonBuilder();
-			builder.setPrettyPrinting();
-
-			Gson gson = builder.create();
-			String jsonElement = gson.toJson(dbTemporada.toSerTemporada());
-			if (agregarComa)
-				json += ",";
-			else
-				agregarComa = true;
-			json += jsonElement;
-		}
-		json += "]}";
-		return json;
 	}
 
 }

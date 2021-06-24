@@ -73,6 +73,7 @@ public class DbProduccion extends ClsEntidad {
 		setLong(temporada, serProduccion.getTemporada());
 		if (serProduccion.getNumOrden() <= 0)
 			throw new Exception("El número de orden debe ser mayor a cero");
+
 		setLong(numOrden, serProduccion.getNumOrden());
 		setMaquileroCorte(serProduccion.getMaquileroCorte());
 		setCliente(serProduccion.getCliente());
@@ -82,6 +83,7 @@ public class DbProduccion extends ClsEntidad {
 		setFechaProgramada(serProduccion.getFechaProgramada());
 		setModelo(serProduccion.getModelo());
 		setCantidad(serProduccion.getCantidad());
+		setCorteSobreTela(serProduccion.getCorteSobreTela());
 		setCantidadCorte(serProduccion.getCantidadCorte());
 		setCantidadEntrega(serProduccion.getCantidadEntrega());
 		setFaltanteMaquilero(serProduccion.getFaltanteMaquilero());
@@ -102,6 +104,8 @@ public class DbProduccion extends ClsEntidad {
 		setConsumo1(serProduccion.getConsumo1());
 		setMtsSolicitados1(serProduccion.getMtsSolicitados1());
 		setMtsEnviados1(serProduccion.getMtsEnviados1());
+		setMtsDevolucion1(serProduccion.getMtsDevolucion1());
+		setMtsFaltante1(serProduccion.getMtsFaltante1());
 		setDiferencia1(serProduccion.getDiferencia1());
 		setConsumo2(serProduccion.getConsumo2());
 		setMtsSolicitados2(serProduccion.getMtsSolicitados2());
@@ -112,10 +116,12 @@ public class DbProduccion extends ClsEntidad {
 		setMtsEnviados3(serProduccion.getMtsEnviados3());
 		setDiferencia3(serProduccion.getDiferencia3());
 		setObservaciones(serProduccion.getObservaciones());
+		setRevisado(serProduccion.getRevisado());
+		setIsaac(serProduccion.getIsaac());
 		setMes(serProduccion.getMes());
-		setHabilitacionEnviada(serProduccion.getHabilitacionEnviada());
 		setUsuarioModifico(serProduccion.getUsuarioModifico());
 		setFechaModifico(new Date());
+		setHabilitacionEnviada(serProduccion.getHabilitacionEnviada());
 	}
 
 	public DbProduccion(Entity entidad) throws ExcepcionControlada {
