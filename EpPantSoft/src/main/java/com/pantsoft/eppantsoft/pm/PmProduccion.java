@@ -22,7 +22,7 @@ import com.pantsoft.eppantsoft.util.ExcepcionControlada;
 
 public class PmProduccion {
 
-	public void agregar(SerProduccion serProduccion) throws Exception {
+	public SerProduccion agregar(SerProduccion serProduccion) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
 		serProduccion.setEstatus(0);
@@ -32,6 +32,8 @@ public class PmProduccion {
 			throw new ExcepcionControlada("La orden '" + serProduccion.getNumOrden() + "' ya existe.");
 
 		dbProduccion.guardar(datastore);
+
+		return dbProduccion.toSerProduccion();
 	}
 
 	public SerProduccion actualizar(SerProduccion serProduccion) throws Exception {
