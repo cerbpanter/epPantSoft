@@ -222,7 +222,13 @@ public class PmModelo {
 		try {
 			dbImagen = new DbModeloImagen(datastore.get(key));
 		} catch (EntityNotFoundException e) {
-			throw new Exception("La imagen no existe");
+			try {
+				Key keyp2 = KeyFactory.createKey("DbModelo", "SinImagen-0-SinImagen-1");
+				Key key2 = KeyFactory.createKey(keyp2, "DbModeloImagen", "SinImagen-0-SinImagen-1-1");
+				dbImagen = new DbModeloImagen(datastore.get(key2));
+			} catch (EntityNotFoundException e1) {
+				throw new Exception("La imagen no existe");
+			}
 		}
 
 		OutputStream out = res.getOutputStream();
@@ -232,6 +238,21 @@ public class PmModelo {
 			out.write(dbImagen.getImagen());
 		}
 		out.close();
+	}
+
+	public void modeloImagen_eliminar(SerModeloImagen serModeloImagen) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+		Key keyp = KeyFactory.createKey("DbModelo", serModeloImagen.getEmpresa() + "-" + serModeloImagen.getTemporada() + "-" + serModeloImagen.getModelo() + "-" + serModeloImagen.getReferencia());
+		Key key = KeyFactory.createKey(keyp, "DbModeloImagen", serModeloImagen.getEmpresa() + "-" + serModeloImagen.getTemporada() + "-" + serModeloImagen.getModelo() + "-" + serModeloImagen.getReferencia() + "-" + serModeloImagen.getRenglon());
+
+		DbModeloImagen dbImagen;
+		try {
+			dbImagen = new DbModeloImagen(datastore.get(key));
+		} catch (EntityNotFoundException e) {
+			throw new Exception("La imagen no existe");
+		}
+		dbImagen.eliminar(datastore);
 	}
 
 }

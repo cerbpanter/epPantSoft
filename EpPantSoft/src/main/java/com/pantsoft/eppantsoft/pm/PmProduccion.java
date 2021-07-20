@@ -38,22 +38,30 @@ public class PmProduccion {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		try {
 			Key key = KeyFactory.createKey("DbProduccion", serProduccion.getEmpresa() + "-" + serProduccion.getTemporada() + "-" + serProduccion.getNumOrden());
-			DbProduccion dbProduccion = new DbProduccion(datastore.get(key));
 
 			// Cambios de estatus automáticos
-			if (dbProduccion.getEstatus() == 0 && ClsUtil.esNulo(dbProduccion.getTaller()) && !ClsUtil.esNulo(serProduccion.getTaller())) {
-				serProduccion.setEstatus(1);
-			} else if (dbProduccion.getEstatus() == 1 && dbProduccion.getMtsEnviados1() == 0 && serProduccion.getMtsEnviados1() != 0) {
-				serProduccion.setEstatus(2);
-			} else if (dbProduccion.getEstatus() == 2 && dbProduccion.getHabilitacionEnviada() == false && serProduccion.getHabilitacionEnviada() == true) {
-				serProduccion.setEstatus(3);
-			} else if (dbProduccion.getEstatus() == 3 && dbProduccion.getCantidadCorte() == 0 && serProduccion.getCantidadCorte() != 0) {
-				serProduccion.setEstatus(4);
-			} else if (dbProduccion.getEstatus() == 4 && dbProduccion.getCantidadEntrega() == 0 && serProduccion.getCantidadEntrega() != 0) {
-				if (serProduccion.getCantidadEntrega() < (serProduccion.getCantidadCorte() * .9))
-					serProduccion.setEstatus(5);
-				else
-					serProduccion.setEstatus(6);
+			DbProduccion dbProduccion = new DbProduccion(datastore.get(key));
+			if (!ClsUtil.esIgualConNulo(dbProduccion.getTaller(), serProduccion.getTaller()) || dbProduccion.getMtsEnviados1() != serProduccion.getMtsEnviados1() || dbProduccion.getHabilitacionEnviada() != serProduccion.getHabilitacionEnviada() || dbProduccion.getCantidadCorte() != serProduccion.getCantidadCorte() || dbProduccion.getCantidadEntrega() != serProduccion.getCantidadEntrega()) {
+				int estatus = 0;
+				if (!ClsUtil.esNulo(serProduccion.getTaller())) {
+					estatus = 1;
+					if (serProduccion.getMtsEnviados1() > 0) {
+						estatus = 2;
+						if (serProduccion.getHabilitacionEnviada() == true) {
+							estatus = 3;
+							if (serProduccion.getCantidadCorte() > 0) {
+								estatus = 4;
+								if (serProduccion.getCantidadEntrega() > 0) {
+									if (serProduccion.getCantidadEntrega() < (serProduccion.getCantidadCorte() * .9))
+										estatus = 5;
+									else
+										estatus = 6;
+								}
+							}
+						}
+					}
+				}
+				serProduccion.setEstatus(estatus);
 			}
 
 			if (!ClsUtil.esIgualConNulo(dbProduccion.getMaquileroCorte(), serProduccion.getMaquileroCorte()))

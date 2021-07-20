@@ -91,6 +91,8 @@ public class DbModeloImagen extends ClsEntidad {
 	public void setImagen(long altoImagen, long anchoImagen, byte[] imagen) throws ExcepcionControlada {
 		if (imagen == null || imagen.length == 0)
 			throw new ExcepcionControlada("La imagen no puede estar vacía");
+		if (imagen.length > 819200)
+			throw new ExcepcionControlada("La imagen no puede mediar más de 800 KB");
 		this.setAltoImagen(altoImagen);
 		this.setAnchoImagen(anchoImagen);
 		setBlob(this.imagen, imagen);
@@ -103,6 +105,8 @@ public class DbModeloImagen extends ClsEntidad {
 	public void setImagenMini(byte[] imagenMini) throws ExcepcionControlada {
 		if (imagenMini == null || imagenMini.length == 0)
 			throw new ExcepcionControlada("La imagen mini no puede estar vacía");
+		if (imagenMini.length > 102400)
+			throw new ExcepcionControlada("La imagen mini no puede mediar más de 100 KB");
 		setBlob(this.imagenMini, imagenMini);
 	}
 

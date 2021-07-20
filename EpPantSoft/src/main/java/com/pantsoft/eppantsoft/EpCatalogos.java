@@ -7,9 +7,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.pantsoft.eppantsoft.pm.PmTelaHabilitacion;
 import com.pantsoft.eppantsoft.pm.PmTemporada;
 import com.pantsoft.eppantsoft.pm.PmUsuario;
 import com.pantsoft.eppantsoft.pm.PmVista;
+import com.pantsoft.eppantsoft.serializable.SerTelaHabilitacion;
 import com.pantsoft.eppantsoft.serializable.SerTemporada;
 import com.pantsoft.eppantsoft.serializable.SerUsuario;
 import com.pantsoft.eppantsoft.serializable.SerVista;
@@ -117,6 +119,32 @@ public class EpCatalogos extends HttpServlet {
 				ep.addPar("empresa", "String").addPar("vista", "String");
 				new PmVista().eliminar(ep.dameParametroString("empresa"), ep.dameParametroString("vista"));
 				ep.voidEnBody();
+				return;
+			}
+
+			// TelaHabilitacion ///////////////////////////////////////////////////////////
+			if (ep.esMetodo("telaHabilitacion_agregar") && ep.esVersion("v1")) {
+				SerTelaHabilitacion serTelaHabilitacion = ep.getObjetFromBody(SerTelaHabilitacion.class);
+				new PmTelaHabilitacion().agregar(serTelaHabilitacion);
+				ep.voidEnBody();
+				return;
+			}
+			if (ep.esMetodo("telaHabilitacion_actualizar") && ep.esVersion("v1")) {
+				SerTelaHabilitacion serTelaHabilitacion = ep.getObjetFromBody(SerTelaHabilitacion.class);
+				new PmTelaHabilitacion().actualizar(serTelaHabilitacion);
+				ep.voidEnBody();
+				return;
+			}
+			if (ep.esMetodo("telaHabilitacion_eliminar") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("temporada", "Long").addPar("materia", "String");
+				new PmTelaHabilitacion().eliminar(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"), ep.dameParametroString("materia"));
+				ep.voidEnBody();
+				return;
+			}
+			if (ep.esMetodo("telaHabilitacion_dameTemporadas") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("temporada", "Long");
+				SerTelaHabilitacion[] lstSer = new PmTelaHabilitacion().dameMaterias(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"));
+				ep.objectEnBody(lstSer);
 				return;
 			}
 

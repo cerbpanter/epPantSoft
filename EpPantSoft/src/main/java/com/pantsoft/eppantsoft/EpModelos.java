@@ -23,6 +23,7 @@ public class EpModelos extends HttpServlet {
 		try {
 			ep.setParametros(request, response);
 
+			// Modelo Imagen ///////////////////////////////////////////////////////////////////////////
 			if (ep.esMetodo("modeloImagen") && ep.esVersion("v1")) {
 				// Se agregar los parámetros en el orden en que deben venir en la url
 				ep.addPar("empresa", "String").addPar("temporada", "Long").addPar("modelo", "String").addPar("referencia", "String").addPar("renglon", "Long").addPar("mini", "Int");
@@ -31,14 +32,6 @@ public class EpModelos extends HttpServlet {
 				// int tipo = Integer.parseInt(parametros.dameParametro("tipo"));
 
 				new PmModelo().modeloImagen_dameImagen(request, response, ep);
-				return;
-			}
-
-			// Modelo Imagen ///////////////////////////////////////////////////////////////////////////
-			if (ep.esMetodo("modeloImagen_agregar") && ep.esVersion("v1")) {
-				SerModeloImagen serModeloImagen = ep.getObjetFromBody(SerModeloImagen.class);
-				new PmModelo().modeloImagen_agregar(serModeloImagen);
-				ep.voidEnBody();
 				return;
 			}
 
@@ -107,6 +100,12 @@ public class EpModelos extends HttpServlet {
 			if (ep.esMetodo("modeloImagen_agregar") && ep.esVersion("v1")) {
 				SerModeloImagen serModeloImagen = ep.getObjetFromBody(SerModeloImagen.class);
 				new PmModelo().modeloImagen_agregar(serModeloImagen);
+				ep.voidEnBody();
+				return;
+			}
+			if (ep.esMetodo("modeloImagen_eliminar") && ep.esVersion("v1")) {
+				SerModeloImagen serModeloImagen = ep.getObjetFromBody(SerModeloImagen.class);
+				new PmModelo().modeloImagen_eliminar(serModeloImagen);
 				ep.voidEnBody();
 				return;
 			}

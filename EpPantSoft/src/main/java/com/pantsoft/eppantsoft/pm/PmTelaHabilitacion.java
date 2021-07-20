@@ -1,0 +1,82 @@
+package com.pantsoft.eppantsoft.pm;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.pantsoft.eppantsoft.entidades.DbTelaHabilitacion;
+import com.pantsoft.eppantsoft.serializable.SerTelaHabilitacion;
+import com.pantsoft.eppantsoft.util.ClsEntidad;
+import com.pantsoft.eppantsoft.util.ClsUtil;
+import com.pantsoft.eppantsoft.util.ExcepcionControlada;
+
+public class PmTelaHabilitacion {
+
+	public void agregar(SerTelaHabilitacion serTelaHabilitacion) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+		DbTelaHabilitacion dbTelaHabilitacion = new DbTelaHabilitacion(serTelaHabilitacion);
+
+		if (ClsEntidad.existeEntidad(datastore, "DbTelaHabilitacion", dbTelaHabilitacion.getKey().getName()))
+			throw new ExcepcionControlada("La materia '" + serTelaHabilitacion.getMateria() + "' ya existe.");
+
+		dbTelaHabilitacion.guardar(datastore);
+	}
+
+	public void actualizar(SerTelaHabilitacion serTelaHabilitacion) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		try {
+			Key key = KeyFactory.createKey("DbTelaHabilitacion", serTelaHabilitacion.getEmpresa() + "-" + serTelaHabilitacion.getTemporada() + "-" + serTelaHabilitacion.getMateria());
+			DbTelaHabilitacion dbTelaHabilitacion = new DbTelaHabilitacion(datastore.get(key));
+
+			if (!ClsUtil.esIgualConNulo(dbTelaHabilitacion.getTipo(), serTelaHabilitacion.getTipo()))
+				dbTelaHabilitacion.setTipo(serTelaHabilitacion.getTipo());
+			dbTelaHabilitacion.guardar(datastore);
+		} catch (EntityNotFoundException e) {
+			throw new Exception("La materia '" + serTelaHabilitacion.getMateria() + "' no existe.");
+		}
+	}
+
+	public void eliminar(String empresa, long temporada, String materia) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		try {
+			Key key = KeyFactory.createKey("DbTelaHabilitacion", empresa + "-" + temporada + "-" + materia);
+			datastore.get(key);
+			// Validar que no participe
+			// List<Filter> lstFiltros = new ArrayList<Filter>();
+			// lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, empresa));
+			// lstFiltros.add(new FilterPredicate("temporada", FilterOperator.EQUAL, temporada));
+			// if (ClsEntidad.ejecutarConsultaHayEntidades(datastore, "DbProduccion", lstFiltros))
+			// throw new Exception("La temporada " + temporada + " tiene registros de producción, imposible eliminar.");
+
+			datastore.delete(key);
+		} catch (EntityNotFoundException e) {
+			throw new ExcepcionControlada("La materia '" + temporada + "' no existe.");
+		}
+	}
+
+	public SerTelaHabilitacion[] dameMaterias(String empresa, long temporada) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+		List<Filter> lstFiltros = new ArrayList<Filter>();
+		lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, empresa));
+		lstFiltros.add(new FilterPredicate("temporada", FilterOperator.EQUAL, temporada));
+		List<Entity> lstTemporadas = ClsEntidad.ejecutarConsulta(datastore, "DbTelaHabilitacion", lstFiltros);
+		if (lstTemporadas == null || lstTemporadas.size() == 0)
+			return new SerTelaHabilitacion[0];
+		SerTelaHabilitacion[] arr = new SerTelaHabilitacion[lstTemporadas.size()];
+		for (int i = 0; i < lstTemporadas.size(); i++) {
+			arr[i] = new DbTelaHabilitacion(lstTemporadas.get(i)).toSerTelaHabilitacion();
+		}
+		return arr;
+	}
+
+}
