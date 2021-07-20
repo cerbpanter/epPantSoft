@@ -45,13 +45,13 @@ public class PmProduccion {
 				int estatus = 0;
 				if (!ClsUtil.esNulo(serProduccion.getTaller())) {
 					estatus = 1;
-					if (serProduccion.getMtsEnviados1() > 0) {
+					if (serProduccion.getMtsEnviados1() > 0) { // M enviados 1
 						estatus = 2;
-						if (serProduccion.getHabilitacionEnviada() == true) {
+						if (serProduccion.getHabilitacionEnviada() == true) { // Habilitación enviada
 							estatus = 3;
-							if (serProduccion.getCantidadCorte() > 0) {
+							if (serProduccion.getCantidadCorte() > 0) { // CCorte
 								estatus = 4;
-								if (serProduccion.getCantidadEntrega() > 0) {
+								if (serProduccion.getCantidadEntrega() > 0) { // CEntrega
 									if (serProduccion.getCantidadEntrega() < (serProduccion.getCantidadCorte() * .9))
 										estatus = 5;
 									else
