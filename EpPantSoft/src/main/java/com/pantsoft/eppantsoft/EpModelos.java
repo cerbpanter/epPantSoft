@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.pantsoft.eppantsoft.pm.PmModelo;
 import com.pantsoft.eppantsoft.serializable.Respuesta;
+import com.pantsoft.eppantsoft.serializable.SerModelo;
 import com.pantsoft.eppantsoft.serializable.SerModeloImagen;
 import com.pantsoft.eppantsoft.util.ClsEpUtil;
 
@@ -57,44 +58,48 @@ public class EpModelos extends HttpServlet {
 			}
 
 			// Modelos /////////////////////////////////////////////
-			// if (ep.esMetodo("produccion_agregar") && ep.esVersion("v1")) {
-			// SerProduccion serProduccion = ep.getObjetFromBody(SerProduccion.class);
-			// new PmProduccion().agregar(serProduccion);
-			// ep.voidEnBody();
-			// return;
-			// }
-			// if (ep.esMetodo("produccion_actualizar") && ep.esVersion("v1")) {
-			// SerProduccion serProduccion = ep.getObjetFromBody(SerProduccion.class);
-			// serProduccion = new PmProduccion().actualizar(serProduccion);
-			// ep.objectEnBody(serProduccion);
-			// return;
-			// }
-			// if (ep.esMetodo("produccion_actualizarEstatus") && ep.esVersion("v1")) {
-			// ep.addPar("empresa", "String").addPar("temporada", "Long").addPar("estatus", "Int");
-			// Respuesta resp = ep.getObjetFromBody(Respuesta.class);
-			// new PmProduccion().actualizarEstatus(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"), ep.dameParametroInt("estatus"), resp.lstLong);
-			// ep.voidEnBody();
-			// return;
-			// }
-			// if (ep.esMetodo("produccion_cambiarTemporada") && ep.esVersion("v1")) {
-			// ep.addPar("empresa", "String").addPar("temporada", "Long").addPar("nuevaTemporada", "Long");
-			// Respuesta resp = ep.getObjetFromBody(Respuesta.class);
-			// new PmProduccion().cambiarTemporada(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"), ep.dameParametroLong("nuevaTemporada"), resp.lstLong);
-			// ep.voidEnBody();
-			// return;
-			// }
-			// if (ep.esMetodo("produccion_dameProducciones") && ep.esVersion("v1")) {
-			// ep.addPar("empresa", "String").addPar("temporada", "Long");
-			// SerProduccion[] lstSer = new PmProduccion().dameProducciones(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"));
-			// ep.objectEnBody(lstSer);
-			// return;
-			// }
-			// if (ep.esMetodo("produccion_eliminar") && ep.esVersion("v1")) {
-			// ep.addPar("empresa", "String").addPar("temporada", "Long").addPar("numOrden", "Long");
-			// new PmProduccion().eliminar(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"), ep.dameParametroLong("numOrden"));
-			// ep.voidEnBody();
-			// return;
-			// }
+			if (ep.esMetodo("modelo_agregar") && ep.esVersion("v1")) {
+				SerModelo serModelo = ep.getObjetFromBody(SerModelo.class);
+				serModelo = new PmModelo().modelo_agregar(serModelo);
+				ep.objectEnBody(serModelo);
+				return;
+			}
+			if (ep.esMetodo("modelo_actualizar") && ep.esVersion("v1")) {
+				SerModelo serModelo = ep.getObjetFromBody(SerModelo.class);
+				serModelo = new PmModelo().modelo_actualizar(serModelo);
+				ep.objectEnBody(serModelo);
+				return;
+			}
+			if (ep.esMetodo("modelo_dameModelo") && ep.esVersion("v1")) {
+				SerModelo serModelo = ep.getObjetFromBody(SerModelo.class);
+				serModelo = new PmModelo().modelo_dameModelo(serModelo);
+				ep.objectEnBody(serModelo);
+				return;
+			}
+			if (ep.esMetodo("modelo_dameModelos") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("temporada", "Long");
+				SerModelo[] lstSer = new PmModelo().modelo_dameModelos(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"));
+				ep.objectEnBody(lstSer);
+				return;
+			}
+			if (ep.esMetodo("modelo_eliminar") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("temporada", "Long").addPar("modelo", "String").addPar("referencia", "String");
+				new PmModelo().modelo_eliminar(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"), ep.dameParametroString("modelo"), ep.dameParametroString("referencia"));
+				ep.voidEnBody();
+				return;
+			}
+			if (ep.esMetodo("modelo_sincronizar") && ep.esVersion("v1")) {
+				SerModelo serModelo = ep.getObjetFromBody(SerModelo.class);
+				Object obj = new PmModelo().modelo_sincronizar(serModelo);
+				ep.objectEnBody(obj);
+				return;
+			}
+			if (ep.esMetodo("modelo_marcarSincronizado") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("temporada", "Long").addPar("modelo", "String").addPar("referencia", "String");
+				new PmModelo().modelo_marcarSincronizado(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"), ep.dameParametroString("modelo"), ep.dameParametroString("referencia"));
+				ep.voidEnBody();
+				return;
+			}
 
 			// Modelo Imagen ///////////////////////////////////////////////////////////////////////////
 			if (ep.esMetodo("modeloImagen_agregar") && ep.esVersion("v1")) {
@@ -107,6 +112,12 @@ public class EpModelos extends HttpServlet {
 				SerModeloImagen serModeloImagen = ep.getObjetFromBody(SerModeloImagen.class);
 				new PmModelo().modeloImagen_eliminar(serModeloImagen);
 				ep.voidEnBody();
+				return;
+			}
+			if (ep.esMetodo("modeloImagen_dameModelosImagenSinImagen") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("temporada", "Long");
+				SerModeloImagen[] lstSer = new PmModelo().modeloImagen_dameModelosImagenSinImagen(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"));
+				ep.objectEnBody(lstSer);
 				return;
 			}
 

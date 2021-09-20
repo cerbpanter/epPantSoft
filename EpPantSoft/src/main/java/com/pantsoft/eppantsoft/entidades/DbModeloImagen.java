@@ -48,6 +48,10 @@ public class DbModeloImagen extends ClsEntidad {
 		return Arrays.asList(empresa, temporada, modelo, referencia, renglon, altoImagen, anchoImagen, imagen, imagenMini);
 	}
 
+	public SerModeloImagen toSerModeloImagenSinImagen() throws ExcepcionControlada {
+		return new SerModeloImagen(getEmpresa(), getTemporada(), getModelo(), getReferencia(), getRenglon(), 0, 0, null, null);
+	}
+
 	public String getEmpresa() throws ExcepcionControlada {
 		return getString(empresa);
 	}

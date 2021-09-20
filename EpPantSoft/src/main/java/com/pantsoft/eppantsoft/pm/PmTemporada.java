@@ -39,6 +39,8 @@ public class PmTemporada {
 
 			if (!ClsUtil.esIgualConNulo(dbTemporada.getDescripcion(), serTemporada.getDescripcion()))
 				dbTemporada.setDescripcion(serTemporada.getDescripcion());
+			if (dbTemporada.getTemporadaSql() != serTemporada.getTemporadaSql())
+				dbTemporada.setTemporadaSql(serTemporada.getTemporadaSql());
 			dbTemporada.guardar(datastore);
 		} catch (EntityNotFoundException e) {
 			throw new Exception("La temporada '" + serTemporada.getTemporada() + "' no existe.");
@@ -76,6 +78,18 @@ public class PmTemporada {
 			arr[i] = new DbTemporada(lstTemporadas.get(i)).toSerTemporada();
 		}
 		return arr;
+	}
+
+	public SerTemporada dameTemporadaSql(String empresa, long temporadaSql) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+		List<Filter> lstFiltros = new ArrayList<Filter>();
+		lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, empresa));
+		lstFiltros.add(new FilterPredicate("temporadaSql", FilterOperator.EQUAL, temporadaSql));
+		List<Entity> lstTemporadas = ClsEntidad.ejecutarConsulta(datastore, "DbTemporada", lstFiltros);
+		if (lstTemporadas == null || lstTemporadas.size() == 0)
+			return new SerTemporada();
+		return new DbTemporada(lstTemporadas.get(0)).toSerTemporada();
 	}
 
 }

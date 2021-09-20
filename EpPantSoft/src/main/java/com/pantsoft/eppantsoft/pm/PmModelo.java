@@ -1,198 +1,480 @@
 package com.pantsoft.eppantsoft.pm;
 
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.api.datastore.Transaction;
+import com.pantsoft.eppantsoft.entidades.DbModelo;
+import com.pantsoft.eppantsoft.entidades.DbModeloHabilitacion;
 import com.pantsoft.eppantsoft.entidades.DbModeloImagen;
+import com.pantsoft.eppantsoft.entidades.DbModeloProceso;
+import com.pantsoft.eppantsoft.serializable.Respuesta;
+import com.pantsoft.eppantsoft.serializable.SerModelo;
+import com.pantsoft.eppantsoft.serializable.SerModeloHabilitacion;
 import com.pantsoft.eppantsoft.serializable.SerModeloImagen;
+import com.pantsoft.eppantsoft.serializable.SerModeloProceso;
 import com.pantsoft.eppantsoft.util.ClsEntidad;
 import com.pantsoft.eppantsoft.util.ClsEpUtil;
+import com.pantsoft.eppantsoft.util.ClsUtil;
 import com.pantsoft.eppantsoft.util.ExcepcionControlada;
 
 public class PmModelo {
 
 	// Modelo ////////////////////////////////////////////////////////////////////
-	// public void agregar(SerProduccion serProduccion) throws Exception {
-	// DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-	//
-	// serProduccion.setEstatus(0);
-	// DbProduccion dbProduccion = new DbProduccion(serProduccion);
-	//
-	// if (ClsEntidad.existeEntidad(datastore, "DbProduccion", dbProduccion.getKey().getName()))
-	// throw new ExcepcionControlada("La orden '" + serProduccion.getNumOrden() + "' ya existe.");
-	//
-	// dbProduccion.guardar(datastore);
-	// }
-	//
-	// public SerProduccion actualizar(SerProduccion serProduccion) throws Exception {
-	// DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-	// try {
-	// Key key = KeyFactory.createKey("DbProduccion", serProduccion.getEmpresa() + "-" + serProduccion.getTemporada() + "-" + serProduccion.getNumOrden());
-	// DbProduccion dbProduccion = new DbProduccion(datastore.get(key));
-	//
-	// // Cambios de estatus automáticos
-	// if (dbProduccion.getEstatus() == 0 && ClsUtil.esNulo(dbProduccion.getTaller()) && !ClsUtil.esNulo(serProduccion.getTaller())) {
-	// serProduccion.setEstatus(1);
-	// } else if (dbProduccion.getEstatus() == 1 && dbProduccion.getMtsEnviados1() == 0 && serProduccion.getMtsEnviados1() != 0) {
-	// serProduccion.setEstatus(2);
-	// } else if (dbProduccion.getEstatus() == 2 && dbProduccion.getHabilitacionEnviada() == false && serProduccion.getHabilitacionEnviada() == true) {
-	// serProduccion.setEstatus(3);
-	// } else if (dbProduccion.getEstatus() == 3 && dbProduccion.getCantidadCorte() == 0 && serProduccion.getCantidadCorte() != 0) {
-	// serProduccion.setEstatus(4);
-	// } else if (dbProduccion.getEstatus() == 4 && dbProduccion.getCantidadEntrega() == 0 && serProduccion.getCantidadEntrega() != 0) {
-	// if (serProduccion.getCantidadEntrega() < (serProduccion.getCantidadCorte() * .9))
-	// serProduccion.setEstatus(5);
-	// else
-	// serProduccion.setEstatus(6);
-	// }
-	//
-	// if (!ClsUtil.esIgualConNulo(dbProduccion.getMaquileroCorte(), serProduccion.getMaquileroCorte()))
-	// dbProduccion.setMaquileroCorte(serProduccion.getMaquileroCorte());
-	// if (!ClsUtil.esIgualConNulo(dbProduccion.getCliente(), serProduccion.getCliente()))
-	// dbProduccion.setCliente(serProduccion.getCliente());
-	// if (!ClsUtil.esIgualConNulo(dbProduccion.getDepartamento(), serProduccion.getDepartamento()))
-	// dbProduccion.setDepartamento(serProduccion.getDepartamento());
-	// if (!ClsUtil.esIgualConNulo(dbProduccion.getDescripcion(), serProduccion.getDescripcion()))
-	// dbProduccion.setDescripcion(serProduccion.getDescripcion());
-	// dbProduccion.setEstatus(serProduccion.getEstatus());
-	// dbProduccion.setFechaProgramada(serProduccion.getFechaProgramada());
-	// dbProduccion.setModelo(serProduccion.getModelo());
-	// dbProduccion.setCantidad(serProduccion.getCantidad());
-	// dbProduccion.setCorteSobreTela(serProduccion.getCorteSobreTela());
-	// dbProduccion.setCantidadCorte(serProduccion.getCantidadCorte());
-	// dbProduccion.setCantidadEntrega(serProduccion.getCantidadEntrega());
-	// dbProduccion.setFaltanteMaquilero(serProduccion.getFaltanteMaquilero());
-	// dbProduccion.setFaltanteCorte(serProduccion.getFaltanteCorte());
-	// dbProduccion.setTaller(serProduccion.getTaller());
-	// dbProduccion.setPrecio(serProduccion.getPrecio());
-	// dbProduccion.setTotal(serProduccion.getTotal());
-	// dbProduccion.setPrecioFaltante(serProduccion.getPrecioFaltante());
-	// dbProduccion.setTotalPorPagar(serProduccion.getTotalPorPagar());
-	// dbProduccion.setFechaSalida(serProduccion.getFechaSalida());
-	// dbProduccion.setFechaEntrega(serProduccion.getFechaEntrega());
-	// dbProduccion.setProceso1(serProduccion.getProceso1());
-	// dbProduccion.setTallerProceso1(serProduccion.getTallerProceso1());
-	// dbProduccion.setPrecioProceso1(serProduccion.getPrecioProceso1());
-	// dbProduccion.setProceso2(serProduccion.getProceso2());
-	// dbProduccion.setTallerProceso2(serProduccion.getTallerProceso2());
-	// dbProduccion.setPrecioProceso2(serProduccion.getPrecioProceso2());
-	// dbProduccion.setConsumo1(serProduccion.getConsumo1());
-	// dbProduccion.setMtsSolicitados1(serProduccion.getMtsSolicitados1());
-	// dbProduccion.setMtsEnviados1(serProduccion.getMtsEnviados1());
-	// dbProduccion.setMtsDevolucion1(serProduccion.getMtsDevolucion1());
-	// dbProduccion.setMtsFaltante1(serProduccion.getMtsFaltante1());
-	// dbProduccion.setDiferencia1(serProduccion.getDiferencia1());
-	// dbProduccion.setConsumo2(serProduccion.getConsumo2());
-	// dbProduccion.setMtsSolicitados2(serProduccion.getMtsSolicitados2());
-	// dbProduccion.setMtsEnviados2(serProduccion.getMtsEnviados2());
-	// dbProduccion.setDiferencia2(serProduccion.getDiferencia2());
-	// dbProduccion.setConsumo3(serProduccion.getConsumo3());
-	// dbProduccion.setMtsSolicitados3(serProduccion.getMtsSolicitados3());
-	// dbProduccion.setMtsEnviados3(serProduccion.getMtsEnviados3());
-	// dbProduccion.setDiferencia3(serProduccion.getDiferencia3());
-	// dbProduccion.setObservaciones(serProduccion.getObservaciones());
-	// dbProduccion.setRevisado(serProduccion.getRevisado());
-	// dbProduccion.setIsaac(serProduccion.getIsaac());
-	// dbProduccion.setMes(serProduccion.getMes());
-	// dbProduccion.setUsuarioModifico(serProduccion.getUsuarioModifico());
-	// dbProduccion.setFechaModifico(new Date());
-	// dbProduccion.setHabilitacionEnviada(serProduccion.getHabilitacionEnviada());
-	// dbProduccion.guardar(datastore);
-	//
-	// return dbProduccion.toSerProduccion();
-	// } catch (EntityNotFoundException e) {
-	// throw new Exception("La orden '" + serProduccion.getNumOrden() + "' no existe.");
-	// }
-	// }
-	//
-	// public void actualizarEstatus(String empresa, long temporada, int estatus, List<Long> lstOrdenes) throws Exception {
-	// DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-	// for (long orden : lstOrdenes) {
-	// try {
-	// Key key = KeyFactory.createKey("DbProduccion", empresa + "-" + temporada + "-" + orden);
-	// DbProduccion dbProduccion = new DbProduccion(datastore.get(key));
-	//
-	// if (dbProduccion.getEstatus() != estatus) {
-	// dbProduccion.setEstatus(estatus);
-	// dbProduccion.guardar(datastore);
-	// }
-	// } catch (EntityNotFoundException e) {
-	// throw new Exception("La orden '" + orden + "' no existe.");
-	// }
-	// }
-	// }
-	//
-	// public void cambiarTemporada(String empresa, long temporada, long nuevaTemporada, List<Long> lstOrdenes) throws Exception {
-	// DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-	// Transaction tx = null;
-	// for (long orden : lstOrdenes) {
-	// try {
-	// tx = ClsEntidad.iniciarTransaccion(datastore);
-	//
-	// // Busco y elimino la entidad original
-	// Key key = KeyFactory.createKey("DbProduccion", empresa + "-" + temporada + "-" + orden);
-	// DbProduccion dbProduccion = new DbProduccion(datastore.get(key));
-	// SerProduccion serProduccion = dbProduccion.toSerProduccion();
-	// dbProduccion.eliminar(datastore, tx);
-	//
-	// // Asigno la nueva temporada
-	// serProduccion.setTemporada(nuevaTemporada);
-	//
-	// // Creo y grabo el nuevo registro
-	// dbProduccion = new DbProduccion(serProduccion);
-	// if (ClsEntidad.existeEntidad(datastore, "DbProduccion", dbProduccion.getKey().getName()))
-	// throw new ExcepcionControlada("La orden '" + serProduccion.getNumOrden() + "' ya existe.");
-	// dbProduccion.guardar(datastore);
-	//
-	// tx.commit();
-	// } catch (EntityNotFoundException e) {
-	// throw new Exception("La orden '" + orden + "' no existe.");
-	// } finally {
-	// if (tx != null && tx.isActive())
-	// tx.rollback();
-	// }
-	// }
-	// }
-	//
-	// public SerProduccion[] dameProducciones(String empresa, long temporada) throws Exception {
-	// DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-	//
-	// List<Filter> lstFiltros = new ArrayList<Filter>();
-	// lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, empresa));
-	// lstFiltros.add(new FilterPredicate("temporada", FilterOperator.EQUAL, temporada));
-	// List<Entity> lstProduccion = ClsEntidad.ejecutarConsulta(datastore, "DbProduccion", lstFiltros);
-	// if (lstProduccion == null || lstProduccion.size() == 0)
-	// return new SerProduccion[0];
-	// SerProduccion[] arr = new SerProduccion[lstProduccion.size()];
-	// for (int i = 0; i < lstProduccion.size(); i++) {
-	// arr[i] = new DbProduccion(lstProduccion.get(i)).toSerProduccion();
-	// }
-	// return arr;
-	// }
-	//
-	// public void eliminar(String empresa, long temporada, long numOrden) throws Exception {
-	// DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-	// try {
-	// Key key = KeyFactory.createKey("DbProduccion", empresa + "-" + temporada + "-" + numOrden);
-	// datastore.get(key);
-	// // Validar que no participe
-	// // List<Filter> lstFiltros = new ArrayList<Filter>();
-	// // lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, empresa));
-	// // if (ClsEntidad.ejecutarConsultaHayEntidades(datastore, "DbAlmEntradaDetLote", lstFiltros))
-	// // throw new Exception("El almacén " + almacen + " tiene entradas, imposible eliminar.");
-	//
-	// datastore.delete(key);
-	// } catch (EntityNotFoundException e) {
-	// throw new ExcepcionControlada("La orden '" + numOrden + "' no existe.");
-	// }
-	// }
+	public SerModelo modelo_agregar(SerModelo serModelo) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Transaction tx = null;
+		try {
+			tx = ClsEntidad.iniciarTransaccion(datastore);
+
+			DbModelo dbModelo = new DbModelo(serModelo);
+			dbModelo.setFecha(new Date());
+
+			if (ClsEntidad.existeEntidad(datastore, "DbModelo", dbModelo.getKey().getName()))
+				throw new ExcepcionControlada("El modelo '" + serModelo.getModelo() + "' ya existe.");
+
+			dbModelo.guardar(datastore);
+
+			// Guardo las habilitaciones
+			if (serModelo.getHabilitaciones() != null && serModelo.getHabilitaciones().length > 0) {
+				for (SerModeloHabilitacion serHab : serModelo.getHabilitaciones()) {
+					serHab.setEmpresa(serModelo.getEmpresa());
+					serHab.setTemporada(serModelo.getTemporada());
+					serHab.setModelo(serModelo.getModelo());
+					serHab.setReferencia(serModelo.getReferencia());
+					DbModeloHabilitacion dbHab = new DbModeloHabilitacion(serHab);
+					dbHab.guardar(datastore, tx);
+				}
+			}
+
+			// Guardo las procesos
+			if (serModelo.getProcesos() != null && serModelo.getProcesos().length > 0) {
+				for (SerModeloProceso serPro : serModelo.getProcesos()) {
+					serPro.setEmpresa(serModelo.getEmpresa());
+					serPro.setTemporada(serModelo.getTemporada());
+					serPro.setModelo(serModelo.getModelo());
+					serPro.setReferencia(serModelo.getReferencia());
+					DbModeloProceso dbHab = new DbModeloProceso(serPro);
+					dbHab.guardar(datastore, tx);
+				}
+			}
+			tx.commit();
+
+			return dbModelo.toSerModeloCompleto(datastore, null);
+		} finally {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+		}
+	}
+
+	public SerModelo modelo_actualizar(SerModelo serModelo) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Transaction tx = null;
+		try {
+			tx = ClsEntidad.iniciarTransaccion(datastore);
+
+			Key key = KeyFactory.createKey("DbModelo", serModelo.getEmpresa() + "-" + serModelo.getTemporada() + "-" + serModelo.getModelo() + "-" + serModelo.getReferencia());
+			DbModelo dbModelo = new DbModelo(datastore.get(key));
+
+			dbModelo.setDepartamento(serModelo.getDepartamento());
+			dbModelo.setDescripcionSeccion(serModelo.getDescripcionSeccion());
+			dbModelo.setDescripcion2(serModelo.getDescripcion2());
+			dbModelo.setTela(serModelo.getTela());
+			dbModelo.setTalla(serModelo.getTalla());
+			dbModelo.setObservaciones(serModelo.getObservaciones());
+			dbModelo.setCostura(serModelo.getCostura());
+			dbModelo.setOtros(serModelo.getOtros());
+			dbModelo.setPrecosto(serModelo.getPrecosto());
+			dbModelo.setCosto(serModelo.getCosto());
+			dbModelo.setOk(serModelo.getOk());
+			dbModelo.setCortado(serModelo.getCortado());
+			dbModelo.setEsPantSoft(true);
+			dbModelo.guardar(datastore);
+
+			// Guardo las habilitaciones
+			Map<String, Boolean> mapHabilitaciones = new HashMap<String, Boolean>();
+			if (serModelo.getHabilitaciones() != null && serModelo.getHabilitaciones().length > 0) {
+				for (SerModeloHabilitacion serHab : serModelo.getHabilitaciones()) {
+					serHab.setEmpresa(serModelo.getEmpresa());
+					serHab.setTemporada(serModelo.getTemporada());
+					serHab.setModelo(serModelo.getModelo());
+					serHab.setReferencia(serModelo.getReferencia());
+					mapHabilitaciones.put(serHab.getMateria(), true);
+					// Busco el detalle
+					boolean esNuevo = true;
+					for (DbModeloHabilitacion dbHab : dbModelo.getHabilitaciones(datastore, tx)) {
+						if (dbHab.getMateria() == serHab.getMateria()) {
+							dbHab.setConsumo(serHab.getConsumo());
+							dbHab.setConsumoReal(serHab.getConsumoReal());
+							dbHab.setTrazo(serHab.getTrazo());
+							dbHab.guardar(datastore, tx);
+							esNuevo = false;
+							break;
+						}
+					}
+					if (esNuevo) {
+						DbModeloHabilitacion dbHab = new DbModeloHabilitacion(serHab);
+						dbHab.guardar(datastore, tx);
+					}
+				}
+			}
+			if (dbModelo.getHabilitaciones(datastore, tx) != null && dbModelo.getHabilitaciones(datastore, tx).size() > 0) {
+				for (DbModeloHabilitacion dbHab : dbModelo.getHabilitaciones(datastore, tx)) {
+					if (!mapHabilitaciones.containsKey(dbHab.getMateria()))
+						dbHab.eliminar(datastore, tx);
+				}
+			}
+
+			// Guardo las procesos
+			Map<String, Boolean> mapProcesos = new HashMap<String, Boolean>();
+			if (serModelo.getProcesos() != null && serModelo.getProcesos().length > 0) {
+				for (SerModeloProceso serPro : serModelo.getProcesos()) {
+					serPro.setEmpresa(serModelo.getEmpresa());
+					serPro.setTemporada(serModelo.getTemporada());
+					serPro.setModelo(serModelo.getModelo());
+					serPro.setReferencia(serModelo.getReferencia());
+					mapProcesos.put(serPro.getProceso(), true);
+					// Busco el detalle
+					boolean esNuevo = true;
+					for (DbModeloProceso dbPro : dbModelo.getProcesos(datastore, tx)) {
+						if (dbPro.getProceso() == serPro.getProceso()) {
+							dbPro.setPrecosto(serPro.getPrecosto());
+							dbPro.setCosto(serPro.getCosto());
+							dbPro.guardar(datastore, tx);
+							esNuevo = false;
+							break;
+						}
+					}
+					if (esNuevo) {
+						DbModeloProceso dbHab = new DbModeloProceso(serPro);
+						dbHab.guardar(datastore, tx);
+					}
+				}
+			}
+			if (dbModelo.getProcesos(datastore, tx) != null && dbModelo.getProcesos(datastore, tx).size() > 0) {
+				for (DbModeloProceso dbHab : dbModelo.getProcesos(datastore, tx)) {
+					if (!mapProcesos.containsKey(dbHab.getProceso()))
+						dbHab.eliminar(datastore, tx);
+				}
+			}
+
+			tx.commit();
+
+			return dbModelo.toSerModeloCompleto(datastore, tx);
+		} catch (EntityNotFoundException e) {
+			throw new Exception("El modelo '" + serModelo.getModelo() + "' no existe.");
+		} finally {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+		}
+	}
+
+	public SerModelo modelo_dameModelo(SerModelo serModelo) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		try {
+			Key key = KeyFactory.createKey("DbModelo", serModelo.getEmpresa() + "-" + serModelo.getTemporada() + "-" + serModelo.getModelo() + "-" + serModelo.getReferencia());
+			DbModelo dbModelo = new DbModelo(datastore.get(key));
+			return dbModelo.toSerModeloCompleto(datastore, null);
+		} catch (EntityNotFoundException e) {
+			throw new Exception("El modelo '" + serModelo.getModelo() + "' no existe.");
+		}
+	}
+
+	public SerModelo[] modelo_dameModelos(String empresa, long temporada) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+		List<Filter> lstFiltros = new ArrayList<Filter>();
+		lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, empresa));
+		lstFiltros.add(new FilterPredicate("temporada", FilterOperator.EQUAL, temporada));
+		List<Entity> lstModelo = ClsEntidad.ejecutarConsulta(datastore, "DbModelo", lstFiltros);
+		if (lstModelo == null || lstModelo.size() == 0)
+			return new SerModelo[0];
+		SerModelo[] arr = new SerModelo[lstModelo.size()];
+		for (int i = 0; i < lstModelo.size(); i++) {
+			arr[i] = new DbModelo(lstModelo.get(i)).toSerModelo();
+		}
+		return arr;
+	}
+
+	public void modelo_eliminar(String empresa, long temporada, String modelo, String referencia) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Transaction tx = null;
+		try {
+			tx = ClsEntidad.iniciarTransaccion(datastore);
+
+			Key key = KeyFactory.createKey("DbModelo", empresa + "-" + temporada + "-" + modelo + "-" + referencia);
+			DbModelo dbModelo = new DbModelo(datastore.get(key));
+			// Validar que no participe
+			List<Filter> lstFiltros = new ArrayList<Filter>();
+			lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, empresa));
+			lstFiltros.add(new FilterPredicate("temporada", FilterOperator.EQUAL, temporada));
+			lstFiltros.add(new FilterPredicate("modelo", FilterOperator.EQUAL, modelo));
+			if (ClsEntidad.ejecutarConsultaHayEntidades(datastore, "DbProduccion", lstFiltros))
+				throw new Exception("El modelo " + modelo + " tiene producciones, imposible eliminar.");
+
+			dbModelo.eliminar(datastore, tx);
+
+			for (DbModeloHabilitacion dbHab : dbModelo.getHabilitaciones(datastore, tx)) {
+				dbHab.eliminar(datastore, tx);
+			}
+
+			for (DbModeloProceso dbPro : dbModelo.getProcesos(datastore, tx)) {
+				dbPro.eliminar(datastore, tx);
+			}
+
+			tx.commit();
+		} catch (EntityNotFoundException e) {
+			throw new ExcepcionControlada("El modelo '" + modelo + "' no existe.");
+		} finally {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+		}
+	}
+
+	public Object modelo_sincronizar(SerModelo serModelo) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Transaction tx = null;
+		try {
+			tx = ClsEntidad.iniciarTransaccion(datastore);
+
+			Key key = KeyFactory.createKey("DbModelo", serModelo.getEmpresa() + "-" + serModelo.getTemporada() + "-" + serModelo.getModelo() + "-" + serModelo.getReferencia());
+			DbModelo dbModelo = new DbModelo(datastore.get(key));
+
+			if (dbModelo.getEsPantSoft()) {
+				return dbModelo.toSerModeloCompleto(datastore, tx);
+			} else {
+				boolean modeloActualizado = false;
+				boolean hayCambios = false;
+				String cambios = "";
+				if (!ClsUtil.esIgualConNulo(dbModelo.getDepartamento(), serModelo.getDepartamento())) {
+					dbModelo.setDepartamento(serModelo.getDepartamento());
+					hayCambios = true;
+					cambios += "a";
+				}
+				if (!ClsUtil.esIgualConNulo(dbModelo.getDescripcionSeccion(), serModelo.getDescripcionSeccion())) {
+					dbModelo.setDescripcionSeccion(serModelo.getDescripcionSeccion());
+					hayCambios = true;
+					cambios += "b";
+				}
+				if (!ClsUtil.esIgualConNulo(dbModelo.getDescripcion2(), serModelo.getDescripcion2())) {
+					dbModelo.setDescripcion2(serModelo.getDescripcion2());
+					hayCambios = true;
+					cambios += "c";
+				}
+				if (!ClsUtil.esIgualConNulo(dbModelo.getTela(), serModelo.getTela())) {
+					dbModelo.setTela(serModelo.getTela());
+					hayCambios = true;
+					cambios += "d";
+				}
+				if (!ClsUtil.esIgualConNulo(dbModelo.getTalla(), serModelo.getTalla())) {
+					dbModelo.setTalla(serModelo.getTalla());
+					hayCambios = true;
+					cambios += "e";
+				}
+				if (!ClsUtil.esIgualConNulo(dbModelo.getObservaciones(), serModelo.getObservaciones())) {
+					dbModelo.setObservaciones(serModelo.getObservaciones());
+					hayCambios = true;
+					cambios += "f";
+				}
+				if (!ClsUtil.esIgualConNulo(dbModelo.getCostura(), serModelo.getCostura())) {
+					dbModelo.setCostura(serModelo.getCostura());
+					hayCambios = true;
+					cambios += "g";
+				}
+				if (dbModelo.getOtros() != serModelo.getOtros()) {
+					dbModelo.setOtros(serModelo.getOtros());
+					hayCambios = true;
+					cambios += "h";
+				}
+				if (dbModelo.getPrecosto() != serModelo.getPrecosto()) {
+					dbModelo.setPrecosto(serModelo.getPrecosto());
+					hayCambios = true;
+					cambios += "i";
+				}
+				if (dbModelo.getCosto() != serModelo.getCosto()) {
+					dbModelo.setCosto(serModelo.getCosto());
+					hayCambios = true;
+					cambios += "j";
+				}
+				if (dbModelo.getOk() != serModelo.getOk()) {
+					dbModelo.setOk(serModelo.getOk());
+					hayCambios = true;
+					cambios += "k";
+				}
+				if (dbModelo.getCortado() != serModelo.getCortado()) {
+					dbModelo.setCortado(serModelo.getCortado());
+					hayCambios = true;
+					cambios += "l";
+				}
+				if (hayCambios) {
+					dbModelo.guardar(datastore);
+					modeloActualizado = true;
+					cambios += "m";
+				}
+
+				// Guardo las habilitaciones
+				Map<String, Boolean> mapHabilitaciones = new HashMap<String, Boolean>();
+				if (serModelo.getHabilitaciones() != null && serModelo.getHabilitaciones().length > 0) {
+					for (SerModeloHabilitacion serHab : serModelo.getHabilitaciones()) {
+						// serHab.setEmpresa(serModelo.getEmpresa());
+						// serHab.setTemporada(serModelo.getTemporada());
+						// serHab.setModelo(serModelo.getModelo());
+						// serHab.setReferencia(serModelo.getReferencia());
+						mapHabilitaciones.put(serHab.getMateria(), true);
+						// Busco el detalle
+						boolean esNuevo = true;
+						for (DbModeloHabilitacion dbHab : dbModelo.getHabilitaciones(datastore, tx)) {
+							if (dbHab.getMateria().equals(serHab.getMateria())) {
+								if (dbHab.getConsumo() != serHab.getConsumo() || dbHab.getConsumoReal() != serHab.getConsumoReal() || dbHab.getTrazo() != serHab.getTrazo()) {
+									dbHab.setConsumo(serHab.getConsumo());
+									dbHab.setConsumoReal(serHab.getConsumoReal());
+									dbHab.setTrazo(serHab.getTrazo());
+									dbHab.guardar(datastore, tx);
+									modeloActualizado = true;
+									cambios += "n";
+								}
+								esNuevo = false;
+								break;
+							}
+						}
+						if (esNuevo) {
+							DbModeloHabilitacion dbHab = new DbModeloHabilitacion(serHab);
+							dbHab.guardar(datastore, tx);
+							modeloActualizado = true;
+							cambios += "o";
+						}
+					}
+				}
+				if (dbModelo.getHabilitaciones(datastore, tx) != null && dbModelo.getHabilitaciones(datastore, tx).size() > 0) {
+					for (DbModeloHabilitacion dbHab : dbModelo.getHabilitaciones(datastore, tx)) {
+						if (!mapHabilitaciones.containsKey(dbHab.getMateria())) {
+							dbHab.eliminar(datastore, tx);
+							modeloActualizado = true;
+							cambios += "p";
+						}
+					}
+				}
+
+				// Guardo las procesos
+				Map<String, Boolean> mapProcesos = new HashMap<String, Boolean>();
+				if (serModelo.getProcesos() != null && serModelo.getProcesos().length > 0) {
+					for (SerModeloProceso serPro : serModelo.getProcesos()) {
+						// serPro.setEmpresa(serModelo.getEmpresa());
+						// serPro.setTemporada(serModelo.getTemporada());
+						// serPro.setModelo(serModelo.getModelo());
+						// serPro.setReferencia(serModelo.getReferencia());
+						mapProcesos.put(serPro.getProceso(), true);
+						// Busco el detalle
+						boolean esNuevo = true;
+						for (DbModeloProceso dbPro : dbModelo.getProcesos(datastore, tx)) {
+							if (dbPro.getProceso().equals(serPro.getProceso())) {
+								if (dbPro.getPrecosto() != serPro.getPrecosto() || dbPro.getCosto() != serPro.getCosto()) {
+									dbPro.setPrecosto(serPro.getPrecosto());
+									dbPro.setCosto(serPro.getCosto());
+									dbPro.guardar(datastore, tx);
+									modeloActualizado = true;
+									cambios += "q";
+								}
+								esNuevo = false;
+								break;
+							}
+						}
+						if (esNuevo) {
+							DbModeloProceso dbHab = new DbModeloProceso(serPro);
+							dbHab.guardar(datastore, tx);
+							modeloActualizado = true;
+							cambios += "r";
+						}
+					}
+				}
+				if (dbModelo.getProcesos(datastore, tx) != null && dbModelo.getProcesos(datastore, tx).size() > 0) {
+					for (DbModeloProceso dbHab : dbModelo.getProcesos(datastore, tx)) {
+						if (!mapProcesos.containsKey(dbHab.getProceso())) {
+							dbHab.eliminar(datastore, tx);
+							modeloActualizado = true;
+							cambios += "s";
+						}
+					}
+				}
+
+				tx.commit();
+
+				Respuesta resp = new Respuesta("Sin cambios");
+				resp.booleano = false;
+				if (modeloActualizado) {
+					resp.cadena = "Actualizado(" + cambios + ")";
+					resp.booleano = true;
+				}
+				return resp;
+			}
+		} catch (EntityNotFoundException e) {
+			DbModelo dbModelo = new DbModelo(serModelo);
+			dbModelo.setEsPantSoft(false);
+			dbModelo.guardar(datastore, tx);
+
+			// Guardo las habilitaciones
+			if (serModelo.getHabilitaciones() != null && serModelo.getHabilitaciones().length > 0) {
+				for (SerModeloHabilitacion serHab : serModelo.getHabilitaciones()) {
+					serHab.setEmpresa(serModelo.getEmpresa());
+					serHab.setTemporada(serModelo.getTemporada());
+					serHab.setModelo(serModelo.getModelo());
+					serHab.setReferencia(serModelo.getReferencia());
+					DbModeloHabilitacion dbHab = new DbModeloHabilitacion(serHab);
+					dbHab.guardar(datastore, tx);
+				}
+			}
+
+			// Guardo las procesos
+			if (serModelo.getProcesos() != null && serModelo.getProcesos().length > 0) {
+				for (SerModeloProceso serPro : serModelo.getProcesos()) {
+					serPro.setEmpresa(serModelo.getEmpresa());
+					serPro.setTemporada(serModelo.getTemporada());
+					serPro.setModelo(serModelo.getModelo());
+					serPro.setReferencia(serModelo.getReferencia());
+					DbModeloProceso dbHab = new DbModeloProceso(serPro);
+					dbHab.guardar(datastore, tx);
+				}
+			}
+
+			tx.commit();
+
+			Respuesta resp = new Respuesta("Agregado");
+			resp.booleano = true;
+			return resp;
+
+		} finally {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+		}
+	}
+
+	public void modelo_marcarSincronizado(String empresa, long temporada, String modelo, String referencia) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		try {
+			Key key = KeyFactory.createKey("DbModelo", empresa + "-" + temporada + "-" + modelo + "-" + referencia);
+			DbModelo dbModelo = new DbModelo(datastore.get(key));
+			dbModelo.setEsPantSoft(false);
+			dbModelo.guardar(datastore);
+		} catch (EntityNotFoundException e) {
+			throw new Exception("El modelo '" + modelo + "' no existe.");
+		}
+	}
 
 	// Modelo Imagen //////////////////////////////////////////////////////////
 	public void modeloImagen_agregar(SerModeloImagen serModeloImagen) throws Exception {
@@ -253,6 +535,22 @@ public class PmModelo {
 			throw new Exception("La imagen no existe");
 		}
 		dbImagen.eliminar(datastore);
+	}
+
+	public SerModeloImagen[] modeloImagen_dameModelosImagenSinImagen(String empresa, long temporada) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+		List<Filter> lstFiltros = new ArrayList<Filter>();
+		lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, empresa));
+		lstFiltros.add(new FilterPredicate("temporada", FilterOperator.EQUAL, temporada));
+		List<Entity> lstModeloImagen = ClsEntidad.ejecutarConsulta(datastore, "DbModeloImagen", lstFiltros);
+		if (lstModeloImagen == null || lstModeloImagen.size() == 0)
+			return new SerModeloImagen[0];
+		SerModeloImagen[] arr = new SerModeloImagen[lstModeloImagen.size()];
+		for (int i = 0; i < lstModeloImagen.size(); i++) {
+			arr[i] = new DbModeloImagen(lstModeloImagen.get(i)).toSerModeloImagenSinImagen();
+		}
+		return arr;
 	}
 
 }

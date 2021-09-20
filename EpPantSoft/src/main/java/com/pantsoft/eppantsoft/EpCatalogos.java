@@ -7,10 +7,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.pantsoft.eppantsoft.pm.PmProceso;
 import com.pantsoft.eppantsoft.pm.PmTelaHabilitacion;
 import com.pantsoft.eppantsoft.pm.PmTemporada;
 import com.pantsoft.eppantsoft.pm.PmUsuario;
 import com.pantsoft.eppantsoft.pm.PmVista;
+import com.pantsoft.eppantsoft.serializable.SerProceso;
 import com.pantsoft.eppantsoft.serializable.SerTelaHabilitacion;
 import com.pantsoft.eppantsoft.serializable.SerTemporada;
 import com.pantsoft.eppantsoft.serializable.SerUsuario;
@@ -43,6 +45,12 @@ public class EpCatalogos extends HttpServlet {
 				ep.addPar("empresa", "String").addPar("temporada", "Long");
 				new PmTemporada().eliminar(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"));
 				ep.voidEnBody();
+				return;
+			}
+			if (ep.esMetodo("temporada_dameTemporadaSql") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("temporadaSql", "Long");
+				SerTemporada ser = new PmTemporada().dameTemporadaSql(ep.dameParametroString("empresa"), ep.dameParametroLong("temporadaSql"));
+				ep.objectEnBody(ser);
 				return;
 			}
 			if (ep.esMetodo("temporada_dameTemporadas") && ep.esVersion("v1")) {
@@ -141,9 +149,29 @@ public class EpCatalogos extends HttpServlet {
 				ep.voidEnBody();
 				return;
 			}
-			if (ep.esMetodo("telaHabilitacion_dameTemporadas") && ep.esVersion("v1")) {
+			if (ep.esMetodo("telaHabilitacion_dameMaterias") && ep.esVersion("v1")) {
 				ep.addPar("empresa", "String").addPar("temporada", "Long");
 				SerTelaHabilitacion[] lstSer = new PmTelaHabilitacion().dameMaterias(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"));
+				ep.objectEnBody(lstSer);
+				return;
+			}
+
+			// Procesos ///////////////////////////////////////////////////////////
+			if (ep.esMetodo("procesos_agregar") && ep.esVersion("v1")) {
+				SerProceso serProceso = ep.getObjetFromBody(SerProceso.class);
+				new PmProceso().agregar(serProceso);
+				ep.voidEnBody();
+				return;
+			}
+			if (ep.esMetodo("procesos_eliminar") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("temporada", "Long").addPar("proceso", "String");
+				new PmProceso().eliminar(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"), ep.dameParametroString("proceso"));
+				ep.voidEnBody();
+				return;
+			}
+			if (ep.esMetodo("procesos_dameProcesos") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("temporada", "Long");
+				SerProceso[] lstSer = new PmProceso().dameProcesos(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"));
 				ep.objectEnBody(lstSer);
 				return;
 			}
