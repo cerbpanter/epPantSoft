@@ -6,16 +6,20 @@ public class SerUsuario {
 	private String password;
 	private long[] permisos;
 	private String[] talleres;
+	private String sesion;
+	private long vigencia;
 
 	public SerUsuario() {
 	}
 
-	public SerUsuario(String empresa, String usuario, String password, long[] permisos, String[] talleres) {
+	public SerUsuario(String empresa, String usuario, String password, long[] permisos, String[] talleres, String sesion, long vigencia) {
 		this.empresa = empresa;
 		this.usuario = usuario;
 		this.password = password;
 		this.permisos = permisos;
 		this.setTalleres(talleres);
+		this.setSesion(sesion);
+		this.setVigencia(vigencia);
 	}
 
 	public String getEmpresa() {
@@ -56,5 +60,21 @@ public class SerUsuario {
 
 	public void setTalleres(String[] talleres) {
 		this.talleres = talleres;
+	}
+
+	public String getSesion() {
+		return sesion;
+	}
+
+	public void setSesion(String sesion) {
+		this.sesion = sesion;
+	}
+
+	public long getVigencia() {
+		return vigencia;
+	}
+
+	public void setVigencia(long vigencia) {
+		this.vigencia = vigencia;
 	}
 }

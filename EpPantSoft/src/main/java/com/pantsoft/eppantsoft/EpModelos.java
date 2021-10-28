@@ -8,8 +8,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.pantsoft.eppantsoft.pm.PmListaPrecios;
 import com.pantsoft.eppantsoft.pm.PmModelo;
 import com.pantsoft.eppantsoft.serializable.Respuesta;
+import com.pantsoft.eppantsoft.serializable.SerListaPrecios;
+import com.pantsoft.eppantsoft.serializable.SerListaPreciosDet;
+import com.pantsoft.eppantsoft.serializable.SerListaPreciosDetArr;
 import com.pantsoft.eppantsoft.serializable.SerModelo;
 import com.pantsoft.eppantsoft.serializable.SerModeloImagen;
 import com.pantsoft.eppantsoft.util.ClsEpUtil;
@@ -118,6 +122,76 @@ public class EpModelos extends HttpServlet {
 				ep.addPar("empresa", "String").addPar("temporada", "Long");
 				SerModeloImagen[] lstSer = new PmModelo().modeloImagen_dameModelosImagenSinImagen(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"));
 				ep.objectEnBody(lstSer);
+				return;
+			}
+
+			// ListaPrecios /////////////////////////////////////////////
+			if (ep.esMetodo("listaPrecios_agregar") && ep.esVersion("v1")) {
+				SerListaPrecios serListaPreciosDet = ep.getObjetFromBody(SerListaPrecios.class);
+				serListaPreciosDet = new PmListaPrecios().listaPrecios_agregar(serListaPreciosDet);
+				ep.objectEnBody(serListaPreciosDet);
+				return;
+			}
+			if (ep.esMetodo("listaPrecios_actualizar") && ep.esVersion("v1")) {
+				SerListaPrecios serListaPreciosDet = ep.getObjetFromBody(SerListaPrecios.class);
+				serListaPreciosDet = new PmListaPrecios().listaPrecios_actualizar(serListaPreciosDet);
+				ep.objectEnBody(serListaPreciosDet);
+				return;
+			}
+			if (ep.esMetodo("listaPrecios_dameListaPrecios") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("temporada", "Long").addPar("idListaPrecios", "Long").addPar("usuario", "String");
+				SerListaPrecios serListaPreciosDet = new PmListaPrecios().listaPrecios_dameListaPrecios(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"), ep.dameParametroLong("idListaPrecios"), ep.dameParametroString("usuario"));
+				ep.objectEnBody(serListaPreciosDet);
+				return;
+			}
+			if (ep.esMetodo("listaPrecios_dameListasPrecios") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("temporada", "Long").addPar("usuario", "String");
+				SerListaPrecios[] lstSer = new PmListaPrecios().listaPrecios_dameListasPrecios(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"), ep.dameParametroString("usuario"));
+				ep.objectEnBody(lstSer);
+				return;
+			}
+			if (ep.esMetodo("listaPrecios_eliminar") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("temporada", "Long").addPar("idListaPrecios", "Long");
+				new PmListaPrecios().listaPrecios_eliminar(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"), ep.dameParametroLong("idListaPrecios"));
+				ep.voidEnBody();
+				return;
+			}
+
+			// ListaPreciosDet /////////////////////////////////////////////
+			if (ep.esMetodo("listaPreciosDet_agregar") && ep.esVersion("v1")) {
+				SerListaPreciosDet serListaPreciosDet = ep.getObjetFromBody(SerListaPreciosDet.class);
+				serListaPreciosDet = new PmListaPrecios().listaPreciosDet_agregar(serListaPreciosDet);
+				ep.objectEnBody(serListaPreciosDet);
+				return;
+			}
+			if (ep.esMetodo("listaPreciosDet_agregarArr") && ep.esVersion("v1")) {
+				SerListaPreciosDetArr serListaPreciosDetArr = ep.getObjetFromBody(SerListaPreciosDetArr.class);
+				new PmListaPrecios().listaPreciosDet_agregarArr(serListaPreciosDetArr.getArr());
+				ep.voidEnBody();
+				return;
+			}
+			if (ep.esMetodo("listaPreciosDet_actualizar") && ep.esVersion("v1")) {
+				SerListaPreciosDet serListaPreciosDet = ep.getObjetFromBody(SerListaPreciosDet.class);
+				serListaPreciosDet = new PmListaPrecios().listaPreciosDet_actualizar(serListaPreciosDet);
+				ep.objectEnBody(serListaPreciosDet);
+				return;
+			}
+			if (ep.esMetodo("listaPreciosDet_actualizarArr") && ep.esVersion("v1")) {
+				SerListaPreciosDetArr serListaPreciosDetArr = ep.getObjetFromBody(SerListaPreciosDetArr.class);
+				new PmListaPrecios().listaPreciosDet_actualizarArr(serListaPreciosDetArr.getArr());
+				ep.voidEnBody();
+				return;
+			}
+			if (ep.esMetodo("listaPreciosDet_dameDetalles") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("temporada", "Long").addPar("idListaPrecios", "Long");
+				SerListaPreciosDet[] detalles = new PmListaPrecios().listaPreciosDet_dameDetalles(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"), ep.dameParametroLong("idListaPrecios"));
+				ep.objectEnBody(detalles);
+				return;
+			}
+			if (ep.esMetodo("listaPreciosDet_eliminar") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("temporada", "Long").addPar("idListaPrecios", "String").addPar("modelo", "String").addPar("referencia", "String");
+				new PmListaPrecios().listaPreciosDet_eliminar(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"), ep.dameParametroString("idListaPrecios"), ep.dameParametroString("modelo"), ep.dameParametroString("referencia"));
+				ep.voidEnBody();
 				return;
 			}
 

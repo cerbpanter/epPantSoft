@@ -19,6 +19,8 @@ public class DbUsuario extends ClsEntidad {
 	private final ClsCampo password = new ClsCampo("password", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo permisos = new ClsCampo("permisos", Tipo.ArrayLong, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo talleres = new ClsCampo("talleres", Tipo.ArrayString, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo sesion = new ClsCampo("sesion", Tipo.String, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo vigencia = new ClsCampo("vigencia", Tipo.Long, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, NO_SUSTITUIR_NULL);
 
 	public DbUsuario(SerUsuario serUsuario) throws ExcepcionControlada {
 		Key key = KeyFactory.createKey("DbUsuario", serUsuario.getEmpresa() + "-" + serUsuario.getUsuario());
@@ -28,6 +30,8 @@ public class DbUsuario extends ClsEntidad {
 		setString(usuario, serUsuario.getUsuario());
 		setPassword(serUsuario.getPassword());
 		setPermisos(serUsuario.getPermisos());
+		setSesion("");
+		setVigencia(0);
 	}
 
 	public DbUsuario(Entity entidad) throws Exception {
@@ -40,11 +44,11 @@ public class DbUsuario extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, usuario, password, permisos, talleres);
+		return Arrays.asList(empresa, usuario, password, permisos, talleres, sesion, vigencia);
 	}
 
 	public SerUsuario toSerUsuario() throws ExcepcionControlada {
-		return new SerUsuario(getEmpresa(), getUsuario(), getPassword(), getPermisos(), getTalleres());
+		return new SerUsuario(getEmpresa(), getUsuario(), getPassword(), getPermisos(), getTalleres(), getSesion(), getVigencia());
 	}
 
 	public String getEmpresa() throws ExcepcionControlada {
@@ -109,5 +113,21 @@ public class DbUsuario extends ClsEntidad {
 			}
 			setArrayString(this.talleres, lstTalleres);
 		}
+	}
+
+	public String getSesion() throws ExcepcionControlada {
+		return getString(sesion);
+	}
+
+	public void setSesion(String sesion) throws ExcepcionControlada {
+		setString(this.sesion, sesion);
+	}
+
+	public long getVigencia() throws ExcepcionControlada {
+		return getLong(vigencia);
+	}
+
+	public void setVigencia(long vigencia) throws ExcepcionControlada {
+		setLong(this.vigencia, vigencia);
 	}
 }

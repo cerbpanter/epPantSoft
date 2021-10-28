@@ -1,6 +1,9 @@
 package com.pantsoft.eppantsoft.pm;
 
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.google.appengine.api.datastore.DatastoreService;
@@ -103,6 +106,55 @@ public class PmUsuario {
 			throw new Exception("Contraseña incorrecta");
 
 		return dbUsuario.toSerUsuario();
+	}
+
+	public SerUsuario iniciarSesion(String empresa, String usuario, String password) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		DbUsuario dbUsuario;
+		try {
+			Key key = KeyFactory.createKey("DbUsuario", empresa + "-" + usuario);
+			dbUsuario = new DbUsuario(datastore.get(key));
+		} catch (EntityNotFoundException e) {
+			throw new Exception("El usuario '" + usuario + "' no existe.");
+		}
+
+		if (!dbUsuario.getPassword().equals(password))
+			throw new Exception("Contraseña incorrecta");
+
+		dbUsuario.setSesion(dameSesion());
+		dbUsuario.setVigencia(getVigencia());
+		dbUsuario.guardar(datastore);
+
+		return dbUsuario.toSerUsuario();
+	}
+
+	public SerUsuario validarSesion(String empresa, String usuario, String sesion) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		DbUsuario dbUsuario;
+		try {
+			Key key = KeyFactory.createKey("DbUsuario", empresa + "-" + usuario);
+			dbUsuario = new DbUsuario(datastore.get(key));
+		} catch (EntityNotFoundException e) {
+			throw new Exception("El usuario '" + usuario + "' no existe.");
+		}
+
+		if (!dbUsuario.getSesion().equals(sesion) || dbUsuario.getVigencia() != getVigencia())
+			throw new Exception("Sesión inválida");
+
+		return dbUsuario.toSerUsuario();
+	}
+
+	private long getVigencia() {
+		Date hoy = new Date();
+		@SuppressWarnings("deprecation")
+		long vigencia = ((hoy.getYear() + 1900) * 10000) + ((hoy.getMonth() + 1) * 100) + hoy.getDate();
+		return vigencia;
+	}
+
+	private SecureRandom random = new SecureRandom();
+
+	private String dameSesion() {
+		return new BigInteger(40, random).toString(32).toUpperCase();
 	}
 
 	public SerUsuario dameTalleresUsuario(String empresa, String usuario) throws Exception {

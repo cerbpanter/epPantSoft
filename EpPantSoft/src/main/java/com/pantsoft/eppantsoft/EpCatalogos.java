@@ -97,6 +97,18 @@ public class EpCatalogos extends HttpServlet {
 				ep.objectEnBody(serUsuario);
 				return;
 			}
+			if (ep.esMetodo("usuario_iniciarSesion") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("usuario", "String").addPar("password", "String");
+				SerUsuario serUsuario = new PmUsuario().iniciarSesion(ep.dameParametroString("empresa"), ep.dameParametroString("usuario"), ep.dameParametroString("password"));
+				ep.objectEnBody(serUsuario);
+				return;
+			}
+			if (ep.esMetodo("usuario_validarSesion") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("usuario", "String").addPar("sesion", "String");
+				SerUsuario serUsuario = new PmUsuario().validarSesion(ep.dameParametroString("empresa"), ep.dameParametroString("usuario"), ep.dameParametroString("sesion"));
+				ep.objectEnBody(serUsuario);
+				return;
+			}
 			if (ep.esMetodo("usuario_dameTalleresUsuario") && ep.esVersion("v1")) {
 				ep.addPar("empresa", "String").addPar("usuario", "String");
 				SerUsuario serUsuario = new PmUsuario().dameTalleresUsuario(ep.dameParametroString("empresa"), ep.dameParametroString("usuario"));
