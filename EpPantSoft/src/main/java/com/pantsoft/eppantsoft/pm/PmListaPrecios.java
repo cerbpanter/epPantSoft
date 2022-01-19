@@ -84,9 +84,7 @@ public class PmListaPrecios {
 		}
 	}
 
-	public SerListaPrecios[] listaPrecios_dameListasPrecios(String empresa, long temporada, String usuario) throws Exception {
-		if (ClsUtil.esNulo(usuario))
-			throw new Exception("Falta el usuario");
+	public SerListaPrecios[] listaPrecios_dameListasPrecios(String empresa, long temporada) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
 		List<Filter> lstFiltros = new ArrayList<Filter>();
@@ -95,15 +93,13 @@ public class PmListaPrecios {
 		List<Entity> lstListaPrecios = ClsEntidad.ejecutarConsulta(datastore, "DbListaPrecios", lstFiltros);
 		if (lstListaPrecios == null || lstListaPrecios.size() == 0)
 			return new SerListaPrecios[0];
-		SerListaPrecios[] arr = new SerListaPrecios[lstListaPrecios.size()];
+		List<SerListaPrecios> lst = new ArrayList<SerListaPrecios>();
 		DbListaPrecios dbListaPrecios;
 		for (int i = 0; i < lstListaPrecios.size(); i++) {
 			dbListaPrecios = new DbListaPrecios(lstListaPrecios.get(i));
-			if (ClsUtil.esNulo(dbListaPrecios.getUsuarioPropietario()) || dbListaPrecios.getUsuarioPropietario().equals(usuario)) {
-				arr[i] = dbListaPrecios.toSerListaPrecios();
-			}
+			lst.add(dbListaPrecios.toSerListaPrecios());
 		}
-		return arr;
+		return lst.toArray(new SerListaPrecios[0]);
 	}
 
 	public void listaPrecios_eliminar(String empresa, long temporada, long idListaPrecios) throws Exception {
@@ -116,7 +112,7 @@ public class PmListaPrecios {
 			lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, empresa));
 			lstFiltros.add(new FilterPredicate("temporada", FilterOperator.EQUAL, temporada));
 			lstFiltros.add(new FilterPredicate("idListaPrecios", FilterOperator.EQUAL, idListaPrecios));
-			if (ClsEntidad.ejecutarConsultaHayEntidades(datastore, "DbListaPrecioDet", lstFiltros))
+			if (ClsEntidad.ejecutarConsultaHayEntidades(datastore, "DbListaPreciosDet", lstFiltros))
 				throw new Exception("La listaPrecios " + idListaPrecios + " tiene detalles, imposible eliminar.");
 
 			dbListaPrecios.eliminar(datastore);
@@ -173,7 +169,8 @@ public class PmListaPrecios {
 	public SerListaPreciosDet listaPreciosDet_actualizar(SerListaPreciosDet serListaPreciosDet) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		try {
-			Key key = KeyFactory.createKey("DbListaPreciosDet", serListaPreciosDet.getEmpresa() + "-" + serListaPreciosDet.getTemporada() + "-" + serListaPreciosDet.getIdListaPrecios());
+			Key keyp = KeyFactory.createKey("DbListaPrecios", serListaPreciosDet.getEmpresa() + "-" + serListaPreciosDet.getTemporada() + "-" + serListaPreciosDet.getIdListaPrecios());
+			Key key = KeyFactory.createKey(keyp, "DbListaPreciosDet", serListaPreciosDet.getEmpresa() + "-" + serListaPreciosDet.getTemporada() + "-" + serListaPreciosDet.getIdListaPrecios() + "-" + serListaPreciosDet.getModelo() + "-" + serListaPreciosDet.getReferencia());
 			DbListaPreciosDet dbListaPreciosDet = new DbListaPreciosDet(datastore.get(key));
 
 			dbListaPreciosDet.setTalla(serListaPreciosDet.getTalla());
@@ -201,7 +198,8 @@ public class PmListaPrecios {
 			tx = ClsEntidad.iniciarTransaccion(datastore);
 			for (SerListaPreciosDet serListaPreciosDet : serListaPreciosDetArr) {
 				try {
-					Key key = KeyFactory.createKey("DbListaPreciosDet", serListaPreciosDet.getEmpresa() + "-" + serListaPreciosDet.getTemporada() + "-" + serListaPreciosDet.getIdListaPrecios());
+					Key keyp = KeyFactory.createKey("DbListaPrecios", serListaPreciosDet.getEmpresa() + "-" + serListaPreciosDet.getTemporada() + "-" + serListaPreciosDet.getIdListaPrecios());
+					Key key = KeyFactory.createKey(keyp, "DbListaPreciosDet", serListaPreciosDet.getEmpresa() + "-" + serListaPreciosDet.getTemporada() + "-" + serListaPreciosDet.getIdListaPrecios() + "-" + serListaPreciosDet.getModelo() + "-" + serListaPreciosDet.getReferencia());
 					DbListaPreciosDet dbListaPreciosDet = new DbListaPreciosDet(datastore.get(tx, key));
 
 					dbListaPreciosDet.setTalla(serListaPreciosDet.getTalla());
@@ -243,12 +241,13 @@ public class PmListaPrecios {
 	public void listaPreciosDet_eliminar(String empresa, long temporada, String idListaPrecios, String modelo, String referencia) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		try {
-			Key key = KeyFactory.createKey("DbListaPreciosDet", empresa + "-" + temporada + "-" + idListaPrecios + "-" + modelo + "-" + referencia);
+			Key keyp = KeyFactory.createKey("DbListaPrecios", empresa + "-" + temporada + "-" + idListaPrecios);
+			Key key = KeyFactory.createKey(keyp, "DbListaPreciosDet", empresa + "-" + temporada + "-" + idListaPrecios + "-" + modelo + "-" + referencia);
 			DbListaPreciosDet dbListaPreciosDet = new DbListaPreciosDet(datastore.get(key));
 
 			dbListaPreciosDet.eliminar(datastore);
 		} catch (EntityNotFoundException e) {
-			throw new ExcepcionControlada("El listaPrecios '" + idListaPrecios + "-" + modelo + "-" + referencia + "' no existe.");
+			throw new ExcepcionControlada("El listaPreciosDet '" + idListaPrecios + "-" + modelo + "-" + referencia + "' no existe.");
 		}
 	}
 

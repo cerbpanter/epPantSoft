@@ -86,6 +86,12 @@ public class EpModelos extends HttpServlet {
 				ep.objectEnBody(lstSer);
 				return;
 			}
+			if (ep.esMetodo("modelo_dameModelosCostura") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("temporada", "Long");
+				Respuesta resp = new PmModelo().modelo_dameModelosCostura(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"));
+				ep.objectEnBody(resp);
+				return;
+			}
 			if (ep.esMetodo("modelo_eliminar") && ep.esVersion("v1")) {
 				ep.addPar("empresa", "String").addPar("temporada", "Long").addPar("modelo", "String").addPar("referencia", "String");
 				new PmModelo().modelo_eliminar(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"), ep.dameParametroString("modelo"), ep.dameParametroString("referencia"));
@@ -93,8 +99,9 @@ public class EpModelos extends HttpServlet {
 				return;
 			}
 			if (ep.esMetodo("modelo_sincronizar") && ep.esVersion("v1")) {
+				ep.addPar("bajar", "Long");
 				SerModelo serModelo = ep.getObjetFromBody(SerModelo.class);
-				Object obj = new PmModelo().modelo_sincronizar(serModelo);
+				Object obj = new PmModelo().modelo_sincronizar(serModelo, ep.dameParametroLong("bajar"));
 				ep.objectEnBody(obj);
 				return;
 			}
@@ -102,6 +109,12 @@ public class EpModelos extends HttpServlet {
 				ep.addPar("empresa", "String").addPar("temporada", "Long").addPar("modelo", "String").addPar("referencia", "String");
 				new PmModelo().modelo_marcarSincronizado(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"), ep.dameParametroString("modelo"), ep.dameParametroString("referencia"));
 				ep.voidEnBody();
+				return;
+			}
+			if (ep.esMetodo("modelo_calcularPrecosto") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("temporada", "Long").addPar("tamPag", "Int").addPar("cursor", "String");
+				Respuesta resp = new PmModelo().modelo_calcularPrecosto(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"), ep.dameParametroInt("tamPag"), ep.dameParametroString("cursor"));
+				ep.objectEnBody(resp);
 				return;
 			}
 
@@ -145,8 +158,8 @@ public class EpModelos extends HttpServlet {
 				return;
 			}
 			if (ep.esMetodo("listaPrecios_dameListasPrecios") && ep.esVersion("v1")) {
-				ep.addPar("empresa", "String").addPar("temporada", "Long").addPar("usuario", "String");
-				SerListaPrecios[] lstSer = new PmListaPrecios().listaPrecios_dameListasPrecios(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"), ep.dameParametroString("usuario"));
+				ep.addPar("empresa", "String").addPar("temporada", "Long");
+				SerListaPrecios[] lstSer = new PmListaPrecios().listaPrecios_dameListasPrecios(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"));
 				ep.objectEnBody(lstSer);
 				return;
 			}

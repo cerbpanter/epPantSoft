@@ -74,6 +74,13 @@ public class EpProduccion extends HttpServlet {
 				ep.voidEnBody();
 				return;
 			}
+			if (ep.esMetodo("produccion_actualizarCostura") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("temporada", "Long");
+				Respuesta resp = ep.getObjetFromBody(Respuesta.class);
+				new PmProduccion().actualizarCostura(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"), resp.getCadena());
+				ep.voidEnBody();
+				return;
+			}
 			ep.notFoundEnBody();
 		} catch (Exception e) {
 			ep.exceptionEnBody(e);

@@ -24,6 +24,7 @@ public class DbProduccion extends ClsEntidad {
 	private final ClsCampo estatus = new ClsCampo("estatus", Tipo.Rating, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo fechaProgramada = new ClsCampo("fechaProgramada", Tipo.Date, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo modelo = new ClsCampo("modelo", Tipo.String, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo referencia = new ClsCampo("referencia", Tipo.String, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo cantidad = new ClsCampo("cantidad", Tipo.Long, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo corteSobreTela = new ClsCampo("corteSobreTela", Tipo.Long, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo cantidadCorte = new ClsCampo("cantidadCorte", Tipo.Long, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, NO_SUSTITUIR_NULL);
@@ -32,6 +33,7 @@ public class DbProduccion extends ClsEntidad {
 	private final ClsCampo faltanteCorte = new ClsCampo("faltanteCorte", Tipo.Long, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo taller = new ClsCampo("taller", Tipo.String, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo precio = new ClsCampo("precio", Tipo.Double, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo costura = new ClsCampo("costura", Tipo.Double, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo total = new ClsCampo("total", Tipo.Double, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo precioFaltante = new ClsCampo("precioFaltante", Tipo.Double, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo totalPorPagar = new ClsCampo("totalPorPagar", Tipo.Double, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, NO_SUSTITUIR_NULL);
@@ -82,6 +84,7 @@ public class DbProduccion extends ClsEntidad {
 		setEstatus(serProduccion.getEstatus());
 		setFechaProgramada(serProduccion.getFechaProgramada());
 		setModelo(serProduccion.getModelo());
+		setReferencia(serProduccion.getReferencia());
 		setCantidad(serProduccion.getCantidad());
 		setCorteSobreTela(serProduccion.getCorteSobreTela());
 		setCantidadCorte(serProduccion.getCantidadCorte());
@@ -134,11 +137,11 @@ public class DbProduccion extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, temporada, numOrden, maquileroCorte, cliente, departamento, descripcion, estatus, fechaProgramada, modelo, cantidad, corteSobreTela, cantidadCorte, cantidadEntrega, faltanteMaquilero, faltanteCorte, taller, precio, total, precioFaltante, totalPorPagar, fechaSalida, fechaEntrega, proceso1, tallerProceso1, precioProceso1, proceso2, tallerProceso2, precioProceso2, consumo1, mtsSolicitados1, mtsEnviados1, mtsDevolucion1, mtsFaltante1, diferencia1, consumo2, mtsSolicitados2, mtsEnviados2, diferencia2, consumo3, mtsSolicitados3, mtsEnviados3, diferencia3, observaciones, revisado, isaac, mes, usuarioModifico, fechaModifico, habilitacionEnviada);
+		return Arrays.asList(empresa, temporada, numOrden, maquileroCorte, cliente, departamento, descripcion, estatus, fechaProgramada, modelo, cantidad, corteSobreTela, cantidadCorte, cantidadEntrega, faltanteMaquilero, faltanteCorte, taller, precio, costura, total, precioFaltante, totalPorPagar, fechaSalida, fechaEntrega, proceso1, tallerProceso1, precioProceso1, proceso2, tallerProceso2, precioProceso2, consumo1, mtsSolicitados1, mtsEnviados1, mtsDevolucion1, mtsFaltante1, diferencia1, consumo2, mtsSolicitados2, mtsEnviados2, diferencia2, consumo3, mtsSolicitados3, mtsEnviados3, diferencia3, observaciones, revisado, isaac, mes, usuarioModifico, fechaModifico, habilitacionEnviada);
 	}
 
 	public SerProduccion toSerProduccion() throws ExcepcionControlada {
-		return new SerProduccion(getEmpresa(), getTemporada(), getNumOrden(), getMaquileroCorte(), getCliente(), getDepartamento(), getDescripcion(), getEstatus(), getFechaProgramada(), getModelo(), getCantidad(), getCorteSobreTela(), getCantidadCorte(), getCantidadEntrega(), getFaltanteMaquilero(), getFaltanteCorte(), getTaller(), getPrecio(), getTotal(), getPrecioFaltante(), getTotalPorPagar(), getFechaSalida(), getFechaEntrega(), getProceso1(), getTallerProceso1(), getPrecioProceso1(), getProceso2(), getTallerProceso2(), getPrecioProceso2(), getConsumo1(), getMtsSolicitados1(), getMtsEnviados1(), getMtsDevolucion1(), getMtsFaltante1(), getDiferencia1(), getConsumo2(), getMtsSolicitados2(), getMtsEnviados2(), getDiferencia2(), getConsumo3(), getMtsSolicitados3(), getMtsEnviados3(), getDiferencia3(), getObservaciones(), getRevisado(), getIsaac(), getMes(), getUsuarioModifico(), getFechaModifico(), getHabilitacionEnviada());
+		return new SerProduccion(getEmpresa(), getTemporada(), getNumOrden(), getMaquileroCorte(), getCliente(), getDepartamento(), getDescripcion(), getEstatus(), getFechaProgramada(), getModelo(), getReferencia(), getCantidad(), getCorteSobreTela(), getCantidadCorte(), getCantidadEntrega(), getFaltanteMaquilero(), getFaltanteCorte(), getTaller(), getPrecio(), getCostura(), getTotal(), getPrecioFaltante(), getTotalPorPagar(), getFechaSalida(), getFechaEntrega(), getProceso1(), getTallerProceso1(), getPrecioProceso1(), getProceso2(), getTallerProceso2(), getPrecioProceso2(), getConsumo1(), getMtsSolicitados1(), getMtsEnviados1(), getMtsDevolucion1(), getMtsFaltante1(), getDiferencia1(), getConsumo2(), getMtsSolicitados2(), getMtsEnviados2(), getDiferencia2(), getConsumo3(), getMtsSolicitados3(), getMtsEnviados3(), getDiferencia3(), getObservaciones(), getRevisado(), getIsaac(), getMes(), getUsuarioModifico(), getFechaModifico(), getHabilitacionEnviada());
 	}
 
 	public String getEmpresa() throws ExcepcionControlada {
@@ -209,6 +212,14 @@ public class DbProduccion extends ClsEntidad {
 		setString(this.modelo, modelo);
 	}
 
+	public String getReferencia() throws ExcepcionControlada {
+		return getString(referencia);
+	}
+
+	public void setReferencia(String referencia) throws ExcepcionControlada {
+		setString(this.referencia, referencia);
+	}
+
 	public Long getCantidad() throws ExcepcionControlada {
 		return getLong(cantidad);
 	}
@@ -271,6 +282,14 @@ public class DbProduccion extends ClsEntidad {
 
 	public void setPrecio(Double precio) throws ExcepcionControlada {
 		setDouble(this.precio, precio);
+	}
+
+	public Double getCostura() throws ExcepcionControlada {
+		return getDouble(costura);
+	}
+
+	public void setCostura(Double costura) throws ExcepcionControlada {
+		setDouble(this.costura, costura);
 	}
 
 	public Double getTotal() throws ExcepcionControlada {

@@ -22,8 +22,8 @@ public class EpAdministracion extends HttpServlet {
 
 			// Entidades ///////////////////////////////////////////////////////////
 			if (ep.esMetodo("eliminarEntidades") && ep.esVersion("v1")) {
-				ep.addPar("entidad", "String").addPar("filtros", "String").addPar("cursor", "String");
-				Respuesta resp = new PmAdministracion().eliminarEntidades(ep.dameParametroString("entidad"), ep.dameParametroString("filtros"), ep.dameParametroString("cursor"));
+				ep.addPar("entidad", "String").addPar("filtros", "String").addPar("tamPag", "Int").addPar("cursor", "String");
+				Respuesta resp = new PmAdministracion().eliminarEntidades(ep.dameParametroString("entidad"), ep.dameParametroString("filtros"), ep.dameParametroInt("tamPag"), ep.dameParametroString("cursor"));
 				ep.objectEnBody(resp);
 				return;
 			}

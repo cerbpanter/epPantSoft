@@ -24,11 +24,13 @@ import com.pantsoft.eppantsoft.entidades.DbModelo;
 import com.pantsoft.eppantsoft.entidades.DbModeloHabilitacion;
 import com.pantsoft.eppantsoft.entidades.DbModeloImagen;
 import com.pantsoft.eppantsoft.entidades.DbModeloProceso;
+import com.pantsoft.eppantsoft.entidades.DbTelaHabilitacion;
 import com.pantsoft.eppantsoft.serializable.Respuesta;
 import com.pantsoft.eppantsoft.serializable.SerModelo;
 import com.pantsoft.eppantsoft.serializable.SerModeloHabilitacion;
 import com.pantsoft.eppantsoft.serializable.SerModeloImagen;
 import com.pantsoft.eppantsoft.serializable.SerModeloProceso;
+import com.pantsoft.eppantsoft.util.ClsBlobWriter;
 import com.pantsoft.eppantsoft.util.ClsEntidad;
 import com.pantsoft.eppantsoft.util.ClsEpUtil;
 import com.pantsoft.eppantsoft.util.ClsUtil;
@@ -212,6 +214,30 @@ public class PmModelo {
 		return arr;
 	}
 
+	public Respuesta modelo_dameModelosCostura(String empresa, long temporada) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+		List<Filter> lstFiltros = new ArrayList<Filter>();
+		lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, empresa));
+		lstFiltros.add(new FilterPredicate("temporada", FilterOperator.EQUAL, temporada));
+		List<Entity> lstModelo = ClsEntidad.ejecutarConsulta(datastore, "DbModelo", lstFiltros);
+		ClsBlobWriter blobW = new ClsBlobWriter("¬");
+		if (lstModelo == null || lstModelo.size() == 0) {
+			blobW.insertarAlInicioBlobStr("0|&NullSiNube;|modelo|String|costura|Double");
+		} else {
+			for (int i = 0; i < lstModelo.size(); i++) {
+				DbModelo dbModelo = new DbModelo(lstModelo.get(i));
+				if (dbModelo.getReferencia().equals("1")) {
+					blobW.nuevaFila();
+					blobW.agregarStr(dbModelo.getModelo());
+					blobW.agregarDbl(dbModelo.getCostura());
+				}
+			}
+			blobW.insertarAlInicioBlobStr(lstModelo.size() + "|&NullSiNube;|modelo|String|costura|Double");
+		}
+		return new Respuesta(blobW.getString());
+	}
+
 	public void modelo_eliminar(String empresa, long temporada, String modelo, String referencia) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		Transaction tx = null;
@@ -247,7 +273,7 @@ public class PmModelo {
 		}
 	}
 
-	public Object modelo_sincronizar(SerModelo serModelo) throws Exception {
+	public Object modelo_sincronizar(SerModelo serModelo, long bajar) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		Transaction tx = null;
 		try {
@@ -256,7 +282,7 @@ public class PmModelo {
 			Key key = KeyFactory.createKey("DbModelo", serModelo.getEmpresa() + "-" + serModelo.getTemporada() + "-" + serModelo.getModelo() + "-" + serModelo.getReferencia());
 			DbModelo dbModelo = new DbModelo(datastore.get(key));
 
-			if (dbModelo.getEsPantSoft()) {
+			if (bajar != 0 || dbModelo.getEsPantSoft()) {
 				return dbModelo.toSerModeloCompleto(datastore, tx);
 			} else {
 				boolean modeloActualizado = false;
@@ -476,6 +502,85 @@ public class PmModelo {
 		}
 	}
 
+	public Respuesta modelo_calcularPrecosto(String empresa, long temporada, int tamPag, String cursor) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		if (cursor.equals("Inicio"))
+			cursor = null;
+
+		List<Filter> lstFiltros = new ArrayList<Filter>();
+		lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, empresa));
+		lstFiltros.add(new FilterPredicate("temporada", FilterOperator.EQUAL, temporada));
+		List<Entity> lstModelo = ClsEntidad.ejecutarConsulta(datastore, "DbModelo", lstFiltros, tamPag, cursor);
+		cursor = ClsEntidad.getStrCursor();
+		long corregidos = 0;
+		for (Entity entidad : lstModelo) {
+			DbModelo dbModelo = new DbModelo(entidad);
+			double precosto = calcularPrecosto(dbModelo, datastore);
+			if (precosto != dbModelo.getPrecosto().doubleValue()) {
+				dbModelo.setPrecosto(precosto);
+				dbModelo.guardar(datastore);
+				corregidos++;
+			}
+		}
+		Respuesta resp = new Respuesta();
+		resp.cadena = cursor;
+		resp.largo = corregidos;
+		return resp;
+	}
+
+	private double calcularPrecosto(DbModelo dbModelo, DatastoreService datastore) throws Exception {
+		double precosto = 0;
+		List<DbModeloProceso> lstProcesos = dbModelo.getProcesos(datastore, null);
+		if (lstProcesos != null && lstProcesos.size() > 0) {
+			for (DbModeloProceso dbProceso : lstProcesos) {
+				if (dbProceso.getPrecosto() != 0) {
+					precosto += dbProceso.getPrecosto();
+				} else {
+					return 0;
+				}
+			}
+		}
+		boolean hayGancho = false;
+		boolean hayTela = false;
+		List<DbModeloHabilitacion> lstHabilitaciones = dbModelo.getHabilitaciones(datastore, null);
+		for (DbModeloHabilitacion dbMateria : lstHabilitaciones) {
+			DbTelaHabilitacion dbMateriaCat = new DbTelaHabilitacion(ClsEntidad.obtenerEntidad(datastore, "DbTelaHabilitacion", dbMateria.getEmpresa() + "-" + dbMateria.getTemporada() + "-" + dbMateria.getMateria()));
+			if (dbMateriaCat.getPrecio() != 0) {
+				if (dbMateria.getConsumo() != 0) {
+					precosto += ClsUtil.Redondear(dbMateriaCat.getPrecio() * dbMateria.getConsumo(), 2);
+				} else {
+					return 0;
+				}
+			} else {
+				return 0;
+			}
+			if (dbMateria.getMateria().toLowerCase().contains("gancho")) {
+				hayGancho = true;
+			}
+			if (dbMateriaCat.getTipo().equals("T")) {
+				hayTela = true;
+			}
+		}
+		if (!hayGancho) {
+			return 0;
+		}
+		if (!hayTela) {
+			return 0;
+		}
+		if (dbModelo.getOtros() != null && dbModelo.getOtros() != 0) {
+			precosto += dbModelo.getOtros();
+		} else {
+			return 0;
+		}
+		if (dbModelo.getCostura() != null && dbModelo.getCostura() != 0) {
+			precosto += dbModelo.getCostura();
+		} else {
+			return 0;
+		}
+
+		return ClsUtil.Redondear(precosto, 2);
+	}
+
 	// Modelo Imagen //////////////////////////////////////////////////////////
 	public void modeloImagen_agregar(SerModeloImagen serModeloImagen) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -543,14 +648,32 @@ public class PmModelo {
 		List<Filter> lstFiltros = new ArrayList<Filter>();
 		lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, empresa));
 		lstFiltros.add(new FilterPredicate("temporada", FilterOperator.EQUAL, temporada));
-		List<Entity> lstModeloImagen = ClsEntidad.ejecutarConsulta(datastore, "DbModeloImagen", lstFiltros);
-		if (lstModeloImagen == null || lstModeloImagen.size() == 0)
-			return new SerModeloImagen[0];
-		SerModeloImagen[] arr = new SerModeloImagen[lstModeloImagen.size()];
-		for (int i = 0; i < lstModeloImagen.size(); i++) {
-			arr[i] = new DbModeloImagen(lstModeloImagen.get(i)).toSerModeloImagenSinImagen();
+
+		List<Entity> lstEntidades = ClsEntidad.ejecutarConsultaSoloKeys(datastore, "DbModeloImagen", lstFiltros, 0, null);
+		// startCursor = ClsEntidad.getStrCursor();
+
+		// Comienzo a eliminar las entidades
+		List<SerModeloImagen> lstImagenes = new ArrayList<SerModeloImagen>();
+		for (Entity entidad : lstEntidades) {
+			String[] valores = entidad.getKey().getName().split("-");
+			if (valores.length != 5)
+				throw new Exception("Error en split: entidad.getKey().getName() : " + valores.length);
+			lstImagenes.add(new SerModeloImagen(empresa, temporada, valores[2], valores[3], Long.parseLong(valores[4]), 0, 0, null, null));
 		}
-		return arr;
+
+		return lstImagenes.toArray(new SerModeloImagen[0]);
+
+		// List<Filter> lstFiltros = new ArrayList<Filter>();
+		// lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, empresa));
+		// lstFiltros.add(new FilterPredicate("temporada", FilterOperator.EQUAL, temporada));
+		// List<Entity> lstModeloImagen = ClsEntidad.ejecutarConsulta(datastore, "DbModeloImagen", lstFiltros);
+		// if (lstModeloImagen == null || lstModeloImagen.size() == 0)
+		// return new SerModeloImagen[0];
+		// SerModeloImagen[] arr = new SerModeloImagen[lstModeloImagen.size()];
+		// for (int i = 0; i < lstModeloImagen.size(); i++) {
+		// arr[i] = new DbModeloImagen(lstModeloImagen.get(i)).toSerModeloImagenSinImagen();
+		// }
+		// return arr;
 	}
 
 }

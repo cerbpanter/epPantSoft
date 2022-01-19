@@ -14,8 +14,10 @@ import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Transaction;
+import com.pantsoft.eppantsoft.entidades.DbModeloProducido;
 import com.pantsoft.eppantsoft.entidades.DbProduccion;
 import com.pantsoft.eppantsoft.serializable.SerProduccion;
+import com.pantsoft.eppantsoft.util.ClsBlobReader;
 import com.pantsoft.eppantsoft.util.ClsEntidad;
 import com.pantsoft.eppantsoft.util.ClsUtil;
 import com.pantsoft.eppantsoft.util.ExcepcionControlada;
@@ -24,21 +26,43 @@ public class PmProduccion {
 
 	public SerProduccion agregar(SerProduccion serProduccion) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Transaction tx = null;
+		try {
+			tx = ClsEntidad.iniciarTransaccion(datastore);
 
-		serProduccion.setEstatus(0);
-		DbProduccion dbProduccion = new DbProduccion(serProduccion);
+			serProduccion.setEstatus(0);
+			DbProduccion dbProduccion = new DbProduccion(serProduccion);
 
-		if (ClsEntidad.existeEntidad(datastore, "DbProduccion", dbProduccion.getKey().getName()))
-			throw new ExcepcionControlada("La orden '" + serProduccion.getNumOrden() + "' ya existe.");
+			if (ClsEntidad.existeEntidad(datastore, "DbProduccion", dbProduccion.getKey().getName()))
+				throw new ExcepcionControlada("La orden '" + serProduccion.getNumOrden() + "' ya existe.");
 
-		dbProduccion.guardar(datastore);
+			if (!ClsUtil.esNulo(dbProduccion.getReferencia())) {
+				try {
+					Key key = KeyFactory.createKey("DbModeloProducido", dbProduccion.getEmpresa() + "-" + dbProduccion.getTemporada() + "-" + dbProduccion.getModelo());
+					DbModeloProducido dbModPro = new DbModeloProducido(datastore.get(key));
+					if (!dbModPro.getReferencia().equals(dbProduccion.getReferencia()))
+						throw new Exception("La referencia no coincide con la que se marcó en el modelo para producción: " + dbModPro.getReferencia());
+				} catch (EntityNotFoundException e) {
+					DbModeloProducido dbModPro = new DbModeloProducido(dbProduccion.getEmpresa(), dbProduccion.getTemporada(), dbProduccion.getModelo(), dbProduccion.getReferencia());
+					dbModPro.guardar(datastore, tx);
+				}
+			}
 
-		return dbProduccion.toSerProduccion();
+			dbProduccion.guardar(datastore, tx);
+			tx.commit();
+
+			return dbProduccion.toSerProduccion();
+		} finally {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+		}
 	}
 
 	public SerProduccion actualizar(SerProduccion serProduccion) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Transaction tx = null;
 		try {
+			tx = ClsEntidad.iniciarTransaccion(datastore);
 			Key key = KeyFactory.createKey("DbProduccion", serProduccion.getEmpresa() + "-" + serProduccion.getTemporada() + "-" + serProduccion.getNumOrden());
 
 			// Cambios de estatus automáticos
@@ -77,6 +101,20 @@ public class PmProduccion {
 			dbProduccion.setEstatus(serProduccion.getEstatus());
 			dbProduccion.setFechaProgramada(serProduccion.getFechaProgramada());
 			dbProduccion.setModelo(serProduccion.getModelo());
+			if (!ClsUtil.esIgualConNulo(dbProduccion.getReferencia(), serProduccion.getReferencia())) {
+				dbProduccion.setReferencia(serProduccion.getReferencia());
+				if (!ClsUtil.esNulo(dbProduccion.getReferencia())) {
+					try {
+						key = KeyFactory.createKey("DbModeloProducido", dbProduccion.getEmpresa() + "-" + dbProduccion.getTemporada() + "-" + dbProduccion.getModelo());
+						DbModeloProducido dbModPro = new DbModeloProducido(datastore.get(key));
+						if (!dbModPro.getReferencia().equals(dbProduccion.getReferencia()))
+							throw new Exception("La referencia no coincide con la que se marcó en el modelo para producción: " + dbModPro.getReferencia());
+					} catch (EntityNotFoundException e) {
+						DbModeloProducido dbModPro = new DbModeloProducido(dbProduccion.getEmpresa(), dbProduccion.getTemporada(), dbProduccion.getModelo(), dbProduccion.getReferencia());
+						dbModPro.guardar(datastore, tx);
+					}
+				}
+			}
 			dbProduccion.setCantidad(serProduccion.getCantidad());
 			dbProduccion.setCorteSobreTela(serProduccion.getCorteSobreTela());
 			dbProduccion.setCantidadCorte(serProduccion.getCantidadCorte());
@@ -117,7 +155,9 @@ public class PmProduccion {
 			dbProduccion.setUsuarioModifico(serProduccion.getUsuarioModifico());
 			dbProduccion.setFechaModifico(new Date());
 			dbProduccion.setHabilitacionEnviada(serProduccion.getHabilitacionEnviada());
-			dbProduccion.guardar(datastore);
+			dbProduccion.guardar(datastore, tx);
+
+			tx.commit();
 
 			return dbProduccion.toSerProduccion();
 		} catch (EntityNotFoundException e) {
@@ -138,6 +178,24 @@ public class PmProduccion {
 				}
 			} catch (EntityNotFoundException e) {
 				throw new Exception("La orden '" + orden + "' no existe.");
+			}
+		}
+	}
+
+	public void actualizarCostura(String empresa, long temporada, String blobStr) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		ClsBlobReader blobR = new ClsBlobReader("¬", blobStr, true);
+		while (blobR.siguienteFila()) {
+			try {
+				Key key = KeyFactory.createKey("DbProduccion", empresa + "-" + temporada + "-" + blobR.getValorLong("numOrden"));
+				DbProduccion dbProduccion = new DbProduccion(datastore.get(key));
+
+				if (dbProduccion.getCostura() != blobR.getValorDbl("costura")) {
+					dbProduccion.setCostura(blobR.getValorDbl("costura"));
+					dbProduccion.guardar(datastore);
+				}
+			} catch (EntityNotFoundException e) {
+				throw new Exception("La orden '" + blobR.getValorLong("orden") + "' no existe.");
 			}
 		}
 	}
@@ -163,6 +221,18 @@ public class PmProduccion {
 				if (ClsEntidad.existeEntidad(datastore, "DbProduccion", dbProduccion.getKey().getName()))
 					throw new ExcepcionControlada("La orden '" + serProduccion.getNumOrden() + "' ya existe.");
 				dbProduccion.guardar(datastore);
+
+				if (!ClsUtil.esNulo(dbProduccion.getReferencia())) {
+					try {
+						key = KeyFactory.createKey("DbModeloProducido", dbProduccion.getEmpresa() + "-" + dbProduccion.getTemporada() + "-" + dbProduccion.getModelo());
+						DbModeloProducido dbModPro = new DbModeloProducido(datastore.get(key));
+						if (!dbModPro.getReferencia().equals(dbProduccion.getReferencia()))
+							throw new Exception("La referencia no coincide con la que se marcó en el modelo para producción en la nueva temporada: " + dbModPro.getReferencia());
+					} catch (EntityNotFoundException e) {
+						DbModeloProducido dbModPro = new DbModeloProducido(dbProduccion.getEmpresa(), dbProduccion.getTemporada(), dbProduccion.getModelo(), dbProduccion.getReferencia());
+						dbModPro.guardar(datastore, tx);
+					}
+				}
 
 				tx.commit();
 			} catch (EntityNotFoundException e) {

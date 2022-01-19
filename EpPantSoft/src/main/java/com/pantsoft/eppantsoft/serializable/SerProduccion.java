@@ -13,6 +13,7 @@ public class SerProduccion {
 	private int estatus;
 	private Date fechaProgramada;
 	private String modelo;
+	private String referencia;
 	private long cantidad;
 	private long corteSobreTela;
 	private long cantidadCorte;
@@ -21,6 +22,7 @@ public class SerProduccion {
 	private long faltanteCorte;
 	private String taller;
 	private double precio;
+	private double costura;
 	private double total;
 	private double precioFaltante;
 	private double totalPorPagar;
@@ -57,7 +59,8 @@ public class SerProduccion {
 	public SerProduccion() {
 	}
 
-	public SerProduccion(String empresa, long temporada, long numOrden, String maquileroCorte, String cliente, String departamento, String descripcion, int estatus, Date fechaProgramada, String modelo, long cantidad, long corteSobreTela, long cantidadCorte, long cantidadEntrega, long faltanteMaquilero, long faltanteCorte, String taller, double precio, double total, double precioFaltante, double totalPorPagar, Date fechaSalida, Date fechaEntrega, String proceso1, String tallerProceso1, double precioProceso1, String proceso2, String tallerProceso2, double precioProceso2, double consumo1, double mtsSolicitados1, double mtsEnviados1, double mtsDevolucion1, double mtsFaltante1, double diferencia1, double consumo2, double mtsSolicitados2, double mtsEnviados2, double diferencia2, double consumo3, double mtsSolicitados3, double mtsEnviados3, double diferencia3, String observaciones, boolean revisado, boolean isaac, String mes, String usuarioModifico, Date fechaModifico,
+	public SerProduccion(String empresa, long temporada, long numOrden, String maquileroCorte, String cliente, String departamento, String descripcion, int estatus, Date fechaProgramada, String modelo, String referencia, long cantidad, long corteSobreTela, long cantidadCorte, long cantidadEntrega, long faltanteMaquilero, long faltanteCorte, String taller, double precio, double costura, double total, double precioFaltante, double totalPorPagar, Date fechaSalida, Date fechaEntrega, String proceso1, String tallerProceso1, double precioProceso1, String proceso2, String tallerProceso2, double precioProceso2, double consumo1, double mtsSolicitados1, double mtsEnviados1, double mtsDevolucion1, double mtsFaltante1, double diferencia1, double consumo2, double mtsSolicitados2, double mtsEnviados2, double diferencia2, double consumo3, double mtsSolicitados3, double mtsEnviados3, double diferencia3, String observaciones, boolean revisado, boolean isaac, String mes, String usuarioModifico,
+			Date fechaModifico,
 			boolean habilitacionEnviada) {
 		this.empresa = empresa;
 		this.temporada = temporada;
@@ -69,6 +72,7 @@ public class SerProduccion {
 		this.estatus = estatus;
 		this.fechaProgramada = fechaProgramada;
 		this.modelo = modelo;
+		this.referencia = referencia;
 		this.cantidad = cantidad;
 		this.corteSobreTela = corteSobreTela;
 		this.cantidadCorte = cantidadCorte;
@@ -77,6 +81,7 @@ public class SerProduccion {
 		this.faltanteCorte = faltanteCorte;
 		this.taller = taller;
 		this.precio = precio;
+		this.costura = costura;
 		this.total = total;
 		this.precioFaltante = precioFaltante;
 		this.totalPorPagar = totalPorPagar;
@@ -253,6 +258,14 @@ public class SerProduccion {
 
 	public void setPrecio(double precio) {
 		this.precio = precio;
+	}
+
+	public double getCostura() {
+		return costura;
+	}
+
+	public void setCostura(double costura) {
+		this.costura = costura;
 	}
 
 	public double getTotal() {
@@ -509,5 +522,13 @@ public class SerProduccion {
 
 	public void setHabilitacionEnviada(boolean habilitacionEnviada) {
 		this.habilitacionEnviada = habilitacionEnviada;
+	}
+
+	public String getReferencia() {
+		return referencia;
+	}
+
+	public void setReferencia(String referencia) {
+		this.referencia = referencia;
 	}
 }

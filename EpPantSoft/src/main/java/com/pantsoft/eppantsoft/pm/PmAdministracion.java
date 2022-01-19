@@ -15,7 +15,7 @@ import com.pantsoft.eppantsoft.util.ClsEntidad;
 
 public class PmAdministracion {
 
-	public Respuesta eliminarEntidades(String nombreEntidad, String blobStrFiltros, String cursor) throws Exception {
+	public Respuesta eliminarEntidades(String nombreEntidad, String blobStrFiltros, int tamPag, String cursor) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
 		if (cursor.equals("Inicio")) {
@@ -39,7 +39,7 @@ public class PmAdministracion {
 			}
 		}
 		long eliminados = 0;
-		List<Entity> lstEntidades = ClsEntidad.ejecutarConsulta(datastore, nombreEntidad, lstFiltros, 200, cursor);
+		List<Entity> lstEntidades = ClsEntidad.ejecutarConsultaSoloKeys(datastore, nombreEntidad, lstFiltros, tamPag, cursor);
 		if (lstEntidades != null && lstEntidades.size() > 0) {
 			for (Entity entidad : lstEntidades) {
 				datastore.delete(entidad.getKey());

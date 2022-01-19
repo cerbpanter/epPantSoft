@@ -19,21 +19,21 @@ import com.pantsoft.eppantsoft.util.ExcepcionControlada;
 
 public class PmProceso {
 
-	public void agregar(SerProceso SerProceso) throws Exception {
+	public void agregar(SerProceso serProceso) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
-		DbProceso dbProceso = new DbProceso(SerProceso);
+		DbProceso dbProceso = new DbProceso(serProceso);
 
 		if (ClsEntidad.existeEntidad(datastore, "DbProceso", dbProceso.getKey().getName()))
-			throw new ExcepcionControlada("El Proceso '" + SerProceso.getProceso() + "' ya existe.");
+			throw new ExcepcionControlada("El Proceso '" + serProceso.getProceso() + "' ya existe.");
 
 		dbProceso.guardar(datastore);
 	}
 
-	public void eliminar(String empresa, long temporada, String Proceso) throws Exception {
+	public void eliminar(String empresa, long temporada, String proceso) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		try {
-			Key key = KeyFactory.createKey("DbProceso", empresa + "-" + temporada + "-" + Proceso);
+			Key key = KeyFactory.createKey("DbProceso", empresa + "-" + temporada + "-" + proceso);
 			datastore.get(key);
 			// Validar que no participe
 			// List<Filter> lstFiltros = new ArrayList<Filter>();
@@ -44,7 +44,7 @@ public class PmProceso {
 
 			datastore.delete(key);
 		} catch (EntityNotFoundException e) {
-			throw new ExcepcionControlada("La Proceso '" + Proceso + "' no existe.");
+			throw new ExcepcionControlada("La Proceso '" + proceso + "' no existe.");
 		}
 	}
 

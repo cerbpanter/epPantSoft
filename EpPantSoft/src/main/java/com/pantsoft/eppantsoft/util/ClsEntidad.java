@@ -21,7 +21,6 @@ import com.google.appengine.api.datastore.Rating;
 import com.google.appengine.api.datastore.Text;
 import com.google.appengine.api.datastore.Transaction;
 import com.google.appengine.api.datastore.TransactionOptions;
-
 import com.pantsoft.eppantsoft.util.ClsCampo.Tipo;
 
 public abstract class ClsEntidad {
@@ -695,6 +694,24 @@ public abstract class ClsEntidad {
 		Query q = new Query(entidad);
 		setFilter(q, lstFiltros);
 		FetchOptions fetchOptions = FetchOptions.Builder.withLimit(limite);
+		if (cursor != null && cursor.length() > 0)
+			fetchOptions.startCursor(Cursor.fromWebSafeString(cursor));
+		QueryResultList<Entity> lstEntidades = datastore.prepare(q).asQueryResultList(fetchOptions);
+		if (lstEntidades.size() == limite)
+			strCursor = lstEntidades.getCursor().toWebSafeString();
+		else
+			strCursor = null;
+
+		return lstEntidades;
+	}
+
+	public static List<Entity> ejecutarConsultaSoloKeys(DatastoreService datastore, String entidad, List<Filter> lstFiltros, int limite, String cursor) {
+		Query q = new Query(entidad);
+		setFilter(q, lstFiltros);
+		q.setKeysOnly();
+		FetchOptions fetchOptions = FetchOptions.Builder.withDefaults();
+		if (limite > 0)
+			fetchOptions = FetchOptions.Builder.withLimit(limite);
 		if (cursor != null && cursor.length() > 0)
 			fetchOptions.startCursor(Cursor.fromWebSafeString(cursor));
 		QueryResultList<Entity> lstEntidades = datastore.prepare(q).asQueryResultList(fetchOptions);
