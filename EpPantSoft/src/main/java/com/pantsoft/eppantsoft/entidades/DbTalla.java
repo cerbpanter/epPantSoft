@@ -16,6 +16,7 @@ public class DbTalla extends ClsEntidad {
 	private final ClsCampo empresa = new ClsCampo("empresa", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 1, NO_SUSTITUIR_NULL);
 	private final ClsCampo temporada = new ClsCampo("temporada", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 2, NO_SUSTITUIR_NULL);
 	private final ClsCampo talla = new ClsCampo("talla", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 10, TAM_NORMAL, VAL_MISSING, 3, NO_SUSTITUIR_NULL);
+	private final ClsCampo orden = new ClsCampo("orden", Tipo.Long, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, NO_SUSTITUIR_NULL);
 
 	public DbTalla(SerTalla serTalla) throws ExcepcionControlada {
 		Key key = KeyFactory.createKey("DbTalla", serTalla.getEmpresa() + "-" + serTalla.getTemporada() + "-" + serTalla.getTalla());
@@ -24,6 +25,7 @@ public class DbTalla extends ClsEntidad {
 		setString(empresa, serTalla.getEmpresa());
 		setLong(temporada, serTalla.getTemporada());
 		setString(talla, serTalla.getTalla());
+		setOrden(serTalla.getOrden());
 	}
 
 	public DbTalla(Entity entidad) {
@@ -31,7 +33,7 @@ public class DbTalla extends ClsEntidad {
 	}
 
 	public boolean getLiberado() {
-		return false;
+		return true;
 	}
 
 	public List<ClsCampo> getCampos() {
@@ -39,18 +41,27 @@ public class DbTalla extends ClsEntidad {
 	}
 
 	public SerTalla toSerTalla() throws ExcepcionControlada {
-		return new SerTalla(getEmpresa(), getTemporada(), getTalla());
+		return new SerTalla(getEmpresa(), getTemporada(), getTalla(), getOrden());
 	}
 
 	public String getEmpresa() throws ExcepcionControlada {
 		return getString(empresa);
 	}
 
-	public Long getTemporada() throws ExcepcionControlada {
+	public long getTemporada() throws ExcepcionControlada {
 		return getLong(temporada);
 	}
 
 	public String getTalla() throws ExcepcionControlada {
 		return getString(talla);
 	}
+
+	public void setOrden(long orden) throws ExcepcionControlada {
+		setLong(this.orden, orden);
+	}
+
+	public long getOrden() throws ExcepcionControlada {
+		return getLong(orden);
+	}
+
 }

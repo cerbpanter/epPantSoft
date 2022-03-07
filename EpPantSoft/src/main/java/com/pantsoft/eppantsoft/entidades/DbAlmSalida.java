@@ -31,9 +31,10 @@ public class DbAlmSalida extends ClsEntidad {
 	private final ClsCampo facturas = new ClsCampo("facturas", Tipo.ArrayString, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo folioCliente = new ClsCampo("folioCliente", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo cliente = new ClsCampo("cliente", Tipo.String, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo detalle = new ClsCampo("detalle", Tipo.Text, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_GRANDE, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 
 	// Dependencias
-	private List<DbAlmSalidaDet> detalle = null;
+	private List<DbAlmSalidaDet> dbDetalle = null;
 
 	public DbAlmSalida(SerAlmSalida serAlmSalida) throws ExcepcionControlada {
 		Key key = KeyFactory.createKey("DbAlmSalida", serAlmSalida.getEmpresa() + "-" + serAlmSalida.getFolioAlmSalida());
@@ -52,6 +53,7 @@ public class DbAlmSalida extends ClsEntidad {
 		setFacturas(serAlmSalida.getFacturas());
 		setFolioCliente(serAlmSalida.getFolioCliente());
 		setCliente(serAlmSalida.getCliente());
+		setDetalle(serAlmSalida.getDetalle());
 	}
 
 	public DbAlmSalida(Entity entidad) {
@@ -63,18 +65,22 @@ public class DbAlmSalida extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, folioAlmSalida, almacen, tipo, fechaAlmSalida, dia, mes, usuarioCreo, usuarioModifico, observaciones, facturas, folioCliente, cliente);
+		return Arrays.asList(empresa, folioAlmSalida, almacen, tipo, fechaAlmSalida, dia, mes, usuarioCreo, usuarioModifico, observaciones, facturas, folioCliente, cliente, detalle);
 	}
 
-	public SerAlmSalida toSerAlmSalida(DatastoreService datastore, Transaction tx) throws ExcepcionControlada {
-		SerAlmSalida serAlmSalida = new SerAlmSalida(getEmpresa(), getFolioAlmSalida(), getAlmacen(), getTipo(), getFechaAlmSalida(), getDia(), getMes(), getUsuarioCreo(), getUsuarioModifico(), getObservaciones(), getFacturas(), getFolioCliente(), getCliente());
+	public SerAlmSalida toSerAlmSalida() throws ExcepcionControlada {
+		return new SerAlmSalida(getEmpresa(), getFolioAlmSalida(), getAlmacen(), getTipo(), getFechaAlmSalida(), getDia(), getMes(), getUsuarioCreo(), getUsuarioModifico(), getObservaciones(), getFacturas(), getFolioCliente(), getCliente(), getDetalle());
+	}
+
+	public SerAlmSalida toSerAlmSalidaCompleto(DatastoreService datastore, Transaction tx) throws ExcepcionControlada {
+		SerAlmSalida serAlmSalida = new SerAlmSalida(getEmpresa(), getFolioAlmSalida(), getAlmacen(), getTipo(), getFechaAlmSalida(), getDia(), getMes(), getUsuarioCreo(), getUsuarioModifico(), getObservaciones(), getFacturas(), getFolioCliente(), getCliente(), getDetalle());
 
 		// Agrego el detalle
-		getDetalle(datastore, tx);
+		getDbDetalle(datastore, tx);
 		List<SerAlmSalidaDet> lstDetalle = new ArrayList<SerAlmSalidaDet>();
-		for (DbAlmSalidaDet dbDet : detalle)
+		for (DbAlmSalidaDet dbDet : dbDetalle)
 			lstDetalle.add(dbDet.toSerAlmSalidaDet());
-		serAlmSalida.setDetalle(lstDetalle.toArray(new SerAlmSalidaDet[0]));
+		serAlmSalida.setDbDetalle(lstDetalle.toArray(new SerAlmSalidaDet[0]));
 
 		return serAlmSalida;
 	}
@@ -175,13 +181,21 @@ public class DbAlmSalida extends ClsEntidad {
 		setString(this.cliente, cliente);
 	}
 
-	public List<DbAlmSalidaDet> getDetalle(DatastoreService datastore, Transaction tx) throws ExcepcionControlada {
-		if (detalle == null) {
+	public String getDetalle() throws ExcepcionControlada {
+		return getText(detalle);
+	}
+
+	public void setDetalle(String detalle) throws ExcepcionControlada {
+		setText(this.detalle, detalle);
+	}
+
+	public List<DbAlmSalidaDet> getDbDetalle(DatastoreService datastore, Transaction tx) throws ExcepcionControlada {
+		if (dbDetalle == null) {
 			List<Entity> lstDetalle = ejecutarConsulta(datastore, tx, "DbAlmSalidaDet", getKey());
-			detalle = new ArrayList<DbAlmSalidaDet>();
+			dbDetalle = new ArrayList<DbAlmSalidaDet>();
 			for (Entity det : lstDetalle)
-				detalle.add(new DbAlmSalidaDet(det));
+				dbDetalle.add(new DbAlmSalidaDet(det));
 		}
-		return detalle;
+		return dbDetalle;
 	}
 }

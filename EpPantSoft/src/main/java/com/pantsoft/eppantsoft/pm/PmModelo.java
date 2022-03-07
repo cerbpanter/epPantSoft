@@ -107,7 +107,7 @@ public class PmModelo {
 			dbModelo.setOk(serModelo.getOk());
 			dbModelo.setCortado(serModelo.getCortado());
 			dbModelo.setEsPantSoft(true);
-			dbModelo.guardar(datastore);
+			dbModelo.guardar(datastore, tx);
 
 			// Guardo las habilitaciones
 			Map<String, Boolean> mapHabilitaciones = new HashMap<String, Boolean>();
@@ -184,6 +184,22 @@ public class PmModelo {
 		} finally {
 			if (tx != null && tx.isActive())
 				tx.rollback();
+		}
+	}
+
+	public SerModelo modelo_actualizarTalla(SerModelo serModelo) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		try {
+
+			Key key = KeyFactory.createKey("DbModelo", serModelo.getEmpresa() + "-" + serModelo.getTemporada() + "-" + serModelo.getModelo() + "-" + serModelo.getReferencia());
+			DbModelo dbModelo = new DbModelo(datastore.get(key));
+
+			dbModelo.setTalla(serModelo.getTalla());
+			dbModelo.guardar(datastore);
+
+			return dbModelo.toSerModelo();
+		} catch (EntityNotFoundException e) {
+			throw new Exception("El modelo '" + serModelo.getModelo() + "' no existe.");
 		}
 	}
 

@@ -30,6 +30,22 @@ public class PmTalla {
 		dbTalla.guardar(datastore);
 	}
 
+	public SerTalla actualizar(SerTalla serTalla) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		try {
+			Key key = KeyFactory.createKey("DbTalla", serTalla.getEmpresa() + "-" + serTalla.getTemporada() + "-" + serTalla.getTalla());
+			DbTalla dbTalla = new DbTalla(datastore.get(key));
+
+			if (dbTalla.getOrden() != serTalla.getOrden())
+				dbTalla.setOrden(serTalla.getOrden());
+			dbTalla.guardar(datastore);
+
+			return dbTalla.toSerTalla();
+		} catch (EntityNotFoundException e) {
+			throw new ExcepcionControlada("La Talla '" + serTalla.getTalla() + "' no existe.");
+		}
+	}
+
 	public void eliminar(String empresa, long temporada, String talla) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		try {

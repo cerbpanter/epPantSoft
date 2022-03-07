@@ -1,29 +1,37 @@
 package com.pantsoft.eppantsoft.serializable;
 
+import java.util.Date;
+
 public class SerAlmEntradaDet {
 	private String empresa;
 	private long folioAlmEntrada;
 	private String almacen;
-	private long temporada;
 	private String modelo;
+	private long temporada;
+	private String color;
+	private String talla;
+	private String codigoDeBarras;
+	private Date fechaAlmEntrada;
 	private long dia;
 	private long mes;
 	private long cantidad;
-	private String detalle;
 
 	public SerAlmEntradaDet() {
 	}
 
-	public SerAlmEntradaDet(String empresa, long folioAlmEntrada, String almacen, long temporada, String modelo, long dia, long mes, long cantidad, String detalle) {
+	public SerAlmEntradaDet(String empresa, long folioAlmEntrada, String almacen, String modelo, long temporada, String color, String talla, String codigoDeBarras, Date fechaAlmEntrada, long dia, long mes, long cantidad) {
 		setEmpresa(empresa);
 		setFolioAlmEntrada(folioAlmEntrada);
 		setAlmacen(almacen);
-		setTemporada(temporada);
 		setModelo(modelo);
+		setTemporada(temporada);
+		setColor(color);
+		setTalla(talla);
+		setCodigoDeBarras(codigoDeBarras);
+		setFechaAlmEntrada(fechaAlmEntrada);
 		setDia(dia);
 		setMes(mes);
 		setCantidad(cantidad);
-		setDetalle(detalle);
 	}
 
 	public String getEmpresa() {
@@ -50,6 +58,14 @@ public class SerAlmEntradaDet {
 		this.almacen = almacen;
 	}
 
+	public String getModelo() {
+		return modelo;
+	}
+
+	public void setModelo(String modelo) {
+		this.modelo = modelo;
+	}
+
 	public long getTemporada() {
 		return temporada;
 	}
@@ -58,12 +74,28 @@ public class SerAlmEntradaDet {
 		this.temporada = temporada;
 	}
 
-	public String getModelo() {
-		return modelo;
+	public String getColor() {
+		return color;
 	}
 
-	public void setModelo(String modelo) {
-		this.modelo = modelo;
+	public void setColor(String color) {
+		this.color = color;
+	}
+
+	public String getTalla() {
+		return talla;
+	}
+
+	public void setTalla(String talla) {
+		this.talla = talla;
+	}
+
+	public Date getFechaAlmEntrada() {
+		return fechaAlmEntrada;
+	}
+
+	public void setFechaAlmEntrada(Date fechaAlmEntrada) {
+		this.fechaAlmEntrada = fechaAlmEntrada;
 	}
 
 	public long getDia() {
@@ -90,12 +122,12 @@ public class SerAlmEntradaDet {
 		this.cantidad = cantidad;
 	}
 
-	public String getDetalle() {
-		return detalle;
+	public String getCodigoDeBarras() {
+		return codigoDeBarras;
 	}
 
-	public void setDetalle(String detalle) {
-		this.detalle = detalle;
+	public void setCodigoDeBarras(String codigoDeBarras) {
+		this.codigoDeBarras = codigoDeBarras;
 	}
 
 }

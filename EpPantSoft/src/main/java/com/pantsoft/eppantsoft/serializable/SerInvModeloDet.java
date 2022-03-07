@@ -1,36 +1,26 @@
 package com.pantsoft.eppantsoft.serializable;
 
-import java.util.Date;
-
-public class SerAlmSalidaDet {
+public class SerInvModeloDet {
 	private String empresa;
-	private long folioAlmSalida;
 	private String almacen;
 	private String modelo;
 	private long temporada;
 	private String color;
 	private String talla;
 	private String codigoDeBarras;
-	private Date fechaAlmSalida;
-	private long dia;
-	private long mes;
 	private long cantidad;
 
-	public SerAlmSalidaDet() {
+	public SerInvModeloDet() {
 	}
 
-	public SerAlmSalidaDet(String empresa, long folioAlmSalida, String almacen, String modelo, long temporada, String color, String talla, String codigoDeBarras, Date fechaAlmSalida, long dia, long mes, long cantidad) {
+	public SerInvModeloDet(String empresa, String almacen, String modelo, long temporada, String color, String talla, String codigoDeBarras, long cantidad) {
 		setEmpresa(empresa);
-		setFolioAlmSalida(folioAlmSalida);
 		setAlmacen(almacen);
 		setModelo(modelo);
 		setTemporada(temporada);
 		setColor(color);
 		setTalla(talla);
 		setCodigoDeBarras(codigoDeBarras);
-		setFechaAlmSalida(fechaAlmSalida);
-		setDia(dia);
-		setMes(mes);
 		setCantidad(cantidad);
 	}
 
@@ -40,14 +30,6 @@ public class SerAlmSalidaDet {
 
 	public void setEmpresa(String empresa) {
 		this.empresa = empresa;
-	}
-
-	public long getFolioAlmSalida() {
-		return folioAlmSalida;
-	}
-
-	public void setFolioAlmSalida(long folioAlmSalida) {
-		this.folioAlmSalida = folioAlmSalida;
 	}
 
 	public String getAlmacen() {
@@ -88,30 +70,6 @@ public class SerAlmSalidaDet {
 
 	public void setTalla(String talla) {
 		this.talla = talla;
-	}
-
-	public Date getFechaAlmSalida() {
-		return fechaAlmSalida;
-	}
-
-	public void setFechaAlmSalida(Date fechaAlmSalida) {
-		this.fechaAlmSalida = fechaAlmSalida;
-	}
-
-	public long getDia() {
-		return dia;
-	}
-
-	public void setDia(long dia) {
-		this.dia = dia;
-	}
-
-	public long getMes() {
-		return mes;
-	}
-
-	public void setMes(long mes) {
-		this.mes = mes;
 	}
 
 	public long getCantidad() {

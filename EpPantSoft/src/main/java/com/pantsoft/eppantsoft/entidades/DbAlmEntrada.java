@@ -31,9 +31,10 @@ public class DbAlmEntrada extends ClsEntidad {
 	private final ClsCampo folioOrdenProduccion = new ClsCampo("folioOrdenProduccion", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo folioMaquilero = new ClsCampo("folioMaquilero", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo maquilero = new ClsCampo("maquilero", Tipo.String, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo detalle = new ClsCampo("detalle", Tipo.Text, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_GRANDE, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 
 	// Dependencias
-	private List<DbAlmEntradaDet> detalle = null;
+	private List<DbAlmEntradaDet> dbDetalle = null;
 
 	public DbAlmEntrada(SerAlmEntrada serAlmEntrada) throws ExcepcionControlada {
 		Key key = KeyFactory.createKey("DbAlmEntrada", serAlmEntrada.getEmpresa() + "-" + serAlmEntrada.getFolioAlmEntrada());
@@ -63,18 +64,22 @@ public class DbAlmEntrada extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, folioAlmEntrada, almacen, tipo, fechaAlmEntrada, dia, mes, usuarioCreo, usuarioModifico, observaciones, folioOrdenProduccion, folioMaquilero, maquilero);
+		return Arrays.asList(empresa, folioAlmEntrada, almacen, tipo, fechaAlmEntrada, dia, mes, usuarioCreo, usuarioModifico, observaciones, folioOrdenProduccion, folioMaquilero, maquilero, detalle);
 	}
 
-	public SerAlmEntrada toSerAlmEntrada(DatastoreService datastore, Transaction tx) throws ExcepcionControlada {
-		SerAlmEntrada serAlmEntrada = new SerAlmEntrada(getEmpresa(), getFolioAlmEntrada(), getAlmacen(), getTipo(), getFechaAlmEntrada(), getDia(), getMes(), getUsuarioCreo(), getUsuarioModifico(), getObservaciones(), getFolioOrdenProduccion(), getFolioMaquilero(), getMaquilero());
+	public SerAlmEntrada toSerAlmEntrada() throws ExcepcionControlada {
+		return new SerAlmEntrada(getEmpresa(), getFolioAlmEntrada(), getAlmacen(), getTipo(), getFechaAlmEntrada(), getDia(), getMes(), getUsuarioCreo(), getUsuarioModifico(), getObservaciones(), getFolioOrdenProduccion(), getFolioMaquilero(), getMaquilero(), getDetalle());
+	}
+
+	public SerAlmEntrada toSerAlmEntradaCompleto(DatastoreService datastore, Transaction tx) throws ExcepcionControlada {
+		SerAlmEntrada serAlmEntrada = new SerAlmEntrada(getEmpresa(), getFolioAlmEntrada(), getAlmacen(), getTipo(), getFechaAlmEntrada(), getDia(), getMes(), getUsuarioCreo(), getUsuarioModifico(), getObservaciones(), getFolioOrdenProduccion(), getFolioMaquilero(), getMaquilero(), getDetalle());
 
 		// Agrego el detalle
-		getDetalle(datastore, tx);
+		getDbDetalle(datastore, tx);
 		List<SerAlmEntradaDet> lstDetalle = new ArrayList<SerAlmEntradaDet>();
-		for (DbAlmEntradaDet dbDet : detalle)
+		for (DbAlmEntradaDet dbDet : dbDetalle)
 			lstDetalle.add(dbDet.toSerAlmEntradaDet());
-		serAlmEntrada.setDetalle(lstDetalle.toArray(new SerAlmEntradaDet[0]));
+		serAlmEntrada.setDbDetalle(lstDetalle.toArray(new SerAlmEntradaDet[0]));
 
 		return serAlmEntrada;
 	}
@@ -175,13 +180,21 @@ public class DbAlmEntrada extends ClsEntidad {
 		setString(this.maquilero, maquilero);
 	}
 
-	public List<DbAlmEntradaDet> getDetalle(DatastoreService datastore, Transaction tx) throws ExcepcionControlada {
-		if (detalle == null) {
+	public String getDetalle() throws ExcepcionControlada {
+		return getText(detalle);
+	}
+
+	public void setDetalle(String detalle) throws ExcepcionControlada {
+		setText(this.detalle, detalle);
+	}
+
+	public List<DbAlmEntradaDet> getDbDetalle(DatastoreService datastore, Transaction tx) throws ExcepcionControlada {
+		if (dbDetalle == null) {
 			List<Entity> lstDetalle = ejecutarConsulta(datastore, tx, "DbAlmEntradaDet", getKey());
-			detalle = new ArrayList<DbAlmEntradaDet>();
+			dbDetalle = new ArrayList<DbAlmEntradaDet>();
 			for (Entity det : lstDetalle)
-				detalle.add(new DbAlmEntradaDet(det));
+				dbDetalle.add(new DbAlmEntradaDet(det));
 		}
-		return detalle;
+		return dbDetalle;
 	}
 }

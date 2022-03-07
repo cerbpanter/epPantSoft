@@ -16,13 +16,14 @@ public class SerAlmEntrada {
 	private long folioOrdenProduccion;
 	private long folioMaquilero;
 	private String maquilero;
+	private String detalle;
 
-	private SerAlmEntradaDet[] detalle;
+	private SerAlmEntradaDet[] dbDetalle;
 
 	public SerAlmEntrada() {
 	}
 
-	public SerAlmEntrada(String empresa, long folioAlmEntrada, String almacen, long tipo, Date fechaAlmEntrada, long dia, long mes, String usuarioCreo, String usuarioModifico, String observaciones, long folioOrdenProduccion, long folioMaquilero, String maquilero) {
+	public SerAlmEntrada(String empresa, long folioAlmEntrada, String almacen, long tipo, Date fechaAlmEntrada, long dia, long mes, String usuarioCreo, String usuarioModifico, String observaciones, long folioOrdenProduccion, long folioMaquilero, String maquilero, String detalle) {
 		setEmpresa(empresa);
 		setFolioAlmEntrada(folioAlmEntrada);
 		setAlmacen(almacen);
@@ -36,6 +37,7 @@ public class SerAlmEntrada {
 		setFolioOrdenProduccion(folioOrdenProduccion);
 		setFolioMaquilero(folioMaquilero);
 		setMaquilero(maquilero);
+		setDetalle(detalle);
 	}
 
 	public String getEmpresa() {
@@ -142,12 +144,20 @@ public class SerAlmEntrada {
 		this.maquilero = maquilero;
 	}
 
-	public SerAlmEntradaDet[] getDetalle() {
+	public String getDetalle() {
 		return detalle;
 	}
 
-	public void setDetalle(SerAlmEntradaDet[] detalle) {
+	public void setDetalle(String detalle) {
 		this.detalle = detalle;
+	}
+
+	public SerAlmEntradaDet[] getDbDetalle() {
+		return dbDetalle;
+	}
+
+	public void setDbDetalle(SerAlmEntradaDet[] dbDetalle) {
+		this.dbDetalle = dbDetalle;
 	}
 
 }

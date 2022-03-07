@@ -4,14 +4,16 @@ public class SerTalla {
 	private String empresa;
 	private long temporada;
 	private String talla;
+	private long orden;
 
 	public SerTalla() {
 	}
 
-	public SerTalla(String empresa, long temporada, String talla) {
+	public SerTalla(String empresa, long temporada, String talla, long orden) {
 		this.empresa = empresa;
 		this.temporada = temporada;
 		this.setTalla(talla);
+		this.setOrden(orden);
 	}
 
 	public String getEmpresa() {
@@ -36,6 +38,14 @@ public class SerTalla {
 
 	public void setTalla(String talla) {
 		this.talla = talla;
+	}
+
+	public long getOrden() {
+		return orden;
+	}
+
+	public void setOrden(long orden) {
+		this.orden = orden;
 	}
 
 }

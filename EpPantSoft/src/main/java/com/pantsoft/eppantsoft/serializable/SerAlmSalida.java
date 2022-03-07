@@ -17,13 +17,14 @@ public class SerAlmSalida {
 	private ArrayList<String> facturas;
 	private long folioCliente;
 	private String cliente;
+	private String detalle;
 
-	private SerAlmSalidaDet[] detalle;
+	private SerAlmSalidaDet[] dbDetalle;
 
 	public SerAlmSalida() {
 	}
 
-	public SerAlmSalida(String empresa, long folioAlmSalida, String almacen, long tipo, Date fechaAlmSalida, long dia, long mes, String usuarioCreo, String usuarioModifico, String observaciones, ArrayList<String> facturas, long folioCliente, String cliente) {
+	public SerAlmSalida(String empresa, long folioAlmSalida, String almacen, long tipo, Date fechaAlmSalida, long dia, long mes, String usuarioCreo, String usuarioModifico, String observaciones, ArrayList<String> facturas, long folioCliente, String cliente, String detalle) {
 		setEmpresa(empresa);
 		setFolioAlmSalida(folioAlmSalida);
 		setAlmacen(almacen);
@@ -37,6 +38,7 @@ public class SerAlmSalida {
 		setFacturas(facturas);
 		setFolioCliente(folioCliente);
 		setCliente(cliente);
+		setDetalle(detalle);
 	}
 
 	public String getEmpresa() {
@@ -143,12 +145,20 @@ public class SerAlmSalida {
 		this.cliente = cliente;
 	}
 
-	public SerAlmSalidaDet[] getDetalle() {
+	public String getDetalle() {
 		return detalle;
 	}
 
-	public void setDetalle(SerAlmSalidaDet[] detalle) {
+	public void setDetalle(String detalle) {
 		this.detalle = detalle;
+	}
+
+	public SerAlmSalidaDet[] getDbDetalle() {
+		return dbDetalle;
+	}
+
+	public void setDbDetalle(SerAlmSalidaDet[] dbDetalle) {
+		this.dbDetalle = dbDetalle;
 	}
 
 }

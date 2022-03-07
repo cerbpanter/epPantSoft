@@ -63,6 +63,19 @@ public class PmTallas {
 		}
 	}
 
+	public SerTallas dameTalla(String empresa, long temporada, String talla) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+		try {
+			Key key = KeyFactory.createKey("DbTallas", empresa + "-" + temporada + "-" + talla);
+			DbTallas dbTallas = new DbTallas(datastore.get(key));
+
+			return dbTallas.toSerTallas();
+		} catch (EntityNotFoundException e) {
+			throw new Exception("La talla del modelo no existe, favor de agregarla en el catálogo de tallas");
+		}
+	}
+
 	public SerTallas[] dameTallas(String empresa, long temporada) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 

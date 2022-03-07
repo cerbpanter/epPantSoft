@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.pantsoft.eppantsoft.pm.PmAlmacen;
+import com.pantsoft.eppantsoft.pm.PmCodigoDeBarras;
 import com.pantsoft.eppantsoft.pm.PmColor;
 import com.pantsoft.eppantsoft.pm.PmProceso;
 import com.pantsoft.eppantsoft.pm.PmTalla;
@@ -17,6 +18,7 @@ import com.pantsoft.eppantsoft.pm.PmTemporada;
 import com.pantsoft.eppantsoft.pm.PmUsuario;
 import com.pantsoft.eppantsoft.pm.PmVista;
 import com.pantsoft.eppantsoft.serializable.SerAlmacen;
+import com.pantsoft.eppantsoft.serializable.SerCodigoDeBarras;
 import com.pantsoft.eppantsoft.serializable.SerColor;
 import com.pantsoft.eppantsoft.serializable.SerProceso;
 import com.pantsoft.eppantsoft.serializable.SerTalla;
@@ -203,6 +205,12 @@ public class EpCatalogos extends HttpServlet {
 				ep.voidEnBody();
 				return;
 			}
+			if (ep.esMetodo("talla_actualizar") && ep.esVersion("v1")) {
+				SerTalla serTalla = ep.getObjetFromBody(SerTalla.class);
+				serTalla = new PmTalla().actualizar(serTalla);
+				ep.objectEnBody(serTalla);
+				return;
+			}
 			if (ep.esMetodo("talla_eliminar") && ep.esVersion("v1")) {
 				ep.addPar("empresa", "String").addPar("temporada", "Long").addPar("talla", "String");
 				new PmTalla().eliminar(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"), ep.dameParametroString("talla"));
@@ -233,6 +241,12 @@ public class EpCatalogos extends HttpServlet {
 				ep.addPar("empresa", "String").addPar("temporada", "Long").addPar("talla", "String");
 				new PmTallas().eliminar(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"), ep.dameParametroString("talla"));
 				ep.voidEnBody();
+				return;
+			}
+			if (ep.esMetodo("tallas_dameTalla") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("temporada", "Long").addPar("talla", "String");
+				SerTallas serTallas = new PmTallas().dameTalla(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"), ep.dameParametroString("talla"));
+				ep.objectEnBody(serTallas);
 				return;
 			}
 			if (ep.esMetodo("tallas_dameTallas") && ep.esVersion("v1")) {
@@ -278,6 +292,32 @@ public class EpCatalogos extends HttpServlet {
 			if (ep.esMetodo("almacen_dameColores") && ep.esVersion("v1")) {
 				ep.addPar("empresa", "String");
 				SerAlmacen[] lstSer = new PmAlmacen().catAlmacen_dameAlmacenes(ep.dameParametroString("empresa"));
+				ep.objectEnBody(lstSer);
+				return;
+			}
+
+			// CodigoDeBarras ///////////////////////////////////////////////////////////
+			if (ep.esMetodo("codigoDeBarras_agregar") && ep.esVersion("v1")) {
+				SerCodigoDeBarras serCodigoDeBarras = ep.getObjetFromBody(SerCodigoDeBarras.class);
+				new PmCodigoDeBarras().agregar(serCodigoDeBarras);
+				ep.voidEnBody();
+				return;
+			}
+			if (ep.esMetodo("codigoDeBarras_actualizar") && ep.esVersion("v1")) {
+				SerCodigoDeBarras serCodigoDeBarras = ep.getObjetFromBody(SerCodigoDeBarras.class);
+				serCodigoDeBarras = new PmCodigoDeBarras().actualizar(serCodigoDeBarras);
+				ep.objectEnBody(serCodigoDeBarras);
+				return;
+			}
+			if (ep.esMetodo("codigoDeBarras_eliminar") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("temporada", "Long").addPar("modelo", "String").addPar("color", "String").addPar("talla", "String");
+				new PmCodigoDeBarras().eliminar(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"), ep.dameParametroString("modelo"), ep.dameParametroString("color"), ep.dameParametroString("talla"));
+				ep.voidEnBody();
+				return;
+			}
+			if (ep.esMetodo("codigoDeBarras_dameTallas") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("temporada", "Long").addPar("modelo", "String");
+				SerCodigoDeBarras[] lstSer = new PmCodigoDeBarras().dameCodigosDeBarras(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"), ep.dameParametroString("modelo"));
 				ep.objectEnBody(lstSer);
 				return;
 			}
