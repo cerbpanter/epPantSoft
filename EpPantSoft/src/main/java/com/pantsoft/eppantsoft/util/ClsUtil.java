@@ -7,6 +7,13 @@ import java.io.OutputStream;
 
 import javax.mail.internet.MimeUtility;
 
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.Transaction;
+import com.pantsoft.eppantsoft.entidades.DbConsecutivo;
+
 public class ClsUtil {
 
 	public static boolean esNulo(Object objeto) {
@@ -418,6 +425,44 @@ public class ClsUtil {
 		byte[] res = new byte[n];
 		System.arraycopy(tmp, 0, res, 0, n);
 		return new String(res);
+	}
+
+	// Consecutivos
+	public static long dameIdActual(String empresa, long temporada, String tipo, DatastoreService datastore, Transaction tx) throws Exception {
+		try {
+			Key key = KeyFactory.createKey("DbConsecutivo", empresa + "-" + temporada + "-" + tipo);
+			DbConsecutivo dbConsecutivo = new DbConsecutivo(datastore.get(tx, key));
+			return dbConsecutivo.getId();
+		} catch (EntityNotFoundException e) {
+			return 0L;
+		}
+	}
+
+	public static long dameSiguienteId(String empresa, long temporada, String tipo, DatastoreService datastore, Transaction tx) throws ExcepcionControlada {
+		long id = 0;
+		DbConsecutivo dbConsecutivo;
+		try {
+			Key key = KeyFactory.createKey("DbConsecutivo", empresa + "-" + temporada + "-" + tipo);
+			dbConsecutivo = new DbConsecutivo(datastore.get(tx, key));
+		} catch (EntityNotFoundException e) {
+			dbConsecutivo = new DbConsecutivo(empresa, temporada, tipo);
+		}
+		id = dbConsecutivo.getId() + 1;
+		dbConsecutivo.setId(id);
+		dbConsecutivo.guardar(datastore, tx);
+		return id;
+	}
+
+	public static void estableceId(String empresa, long temporada, String tipo, long id, DatastoreService datastore, Transaction tx) throws Exception {
+		DbConsecutivo dbConsecutivo;
+		try {
+			Key key = KeyFactory.createKey("DbConsecutivo", empresa + "-" + temporada + "-" + tipo);
+			dbConsecutivo = new DbConsecutivo(datastore.get(tx, key));
+		} catch (EntityNotFoundException e) {
+			dbConsecutivo = new DbConsecutivo(empresa, temporada, tipo);
+		}
+		dbConsecutivo.setId(id);
+		dbConsecutivo.guardar(datastore, tx);
 	}
 
 }

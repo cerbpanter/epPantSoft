@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.pantsoft.eppantsoft.pm.PmAdministracion;
+import com.pantsoft.eppantsoft.pm.PmEntidad;
 import com.pantsoft.eppantsoft.serializable.Respuesta;
 import com.pantsoft.eppantsoft.util.ClsEpUtil;
 
@@ -24,6 +25,12 @@ public class EpAdministracion extends HttpServlet {
 			if (ep.esMetodo("eliminarEntidades") && ep.esVersion("v1")) {
 				ep.addPar("entidad", "String").addPar("filtros", "String").addPar("tamPag", "Int").addPar("cursor", "String");
 				Respuesta resp = new PmAdministracion().eliminarEntidades(ep.dameParametroString("entidad"), ep.dameParametroString("filtros"), ep.dameParametroInt("tamPag"), ep.dameParametroString("cursor"));
+				ep.objectEnBody(resp);
+				return;
+			}
+			if (ep.esMetodo("entidad_GuardarEstructura") && ep.esVersion("v1")) {
+				ep.addPar("entidad", "String");
+				Respuesta resp = new PmEntidad().guardarEstructura(ep.dameParametroString("entidad"));
 				ep.objectEnBody(resp);
 				return;
 			}

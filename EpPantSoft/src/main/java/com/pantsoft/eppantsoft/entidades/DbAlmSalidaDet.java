@@ -25,6 +25,7 @@ public class DbAlmSalidaDet extends ClsEntidad {
 	private final ClsCampo fechaAlmSalida = new ClsCampo("fechaAlmSalida", Tipo.Date, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo dia = new ClsCampo("dia", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo mes = new ClsCampo("mes", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo anio = new ClsCampo("anio", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo cantidad = new ClsCampo("cantidad", Tipo.Long, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 
 	public DbAlmSalidaDet(SerAlmSalidaDet serAlmSalidaDet) throws ExcepcionControlada {
@@ -42,6 +43,7 @@ public class DbAlmSalidaDet extends ClsEntidad {
 		setFechaAlmSalida(serAlmSalidaDet.getFechaAlmSalida());
 		setDia(serAlmSalidaDet.getDia());
 		setMes(serAlmSalidaDet.getMes());
+		setAnio(serAlmSalidaDet.getAnio());
 		setCantidad(serAlmSalidaDet.getCantidad());
 	}
 
@@ -54,11 +56,11 @@ public class DbAlmSalidaDet extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, folioAlmSalida, almacen, modelo, temporada, color, talla, codigoDeBarras, fechaAlmSalida, dia, mes, cantidad);
+		return Arrays.asList(empresa, folioAlmSalida, almacen, modelo, temporada, color, talla, codigoDeBarras, fechaAlmSalida, dia, mes, anio, cantidad);
 	}
 
 	public SerAlmSalidaDet toSerAlmSalidaDet() throws ExcepcionControlada {
-		return new SerAlmSalidaDet(getEmpresa(), getFolioAlmSalida(), getAlmacen(), getModelo(), getTemporada(), getColor(), getTalla(), getCodigoDeBarras(), getFechaAlmSalida(), getDia(), getMes(), getCantidad());
+		return new SerAlmSalidaDet(getEmpresa(), getFolioAlmSalida(), getAlmacen(), getModelo(), getTemporada(), getColor(), getTalla(), getCodigoDeBarras(), getFechaAlmSalida(), getDia(), getMes(), getAnio(), getCantidad());
 	}
 
 	public String getEmpresa() throws ExcepcionControlada {
@@ -119,6 +121,14 @@ public class DbAlmSalidaDet extends ClsEntidad {
 
 	public void setMes(Long mes) throws ExcepcionControlada {
 		setLong(this.mes, mes);
+	}
+
+	public Long getAnio() throws ExcepcionControlada {
+		return getLong(anio);
+	}
+
+	public void setAnio(Long anio) throws ExcepcionControlada {
+		setLong(this.anio, anio);
 	}
 
 	public Long getCantidad() throws ExcepcionControlada {

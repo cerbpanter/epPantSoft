@@ -7,9 +7,8 @@ public class SerAlmEntrada {
 	private long folioAlmEntrada;
 	private String almacen;
 	private long tipo;
+	private String zonaHoraria;
 	private Date fechaAlmEntrada;
-	private long dia;
-	private long mes;
 	private String usuarioCreo;
 	private String usuarioModifico;
 	private String observaciones;
@@ -23,14 +22,13 @@ public class SerAlmEntrada {
 	public SerAlmEntrada() {
 	}
 
-	public SerAlmEntrada(String empresa, long folioAlmEntrada, String almacen, long tipo, Date fechaAlmEntrada, long dia, long mes, String usuarioCreo, String usuarioModifico, String observaciones, long folioOrdenProduccion, long folioMaquilero, String maquilero, String detalle) {
+	public SerAlmEntrada(String empresa, long folioAlmEntrada, String almacen, long tipo, String zonaHoraria, Date fechaAlmEntrada, String usuarioCreo, String usuarioModifico, String observaciones, long folioOrdenProduccion, long folioMaquilero, String maquilero, String detalle) {
 		setEmpresa(empresa);
 		setFolioAlmEntrada(folioAlmEntrada);
 		setAlmacen(almacen);
 		setTipo(tipo);
+		setZonaHoraria(zonaHoraria);
 		setFechaAlmEntrada(fechaAlmEntrada);
-		setDia(dia);
-		setMes(mes);
 		setUsuarioCreo(usuarioCreo);
 		setUsuarioModifico(usuarioModifico);
 		setObservaciones(observaciones);
@@ -72,28 +70,20 @@ public class SerAlmEntrada {
 		this.tipo = tipo;
 	}
 
+	public String getZonaHoraria() {
+		return zonaHoraria;
+	}
+
+	public void setZonaHoraria(String zonaHoraria) {
+		this.zonaHoraria = zonaHoraria;
+	}
+
 	public Date getFechaAlmEntrada() {
 		return fechaAlmEntrada;
 	}
 
 	public void setFechaAlmEntrada(Date fechaAlmEntrada) {
 		this.fechaAlmEntrada = fechaAlmEntrada;
-	}
-
-	public long getDia() {
-		return dia;
-	}
-
-	public void setDia(long dia) {
-		this.dia = dia;
-	}
-
-	public long getMes() {
-		return mes;
-	}
-
-	public void setMes(long mes) {
-		this.mes = mes;
 	}
 
 	public String getUsuarioCreo() {

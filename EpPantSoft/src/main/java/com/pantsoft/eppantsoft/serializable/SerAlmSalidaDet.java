@@ -14,12 +14,13 @@ public class SerAlmSalidaDet {
 	private Date fechaAlmSalida;
 	private long dia;
 	private long mes;
+	private long anio;
 	private long cantidad;
 
 	public SerAlmSalidaDet() {
 	}
 
-	public SerAlmSalidaDet(String empresa, long folioAlmSalida, String almacen, String modelo, long temporada, String color, String talla, String codigoDeBarras, Date fechaAlmSalida, long dia, long mes, long cantidad) {
+	public SerAlmSalidaDet(String empresa, long folioAlmSalida, String almacen, String modelo, long temporada, String color, String talla, String codigoDeBarras, Date fechaAlmSalida, long dia, long mes, long anio, long cantidad) {
 		setEmpresa(empresa);
 		setFolioAlmSalida(folioAlmSalida);
 		setAlmacen(almacen);
@@ -31,6 +32,7 @@ public class SerAlmSalidaDet {
 		setFechaAlmSalida(fechaAlmSalida);
 		setDia(dia);
 		setMes(mes);
+		setAnio(anio);
 		setCantidad(cantidad);
 	}
 
@@ -120,6 +122,14 @@ public class SerAlmSalidaDet {
 
 	public void setCantidad(long cantidad) {
 		this.cantidad = cantidad;
+	}
+
+	public long getAnio() {
+		return anio;
+	}
+
+	public void setAnio(long anio) {
+		this.anio = anio;
 	}
 
 	public String getCodigoDeBarras() {

@@ -8,9 +8,8 @@ public class SerAlmSalida {
 	private long folioAlmSalida;
 	private String almacen;
 	private long tipo;
+	private String zonaHoraria;
 	private Date fechaAlmSalida;
-	private long dia;
-	private long mes;
 	private String usuarioCreo;
 	private String usuarioModifico;
 	private String observaciones;
@@ -24,14 +23,13 @@ public class SerAlmSalida {
 	public SerAlmSalida() {
 	}
 
-	public SerAlmSalida(String empresa, long folioAlmSalida, String almacen, long tipo, Date fechaAlmSalida, long dia, long mes, String usuarioCreo, String usuarioModifico, String observaciones, ArrayList<String> facturas, long folioCliente, String cliente, String detalle) {
+	public SerAlmSalida(String empresa, long folioAlmSalida, String almacen, long tipo, String zonaHoraria, Date fechaAlmSalida, String usuarioCreo, String usuarioModifico, String observaciones, ArrayList<String> facturas, long folioCliente, String cliente, String detalle) {
 		setEmpresa(empresa);
 		setFolioAlmSalida(folioAlmSalida);
 		setAlmacen(almacen);
 		setTipo(tipo);
+		setZonaHoraria(zonaHoraria);
 		setFechaAlmSalida(fechaAlmSalida);
-		setDia(dia);
-		setMes(mes);
 		setUsuarioCreo(usuarioCreo);
 		setUsuarioModifico(usuarioModifico);
 		setObservaciones(observaciones);
@@ -73,28 +71,20 @@ public class SerAlmSalida {
 		this.tipo = tipo;
 	}
 
+	public String getZonaHoraria() {
+		return zonaHoraria;
+	}
+
+	public void setZonaHoraria(String zonaHoraria) {
+		this.zonaHoraria = zonaHoraria;
+	}
+
 	public Date getFechaAlmSalida() {
 		return fechaAlmSalida;
 	}
 
 	public void setFechaAlmSalida(Date fechaAlmSalida) {
 		this.fechaAlmSalida = fechaAlmSalida;
-	}
-
-	public long getDia() {
-		return dia;
-	}
-
-	public void setDia(long dia) {
-		this.dia = dia;
-	}
-
-	public long getMes() {
-		return mes;
-	}
-
-	public void setMes(long mes) {
-		this.mes = mes;
 	}
 
 	public String getUsuarioCreo() {

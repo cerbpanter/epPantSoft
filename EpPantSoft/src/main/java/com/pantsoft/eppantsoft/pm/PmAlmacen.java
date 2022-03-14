@@ -1,6 +1,7 @@
 package com.pantsoft.eppantsoft.pm;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.google.appengine.api.datastore.DatastoreService;
@@ -12,13 +13,140 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.api.datastore.Transaction;
+import com.pantsoft.eppantsoft.entidades.DbAlmEntrada;
+import com.pantsoft.eppantsoft.entidades.DbAlmEntradaDet;
+import com.pantsoft.eppantsoft.entidades.DbAlmSalida;
+import com.pantsoft.eppantsoft.entidades.DbAlmSalidaDet;
 import com.pantsoft.eppantsoft.entidades.DbAlmacen;
+import com.pantsoft.eppantsoft.entidades.DbInvModeloDet;
+import com.pantsoft.eppantsoft.serializable.SerAlmEntrada;
+import com.pantsoft.eppantsoft.serializable.SerAlmEntradaDet;
+import com.pantsoft.eppantsoft.serializable.SerAlmSalida;
+import com.pantsoft.eppantsoft.serializable.SerAlmSalidaDet;
 import com.pantsoft.eppantsoft.serializable.SerAlmacen;
+import com.pantsoft.eppantsoft.serializable.SerInvModeloDet;
+import com.pantsoft.eppantsoft.util.ClsBlobReader;
 import com.pantsoft.eppantsoft.util.ClsEntidad;
+import com.pantsoft.eppantsoft.util.ClsUtil;
 import com.pantsoft.eppantsoft.util.ExcepcionControlada;
 
 public class PmAlmacen {
 
+	// AlmEntrada
+	public SerAlmEntrada almEntrada_agregar(SerAlmEntrada serAlmEntrada) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Transaction tx = null;
+
+		try {
+			tx = ClsEntidad.iniciarTransaccion(datastore);
+
+			long folio = ClsUtil.dameSiguienteId(serAlmEntrada.getEmpresa(), 0L, "AlmEntrada", datastore, tx);
+			serAlmEntrada.setFolioAlmEntrada(folio);
+			serAlmEntrada.setFechaAlmEntrada(new Date());
+
+			DbAlmEntrada dbAlmEntrada = new DbAlmEntrada(serAlmEntrada);
+
+			if (ClsEntidad.existeEntidad(datastore, tx, "DbAlmEntrada", dbAlmEntrada.getKey().getName()))
+				throw new ExcepcionControlada("El folio AlmEntrada '" + serAlmEntrada.getFolioAlmEntrada() + "' ya existe.");
+
+			if (ClsUtil.esNulo(dbAlmEntrada.getDetalle()))
+				throw new Exception("El detalle no puede estar vacío");
+
+			ClsBlobReader blobR = new ClsBlobReader("¬", dbAlmEntrada.getDetalle(), true);
+
+			List<DbAlmEntradaDet> lstDetalle = new ArrayList<DbAlmEntradaDet>();
+			while (blobR.siguienteFila()) {
+				SerAlmEntradaDet serDet = new SerAlmEntradaDet(dbAlmEntrada.getEmpresa(), folio, dbAlmEntrada.getAlmacen(), blobR.getValorStr("modelo"), blobR.getValorLong("temporada"), blobR.getValorStr("color"), blobR.getValorStr("talla"), blobR.getValorStr("codigoDeBarras"), dbAlmEntrada.getFechaAlmEntrada(), dbAlmEntrada.getDia(), dbAlmEntrada.getAnio(), dbAlmEntrada.getMes(), blobR.getValorLong("cantidad"));
+				DbAlmEntradaDet dbDet = new DbAlmEntradaDet(serDet);
+				dbDet.guardar(datastore, tx);
+				lstDetalle.add(dbDet);
+
+				// Aumento el inventario
+				Key keyp = KeyFactory.createKey("DbEmpresa", dbDet.getEmpresa());
+				Key key = KeyFactory.createKey(keyp, "DbInvModeloDet", dbDet.getEmpresa() + "-" + dbDet.getAlmacen() + "-" + dbDet.getModelo() + "-" + dbDet.getTemporada() + "-" + dbDet.getColor() + "-" + dbDet.getTalla());
+
+				DbInvModeloDet dbInv;
+				try {
+					dbInv = new DbInvModeloDet(datastore.get(tx, key));
+					dbInv.setCantidad(dbInv.getCantidad() + dbDet.getCantidad());
+				} catch (EntityNotFoundException e) {
+					SerInvModeloDet serInv = new SerInvModeloDet(dbDet.getEmpresa(), dbDet.getAlmacen(), dbDet.getModelo(), dbDet.getTemporada(), dbDet.getColor(), dbDet.getTalla(), dbDet.getCodigoDeBarras(), dbDet.getCantidad());
+					dbInv = new DbInvModeloDet(serInv);
+				}
+				dbInv.guardar(datastore, tx);
+			}
+
+			dbAlmEntrada.guardar(datastore, tx);
+			tx.commit();
+
+			return dbAlmEntrada.toSerAlmEntrada();
+		} finally {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+		}
+	}
+
+	// AlmSalida
+	public SerAlmSalida almSalida_agregar(SerAlmSalida serAlmSalida) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Transaction tx = null;
+
+		try {
+			tx = ClsEntidad.iniciarTransaccion(datastore);
+
+			long folio = ClsUtil.dameSiguienteId(serAlmSalida.getEmpresa(), 0L, "AlmSalida", datastore, tx);
+			serAlmSalida.setFolioAlmSalida(folio);
+			serAlmSalida.setFechaAlmSalida(new Date());
+
+			DbAlmSalida dbAlmSalida = new DbAlmSalida(serAlmSalida);
+
+			if (ClsEntidad.existeEntidad(datastore, tx, "DbAlmSalida", dbAlmSalida.getKey().getName()))
+				throw new ExcepcionControlada("El folio AlmSalida '" + serAlmSalida.getFolioAlmSalida() + "' ya existe.");
+
+			if (ClsUtil.esNulo(dbAlmSalida.getDetalle()))
+				throw new Exception("El detalle no puede estar vacío");
+
+			ClsBlobReader blobR = new ClsBlobReader("¬", dbAlmSalida.getDetalle(), true);
+
+			List<DbAlmSalidaDet> lstDetalle = new ArrayList<DbAlmSalidaDet>();
+			while (blobR.siguienteFila()) {
+				SerAlmSalidaDet serDet = new SerAlmSalidaDet(dbAlmSalida.getEmpresa(), folio, dbAlmSalida.getAlmacen(), blobR.getValorStr("modelo"), blobR.getValorLong("temporada"), blobR.getValorStr("color"), blobR.getValorStr("talla"), blobR.getValorStr("codigoDeBarras"), dbAlmSalida.getFechaAlmSalida(), dbAlmSalida.getDia(), dbAlmSalida.getMes(), dbAlmSalida.getAnio(), blobR.getValorLong("cantidad"));
+				DbAlmSalidaDet dbDet = new DbAlmSalidaDet(serDet);
+				dbDet.guardar(datastore, tx);
+				lstDetalle.add(dbDet);
+
+				// Decremento el inventario
+				Key keyp = KeyFactory.createKey("DbEmpresa", dbDet.getEmpresa());
+				Key key = KeyFactory.createKey(keyp, "DbInvModeloDet", dbDet.getEmpresa() + "-" + dbDet.getAlmacen() + "-" + dbDet.getModelo() + "-" + dbDet.getTemporada() + "-" + dbDet.getColor() + "-" + dbDet.getTalla());
+
+				try {
+					DbInvModeloDet dbInv = new DbInvModeloDet(datastore.get(tx, key));
+					if (dbInv.getCantidad() < dbDet.getCantidad()) {
+						throw new Exception("No hay suficiente inventario para " + dbDet.getModelo() + "-" + dbDet.getTemporada() + "-" + dbDet.getColor() + "-" + dbDet.getTalla() + " (Inv: " + dbInv.getCantidad() + ", Cant: " + dbDet.getCantidad() + ")");
+					} else if (dbInv.getCantidad() == dbDet.getCantidad()) {
+						// Si se va a cero se elimina el regitro de inventario
+						dbInv.eliminar(datastore, tx);
+					} else {
+						dbInv.setCantidad(dbInv.getCantidad() - dbDet.getCantidad());
+						dbInv.guardar(datastore, tx);
+					}
+				} catch (EntityNotFoundException e) {
+					throw new Exception("No hay suficiente inventario para " + dbDet.getModelo() + "-" + dbDet.getTemporada() + "-" + dbDet.getColor() + "-" + dbDet.getTalla() + " (Inv: 0, Cant: " + dbDet.getCantidad() + ")");
+				}
+			}
+
+			dbAlmSalida.guardar(datastore, tx);
+			tx.commit();
+
+			return dbAlmSalida.toSerAlmSalida();
+		} finally {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+		}
+	}
+
+	// CatAlmacen
 	public void catAlmacen_agregar(SerAlmacen serAlmacen) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 

@@ -7,6 +7,7 @@ public class ClsBlobWriter {
 	StringBuilder sb;
 	boolean pipe;
 	String separadorFila = "\n";
+	int numFilas = 1;
 
 	public ClsBlobWriter() {
 		sb = new StringBuilder(1048576); // 1MB
@@ -26,6 +27,11 @@ public class ClsBlobWriter {
 	public void nuevaFila() {
 		sb.append(separadorFila);
 		pipe = false;
+		numFilas++;
+	}
+
+	public int getNumFilas() {
+		return numFilas;
 	}
 
 	public int length() {

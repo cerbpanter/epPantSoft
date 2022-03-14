@@ -2,8 +2,10 @@ package com.pantsoft.eppantsoft.entidades;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.Entity;
@@ -22,9 +24,11 @@ public class DbAlmEntrada extends ClsEntidad {
 	private final ClsCampo folioAlmEntrada = new ClsCampo("folioAlmEntrada", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 2, NO_SUSTITUIR_NULL);
 	private final ClsCampo almacen = new ClsCampo("almacen", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo tipo = new ClsCampo("tipo", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo zonaHoraria = new ClsCampo("zonaHoraria", Tipo.String, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo fechaAlmEntrada = new ClsCampo("fechaAlmEntrada", Tipo.Date, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo dia = new ClsCampo("dia", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo mes = new ClsCampo("mes", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo anio = new ClsCampo("anio", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo usuarioCreo = new ClsCampo("usuarioCreo", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo usuarioModifico = new ClsCampo("usuarioModifico", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo observaciones = new ClsCampo("observaciones", Tipo.String, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
@@ -44,15 +48,14 @@ public class DbAlmEntrada extends ClsEntidad {
 		setLong(folioAlmEntrada, serAlmEntrada.getFolioAlmEntrada());
 		setAlmacen(serAlmEntrada.getAlmacen());
 		setTipo(serAlmEntrada.getTipo());
-		setFechaAlmEntrada(serAlmEntrada.getFechaAlmEntrada());
-		setDia(serAlmEntrada.getDia());
-		setMes(serAlmEntrada.getMes());
+		setFechaAlmEntrada(serAlmEntrada.getFechaAlmEntrada(), serAlmEntrada.getZonaHoraria());
 		setUsuarioCreo(serAlmEntrada.getUsuarioCreo());
 		setUsuarioModifico(serAlmEntrada.getUsuarioModifico());
 		setObservaciones(serAlmEntrada.getObservaciones());
 		setFolioOrdenProduccion(serAlmEntrada.getFolioOrdenProduccion());
 		setFolioMaquilero(serAlmEntrada.getFolioMaquilero());
 		setMaquilero(serAlmEntrada.getMaquilero());
+		setDetalle(serAlmEntrada.getDetalle());
 	}
 
 	public DbAlmEntrada(Entity entidad) {
@@ -64,15 +67,15 @@ public class DbAlmEntrada extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, folioAlmEntrada, almacen, tipo, fechaAlmEntrada, dia, mes, usuarioCreo, usuarioModifico, observaciones, folioOrdenProduccion, folioMaquilero, maquilero, detalle);
+		return Arrays.asList(empresa, folioAlmEntrada, almacen, tipo, zonaHoraria, fechaAlmEntrada, dia, mes, anio, usuarioCreo, usuarioModifico, observaciones, folioOrdenProduccion, folioMaquilero, maquilero, detalle);
 	}
 
 	public SerAlmEntrada toSerAlmEntrada() throws ExcepcionControlada {
-		return new SerAlmEntrada(getEmpresa(), getFolioAlmEntrada(), getAlmacen(), getTipo(), getFechaAlmEntrada(), getDia(), getMes(), getUsuarioCreo(), getUsuarioModifico(), getObservaciones(), getFolioOrdenProduccion(), getFolioMaquilero(), getMaquilero(), getDetalle());
+		return new SerAlmEntrada(getEmpresa(), getFolioAlmEntrada(), getAlmacen(), getTipo(), getZonaHoraria(), getFechaAlmEntrada(), getUsuarioCreo(), getUsuarioModifico(), getObservaciones(), getFolioOrdenProduccion(), getFolioMaquilero(), getMaquilero(), getDetalle());
 	}
 
 	public SerAlmEntrada toSerAlmEntradaCompleto(DatastoreService datastore, Transaction tx) throws ExcepcionControlada {
-		SerAlmEntrada serAlmEntrada = new SerAlmEntrada(getEmpresa(), getFolioAlmEntrada(), getAlmacen(), getTipo(), getFechaAlmEntrada(), getDia(), getMes(), getUsuarioCreo(), getUsuarioModifico(), getObservaciones(), getFolioOrdenProduccion(), getFolioMaquilero(), getMaquilero(), getDetalle());
+		SerAlmEntrada serAlmEntrada = new SerAlmEntrada(getEmpresa(), getFolioAlmEntrada(), getAlmacen(), getTipo(), getZonaHoraria(), getFechaAlmEntrada(), getUsuarioCreo(), getUsuarioModifico(), getObservaciones(), getFolioOrdenProduccion(), getFolioMaquilero(), getMaquilero(), getDetalle());
 
 		// Agrego el detalle
 		getDbDetalle(datastore, tx);
@@ -108,28 +111,40 @@ public class DbAlmEntrada extends ClsEntidad {
 		setLong(this.tipo, tipo);
 	}
 
+	public String getZonaHoraria() throws ExcepcionControlada {
+		return getString(zonaHoraria);
+	}
+
 	public Date getFechaAlmEntrada() throws ExcepcionControlada {
 		return getDate(fechaAlmEntrada);
 	}
 
-	public void setFechaAlmEntrada(Date fechaAlmEntrada) throws ExcepcionControlada {
+	public void setFechaAlmEntrada(Date fechaAlmEntrada, String zonaHoraria) throws ExcepcionControlada {
+		if (fechaAlmEntrada == null) {
+			throw new ExcepcionControlada("El campo Fecha no puede quedar vacío.");
+		}
 		setDate(this.fechaAlmEntrada, fechaAlmEntrada);
+		setString(this.zonaHoraria, zonaHoraria);
+		TimeZone tzGMT = TimeZone.getTimeZone(zonaHoraria);
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(fechaAlmEntrada);
+		cal.setTimeZone(tzGMT);
+
+		setLong(this.anio, (long) cal.get(Calendar.YEAR));
+		setLong(this.mes, (long) ((cal.get(Calendar.YEAR) * 100) + cal.get(Calendar.MONTH) + 1));
+		setLong(this.dia, (long) ((cal.get(Calendar.YEAR) * 10000) + ((cal.get(Calendar.MONTH) + 1) * 100) + cal.get(Calendar.DAY_OF_MONTH)));
 	}
 
 	public Long getDia() throws ExcepcionControlada {
 		return getLong(dia);
 	}
 
-	public void setDia(Long dia) throws ExcepcionControlada {
-		setLong(this.dia, dia);
-	}
-
 	public Long getMes() throws ExcepcionControlada {
 		return getLong(mes);
 	}
 
-	public void setMes(Long mes) throws ExcepcionControlada {
-		setLong(this.mes, mes);
+	public Long getAnio() throws ExcepcionControlada {
+		return getLong(anio);
 	}
 
 	public String getUsuarioCreo() throws ExcepcionControlada {

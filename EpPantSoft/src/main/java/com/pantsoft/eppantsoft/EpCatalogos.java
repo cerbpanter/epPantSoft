@@ -321,6 +321,13 @@ public class EpCatalogos extends HttpServlet {
 				ep.objectEnBody(lstSer);
 				return;
 			}
+			// if (ep.esMetodo("codigoDeBarras_dameTalla") && ep.esVersion("v1")) {
+			// ep.addPar("empresa", "String").addPar("temporada", "Long").addPar("codigoDeBarras", "String");
+			// SerCodigoDeBarras ser = new PmCodigoDeBarras().dameCodigoDeBarras(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"), ep.dameParametroString("codigoDeBarras"));
+			// // El código de barras no existe, deben agregarlo desde la ventana de modelos
+			// ep.objectEnBody(ser);
+			// return;
+			// }
 
 			ep.notFoundEnBody();
 		} catch (Exception e) {

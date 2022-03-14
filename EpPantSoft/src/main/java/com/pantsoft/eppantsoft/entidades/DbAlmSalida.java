@@ -2,8 +2,10 @@ package com.pantsoft.eppantsoft.entidades;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.Entity;
@@ -22,9 +24,11 @@ public class DbAlmSalida extends ClsEntidad {
 	private final ClsCampo folioAlmSalida = new ClsCampo("folioAlmSalida", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 2, NO_SUSTITUIR_NULL);
 	private final ClsCampo almacen = new ClsCampo("almacen", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo tipo = new ClsCampo("tipo", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo zonaHoraria = new ClsCampo("zonaHoraria", Tipo.String, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo fechaAlmSalida = new ClsCampo("fechaAlmSalida", Tipo.Date, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo dia = new ClsCampo("dia", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo mes = new ClsCampo("mes", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo anio = new ClsCampo("anio", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo usuarioCreo = new ClsCampo("usuarioCreo", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo usuarioModifico = new ClsCampo("usuarioModifico", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo observaciones = new ClsCampo("observaciones", Tipo.String, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
@@ -44,9 +48,7 @@ public class DbAlmSalida extends ClsEntidad {
 		setLong(folioAlmSalida, serAlmSalida.getFolioAlmSalida());
 		setAlmacen(serAlmSalida.getAlmacen());
 		setTipo(serAlmSalida.getTipo());
-		setFechaAlmSalida(serAlmSalida.getFechaAlmSalida());
-		setDia(serAlmSalida.getDia());
-		setMes(serAlmSalida.getMes());
+		setFechaAlmSalida(serAlmSalida.getFechaAlmSalida(), serAlmSalida.getZonaHoraria());
 		setUsuarioCreo(serAlmSalida.getUsuarioCreo());
 		setUsuarioModifico(serAlmSalida.getUsuarioModifico());
 		setObservaciones(serAlmSalida.getObservaciones());
@@ -65,15 +67,15 @@ public class DbAlmSalida extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, folioAlmSalida, almacen, tipo, fechaAlmSalida, dia, mes, usuarioCreo, usuarioModifico, observaciones, facturas, folioCliente, cliente, detalle);
+		return Arrays.asList(empresa, folioAlmSalida, almacen, tipo, zonaHoraria, fechaAlmSalida, dia, mes, anio, usuarioCreo, usuarioModifico, observaciones, facturas, folioCliente, cliente, detalle);
 	}
 
 	public SerAlmSalida toSerAlmSalida() throws ExcepcionControlada {
-		return new SerAlmSalida(getEmpresa(), getFolioAlmSalida(), getAlmacen(), getTipo(), getFechaAlmSalida(), getDia(), getMes(), getUsuarioCreo(), getUsuarioModifico(), getObservaciones(), getFacturas(), getFolioCliente(), getCliente(), getDetalle());
+		return new SerAlmSalida(getEmpresa(), getFolioAlmSalida(), getAlmacen(), getTipo(), getZonaHoraria(), getFechaAlmSalida(), getUsuarioCreo(), getUsuarioModifico(), getObservaciones(), getFacturas(), getFolioCliente(), getCliente(), getDetalle());
 	}
 
 	public SerAlmSalida toSerAlmSalidaCompleto(DatastoreService datastore, Transaction tx) throws ExcepcionControlada {
-		SerAlmSalida serAlmSalida = new SerAlmSalida(getEmpresa(), getFolioAlmSalida(), getAlmacen(), getTipo(), getFechaAlmSalida(), getDia(), getMes(), getUsuarioCreo(), getUsuarioModifico(), getObservaciones(), getFacturas(), getFolioCliente(), getCliente(), getDetalle());
+		SerAlmSalida serAlmSalida = new SerAlmSalida(getEmpresa(), getFolioAlmSalida(), getAlmacen(), getTipo(), getZonaHoraria(), getFechaAlmSalida(), getUsuarioCreo(), getUsuarioModifico(), getObservaciones(), getFacturas(), getFolioCliente(), getCliente(), getDetalle());
 
 		// Agrego el detalle
 		getDbDetalle(datastore, tx);
@@ -109,12 +111,31 @@ public class DbAlmSalida extends ClsEntidad {
 		setLong(this.tipo, tipo);
 	}
 
+	public String getZonaHoraria() throws ExcepcionControlada {
+		return getString(zonaHoraria);
+	}
+
 	public Date getFechaAlmSalida() throws ExcepcionControlada {
 		return getDate(fechaAlmSalida);
 	}
 
-	public void setFechaAlmSalida(Date fechaAlmSalida) throws ExcepcionControlada {
+	public void setFechaAlmSalida(Date fechaAlmSalida, String zonaHoraria) throws ExcepcionControlada {
 		setDate(this.fechaAlmSalida, fechaAlmSalida);
+
+		if (fechaAlmSalida == null) {
+			throw new ExcepcionControlada("El campo Fecha no puede quedar vacío.");
+		}
+		setDate(this.fechaAlmSalida, fechaAlmSalida);
+		setString(this.zonaHoraria, zonaHoraria);
+		TimeZone tzGMT = TimeZone.getTimeZone(zonaHoraria);
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(fechaAlmSalida);
+		cal.setTimeZone(tzGMT);
+
+		setLong(this.anio, (long) cal.get(Calendar.YEAR));
+		setLong(this.mes, (long) ((cal.get(Calendar.YEAR) * 100) + cal.get(Calendar.MONTH) + 1));
+		setLong(this.dia, (long) ((cal.get(Calendar.YEAR) * 10000) + ((cal.get(Calendar.MONTH) + 1) * 100) + cal.get(Calendar.DAY_OF_MONTH)));
+
 	}
 
 	public Long getDia() throws ExcepcionControlada {
@@ -131,6 +152,10 @@ public class DbAlmSalida extends ClsEntidad {
 
 	public void setMes(Long mes) throws ExcepcionControlada {
 		setLong(this.mes, mes);
+	}
+
+	public Long getAnio() throws ExcepcionControlada {
+		return getLong(anio);
 	}
 
 	public String getUsuarioCreo() throws ExcepcionControlada {
