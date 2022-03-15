@@ -6,6 +6,7 @@ import java.util.List;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.pantsoft.eppantsoft.serializable.SerEntidadCampo;
 import com.pantsoft.eppantsoft.util.ClsCampo;
 import com.pantsoft.eppantsoft.util.ClsCampo.Tipo;
 import com.pantsoft.eppantsoft.util.ClsEntidad;
@@ -23,9 +24,11 @@ public class DbEntidadCampo extends ClsEntidad {
 	private final ClsCampo valorDefault = new ClsCampo("valorDefault", Tipo.String, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo posLlave = new ClsCampo("posLlave", Tipo.Long, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo sustituirNull = new ClsCampo("sustituirNull", Tipo.Boolean, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo descripcion = new ClsCampo("descripcion", Tipo.Text, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 
 	public DbEntidadCampo(String entidad, ClsCampo clsCampo) throws ExcepcionControlada {
-		Key key = KeyFactory.createKey("DbEntidadCampo", entidad + "-" + clsCampo.getNombre());
+		Key keyp = KeyFactory.createKey("DbEntidad", entidad);
+		Key key = KeyFactory.createKey(keyp, "DbEntidadCampo", entidad + "-" + clsCampo.getNombre());
 		setEntidad(new Entity(key));
 		asignarValoresDefault();
 		setString(this.entidad, entidad);
@@ -39,22 +42,46 @@ public class DbEntidadCampo extends ClsEntidad {
 		setValorDefault(clsCampo.getValorDefault());
 		setPosLlave(clsCampo.getPosLlave());
 		setSustituirNull(clsCampo.getSustituirNull());
+		setDescripcion(clsCampo.getDescripcion());
 	}
 
-	public DbEntidadCampo(Entity entidad) {
+	public DbEntidadCampo(SerEntidadCampo serEntidadCampo) throws ExcepcionControlada {
+		Key keyp = KeyFactory.createKey("DbEntidad", serEntidadCampo.getEntidad());
+		Key key = KeyFactory.createKey(keyp, "DbEntidadCampo", serEntidadCampo.getEntidad() + "-" + serEntidadCampo.getCampo());
+		setEntidad(new Entity(key));
+		asignarValoresDefault();
+		setString(this.entidad, serEntidadCampo.getEntidad());
+		setString(campo, serEntidadCampo.getCampo());
+		setTipo(serEntidadCampo.getTipo());
+		setIndexado(serEntidadCampo.getIndexado());
+		setPermiteNull(serEntidadCampo.getPermiteNull());
+		setLargoMinimo(serEntidadCampo.getLargoMinimo());
+		setLargoMaximo(serEntidadCampo.getLargoMaximo());
+		setEntidadGrande(serEntidadCampo.getEntidadGrande());
+		setValorDefault(serEntidadCampo.getValorDefault());
+		setPosLlave(serEntidadCampo.getPosLlave());
+		setSustituirNull(serEntidadCampo.getSustituirNull());
+	}
+
+	public DbEntidadCampo(Entity entidad) throws ExcepcionControlada {
 		setEntidad(entidad);
+		asignarValoresDefault();
 	}
 
 	public boolean getLiberado() {
-		return false;
+		return true;
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(entidad, campo, tipo, indexado, permiteNull, largoMinimo, largoMaximo, entidadGrande, valorDefault, posLlave, sustituirNull);
+		return Arrays.asList(entidad, campo, tipo, indexado, permiteNull, largoMinimo, largoMaximo, entidadGrande, valorDefault, posLlave, sustituirNull, descripcion);
 	}
 
 	public ClsCampo toClsCampo() throws ExcepcionControlada {
 		return new ClsCampo(getCampo(), Tipo.valueOf(getTipo()), getIndexado(), getPermiteNull(), (int) getLargoMinimo(), (int) getLargoMaximo(), getEntidadGrande(), getValorDefault(), (int) getPosLlave(), getSustituirNull());
+	}
+
+	public SerEntidadCampo toSerEntidadCampo() throws ExcepcionControlada {
+		return new SerEntidadCampo(getEntidadNombre(), getCampo(), getTipo(), getIndexado(), getPermiteNull(), getLargoMinimo(), getLargoMaximo(), getEntidadGrande(), getValorDefault(), getPosLlave(), getSustituirNull());
 	}
 
 	public String getEntidadNombre() throws ExcepcionControlada {
@@ -135,5 +162,13 @@ public class DbEntidadCampo extends ClsEntidad {
 
 	public void setSustituirNull(boolean sustituirNull) throws ExcepcionControlada {
 		setBoolean(this.sustituirNull, sustituirNull);
+	}
+
+	public String getDescripcion() throws ExcepcionControlada {
+		return getText(descripcion);
+	}
+
+	public void setDescripcion(String descripcion) throws ExcepcionControlada {
+		setText(this.descripcion, descripcion);
 	}
 }

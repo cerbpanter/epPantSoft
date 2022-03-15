@@ -11,6 +11,7 @@ public class ClsCampo {
 	private String valorDefault = null;
 	private int posLlave = 0;
 	private boolean sustituirNull = false;
+	private String descripcion;
 
 	public enum Tipo {
 		String, Boolean, Long, Double, Date, Rating, Text, Blob, ArrayString, ArrayLong, Email
@@ -27,6 +28,22 @@ public class ClsCampo {
 		this.valorDefault = valorDefault;
 		this.posLlave = posLlave;
 		this.sustituirNull = sustituirNull;
+		// if (this.sustituirNull && valorDefault.equals("<SiNubeDefault>"))
+		// throw new ExcepcionControlada("Error en definición del campo '" + this.nombre + "', no se puede sustituir null si el valor default es null");
+	}
+
+	public ClsCampo(String nombre, Tipo tipo, boolean indexado, boolean permiteNull, int largoMinimo, int largoMaximo, boolean entidadGrande, String valorDefault, int posLlave, boolean sustituirNull, String descripcion) {
+		this.nombre = nombre;
+		this.tipo = tipo;
+		this.indexado = indexado;
+		this.permiteNull = permiteNull;
+		this.largoMinimo = largoMinimo;
+		this.largoMaximo = largoMaximo;
+		this.entidadGrande = entidadGrande;
+		this.valorDefault = valorDefault;
+		this.posLlave = posLlave;
+		this.sustituirNull = sustituirNull;
+		this.descripcion = descripcion;
 		// if (this.sustituirNull && valorDefault.equals("<SiNubeDefault>"))
 		// throw new ExcepcionControlada("Error en definición del campo '" + this.nombre + "', no se puede sustituir null si el valor default es null");
 	}
@@ -69,5 +86,13 @@ public class ClsCampo {
 
 	public boolean getSustituirNull() {
 		return sustituirNull;
+	}
+
+	public String getDescripcion() {
+		return descripcion;
+	}
+
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
 	}
 }

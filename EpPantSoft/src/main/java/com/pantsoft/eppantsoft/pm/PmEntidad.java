@@ -37,6 +37,7 @@ import com.pantsoft.eppantsoft.entidades.DbListaPrecios;
 import com.pantsoft.eppantsoft.entidades.DbListaPreciosDet;
 import com.pantsoft.eppantsoft.entidades.DbModelo;
 import com.pantsoft.eppantsoft.entidades.DbModeloHabilitacion;
+import com.pantsoft.eppantsoft.entidades.DbModeloImagen;
 import com.pantsoft.eppantsoft.entidades.DbModeloProceso;
 import com.pantsoft.eppantsoft.entidades.DbModeloProducido;
 import com.pantsoft.eppantsoft.entidades.DbProceso;
@@ -843,9 +844,9 @@ public class PmEntidad {
 					if (!dbEntidadTemp.getString(mapCamposBd.get("empresa")).equals(empresa))
 						throw new ExcepcionControlada("La empresa de la entidad no coincide con la de la firma - " + dbEntidadTemp.getString(mapCamposBd.get("empresa")));
 			if (!usuarioAdmin && entidadCns.getDbEntidad().getValidarSucursal() && (dbEntidadTemp.getKey().getName() == null || !dbEntidadTemp.getKey().getName().equals("Null")) && mapCamposBd.containsKey("temporada"))
-				if (!dbEntidadTemp.getString(mapCamposBd.get("temporada")).equals(temporada))
-					if (!(dbEntidadTemp.getKey().getKind().equals("DbParametro") && ClsUtil.esNulo(dbEntidadTemp.getString(mapCamposBd.get("temporada"))))) // Si es un parámetro por empresa no se valida la sucursal
-						throw new ExcepcionControlada("La sucursal de la entidad no coincide con la de la firma - " + dbEntidadTemp.getString(mapCamposBd.get("sucursal")));
+				if (dbEntidadTemp.getLong(mapCamposBd.get("temporada")).longValue() != temporada)
+					// if (!(dbEntidadTemp.getKey().getKind().equals("DbParametro") && ClsUtil.esNulo(dbEntidadTemp.getString(mapCamposBd.get("temporada"))))) // Si es un parámetro por empresa no se valida la sucursal
+					throw new ExcepcionControlada("La temporada de la entidad no coincide con la de la firma - " + dbEntidadTemp.getLong(mapCamposBd.get("temporada")));
 			// Reviso si hay sub entidades y las obtengo
 			if (entidadCns.getSubEntidad() != null) {
 				boolean ejecutarConsulta = true;
@@ -1550,7 +1551,7 @@ public class PmEntidad {
 	private List<ClsCampo> dameCampos(String entidad) throws Exception {
 		Entity entity = new Entity(KeyFactory.createKey("Entidad", "Prueba"));
 		List<ClsCampo> lstCampos;
-		if (entidad.equals("DbAcreedorDeudor")) {
+		if (entidad.equals("DbAlmacen")) {
 			DbAlmacen db = new DbAlmacen(entity);
 			lstCampos = db.getCampos();
 		} else if (entidad.equals("DbAlmEntrada")) {
@@ -1580,7 +1581,7 @@ public class PmEntidad {
 		} else if (entidad.equals("DbEmpresa")) {
 			DbEmpresa db = new DbEmpresa(entity);
 			lstCampos = db.getCampos();
-		} else if (entidad.equals("DbEntidfad")) {
+		} else if (entidad.equals("DbEntidad")) {
 			DbEntidad db = new DbEntidad(entity);
 			lstCampos = db.getCampos();
 		} else if (entidad.equals("DbEntidadCampo")) {
@@ -1598,8 +1599,11 @@ public class PmEntidad {
 		} else if (entidad.equals("DbModelo")) {
 			DbModelo db = new DbModelo(entity);
 			lstCampos = db.getCampos();
-		} else if (entidad.equals("DbModeloHabiolitacion")) {
+		} else if (entidad.equals("DbModeloHabilitacion")) {
 			DbModeloHabilitacion db = new DbModeloHabilitacion(entity);
+			lstCampos = db.getCampos();
+		} else if (entidad.equals("DbModeloImagen")) {
+			DbModeloImagen db = new DbModeloImagen(entity);
 			lstCampos = db.getCampos();
 		} else if (entidad.equals("DbModeloProceso")) {
 			DbModeloProceso db = new DbModeloProceso(entity);

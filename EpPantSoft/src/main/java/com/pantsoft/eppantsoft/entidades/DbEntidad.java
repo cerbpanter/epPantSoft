@@ -6,6 +6,7 @@ import java.util.List;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.pantsoft.eppantsoft.serializable.SerEntidad;
 import com.pantsoft.eppantsoft.util.ClsCampo;
 import com.pantsoft.eppantsoft.util.ClsCampo.Tipo;
 import com.pantsoft.eppantsoft.util.ClsEntidad;
@@ -29,16 +30,32 @@ public class DbEntidad extends ClsEntidad {
 		setValidarSucursal(validarSucursal);
 	}
 
-	public DbEntidad(Entity entidad) {
+	public DbEntidad(SerEntidad serEntidad) throws ExcepcionControlada {
+		Key key = KeyFactory.createKey("DbEntidad", serEntidad.getEntidad());
+		setEntidad(new Entity(key));
+		asignarValoresDefault();
+		setString(this.entidad, serEntidad.getEntidad());
+		setEndpoint(serEntidad.getEndpoint());
+		setRespaldar(serEntidad.getRespaldar());
+		setSoloAdmin(serEntidad.getSoloAdmin());
+		setValidarSucursal(serEntidad.getValidarSucursal());
+	}
+
+	public DbEntidad(Entity entidad) throws ExcepcionControlada {
 		setEntidad(entidad);
+		asignarValoresDefault();
+	}
+
+	public SerEntidad toSerEntidad() throws Exception {
+		return new SerEntidad(getEntidadNombre(), getRespaldar(), getEndpoint(), getSoloAdmin(), getValidarSucursal());
 	}
 
 	public boolean getLiberado() {
-		return false;
+		return true;
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(entidad, endpoint, respaldar);
+		return Arrays.asList(entidad, endpoint, respaldar, soloAdmin, validarSucursal);
 	}
 
 	public String getEntidadNombre() throws ExcepcionControlada {
