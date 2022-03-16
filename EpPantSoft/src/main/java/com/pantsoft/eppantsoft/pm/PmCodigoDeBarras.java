@@ -100,19 +100,46 @@ public class PmCodigoDeBarras {
 
 	public void eliminar(String empresa, long temporada, String modelo, String color, String talla) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-		try {
-			Key key = KeyFactory.createKey("DbCodigoDeBarras", empresa + "-" + temporada + "-" + modelo + "-" + color + "-" + talla);
-			datastore.get(key);
-			// Validar que no participe
-			// List<Filter> lstFiltros = new ArrayList<Filter>();
-			// lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, empresa));
-			// lstFiltros.add(new FilterPredicate("CodigoDeBarras", FilterOperator.EQUAL, CodigoDeBarras));
-			// if (ClsEntidad.ejecutarConsultaHayEntidades(datastore, "DbProduccion", lstFiltros))
-			// throw new Exception("La CodigoDeBarras " + CodigoDeBarras + " tiene registros de producción, imposible eliminar.");
+		Transaction tx = null;
 
-			datastore.delete(key);
-		} catch (EntityNotFoundException e) {
-			throw new ExcepcionControlada("El codigoDeBarras '" + empresa + "-" + temporada + "-" + modelo + "-" + color + "-" + talla + "' no existe.");
+		try {
+			tx = ClsEntidad.iniciarTransaccion(datastore);
+
+			Key key = KeyFactory.createKey("DbCodigoDeBarras", empresa + "-" + temporada + "-" + modelo + "-" + color + "-" + talla);
+			DbCodigoDeBarras dbCodigoDeBarras;
+			try {
+				dbCodigoDeBarras = new DbCodigoDeBarras(datastore.get(tx, key));
+			} catch (EntityNotFoundException e) {
+				throw new Exception("El código de barras no existe (DbCodigoDeBarras)");
+			}
+			key = KeyFactory.createKey("DbCodigoDeBarras_A", empresa + "-" + temporada + "-" + dbCodigoDeBarras.getCodigoDeBarras());
+			DbCodigoDeBarras_A dbCodigoDeBarras_A;
+			try {
+				dbCodigoDeBarras_A = new DbCodigoDeBarras_A(datastore.get(tx, key));
+			} catch (EntityNotFoundException e) {
+				throw new Exception("El código de barras no existe (DbCodigoDeBarras_A)");
+			}
+			// Validar que no participe
+			List<Filter> lstFiltros = new ArrayList<Filter>();
+			lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, empresa));
+			lstFiltros.add(new FilterPredicate("temporada", FilterOperator.EQUAL, temporada));
+			lstFiltros.add(new FilterPredicate("CodigoDeBarras", FilterOperator.EQUAL, dbCodigoDeBarras.getCodigoDeBarras()));
+			if (ClsEntidad.ejecutarConsultaHayEntidades(datastore, "DbAlmEntradaDet", lstFiltros))
+				throw new Exception("El CodigoDeBarras " + dbCodigoDeBarras.getCodigoDeBarras() + " tiene registros de Almacén Entrada, imposible eliminar.");
+
+			if (ClsEntidad.ejecutarConsultaHayEntidades(datastore, "DbAlmSalidaDet", lstFiltros))
+				throw new Exception("El CodigoDeBarras " + dbCodigoDeBarras.getCodigoDeBarras() + " tiene registros de Almacén Salida, imposible eliminar.");
+
+			if (ClsEntidad.ejecutarConsultaHayEntidades(datastore, "DbInvModeloDet", lstFiltros))
+				throw new Exception("El CodigoDeBarras " + dbCodigoDeBarras.getCodigoDeBarras() + " tiene registros de Inventario, imposible eliminar.");
+
+			dbCodigoDeBarras.eliminar(datastore, tx);
+			dbCodigoDeBarras_A.eliminar(datastore, tx);
+
+			tx.commit();
+		} finally {
+			if (tx != null && tx.isActive())
+				tx.rollback();
 		}
 	}
 
