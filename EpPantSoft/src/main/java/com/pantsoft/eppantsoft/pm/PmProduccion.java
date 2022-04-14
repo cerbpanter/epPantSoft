@@ -14,8 +14,10 @@ import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Transaction;
+import com.pantsoft.eppantsoft.entidades.DbModeloHabilitacion;
 import com.pantsoft.eppantsoft.entidades.DbModeloProducido;
 import com.pantsoft.eppantsoft.entidades.DbProduccion;
+import com.pantsoft.eppantsoft.entidades.DbTelaHabilitacion;
 import com.pantsoft.eppantsoft.serializable.SerProduccion;
 import com.pantsoft.eppantsoft.util.ClsBlobReader;
 import com.pantsoft.eppantsoft.util.ClsEntidad;
@@ -134,7 +136,41 @@ public class PmProduccion {
 			dbProduccion.setProceso2(serProduccion.getProceso2());
 			dbProduccion.setTallerProceso2(serProduccion.getTallerProceso2());
 			dbProduccion.setPrecioProceso2(serProduccion.getPrecioProceso2());
-			dbProduccion.setConsumo1(serProduccion.getConsumo1());
+			if (dbProduccion.getConsumo1() != serProduccion.getConsumo1()) {
+				dbProduccion.setConsumo1(serProduccion.getConsumo1());
+				// Busco la tela y si solo hay una, actualizo el trazo con el consumo 1
+				List<Filter> lstFiltros = new ArrayList<Filter>();
+				lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, dbProduccion.getEmpresa()));
+				lstFiltros.add(new FilterPredicate("temporada", FilterOperator.EQUAL, dbProduccion.getTemporada()));
+				lstFiltros.add(new FilterPredicate("modelo", FilterOperator.EQUAL, dbProduccion.getModelo()));
+				lstFiltros.add(new FilterPredicate("referencia", FilterOperator.EQUAL, dbProduccion.getReferencia()));
+				List<Entity> lstMaterias = ClsEntidad.ejecutarConsulta(datastore, "DbModeloHabilitacion", lstFiltros);
+
+				DbModeloHabilitacion dbTela = null;
+				boolean actualizar = true;
+				if (lstMaterias != null && lstMaterias.size() > 0) {
+					for (int i = 0; i < lstMaterias.size(); i++) {
+						DbModeloHabilitacion dbModeloHabilitacion = new DbModeloHabilitacion(lstMaterias.get(i));
+						try {
+							DbTelaHabilitacion dbTelaHabilitacion = new DbTelaHabilitacion(ClsEntidad.obtenerEntidad(datastore, "DbTelaHabilitacion", dbModeloHabilitacion.getEmpresa() + "-" + dbModeloHabilitacion.getTemporada() + "-" + dbModeloHabilitacion.getMateria()));
+							if (dbTelaHabilitacion.getTipo().equals("T")) {
+								if (dbTela == null) {
+									dbTela = new DbModeloHabilitacion(datastore.get(tx, dbModeloHabilitacion.getKey()));
+								} else {
+									actualizar = false;
+								}
+							}
+						} catch (EntityNotFoundException e) {
+						}
+					}
+				}
+				if (actualizar && dbTela != null) {
+					dbTela.setTrazo(dbProduccion.getConsumo1());
+					dbTela.setConsumoReal(ClsUtil.Redondear((dbProduccion.getMtsEnviados1() - dbProduccion.getMtsDevolucion1()) / dbProduccion.getCantidadCorte(), 2));
+					dbTela.guardar(datastore, tx);
+				}
+			}
+
 			dbProduccion.setMtsSolicitados1(serProduccion.getMtsSolicitados1());
 			dbProduccion.setMtsEnviados1(serProduccion.getMtsEnviados1());
 			dbProduccion.setMtsDevolucion1(serProduccion.getMtsDevolucion1());

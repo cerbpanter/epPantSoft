@@ -711,7 +711,7 @@ public class PmEntidad {
 						lstEntidades.add(ClsEntidad.obtenerEntidad(datastore, entidadCns.getEntidad(), keyNam));
 						entidadesLeidas++;
 					} catch (EntityNotFoundException e) {
-						throw new Exception("No exite la entidad '" + entidadCns.getEntidad() + "' con keyName IN '" + keyNam + "'");
+						// throw new Exception("No existe la entidad '" + entidadCns.getEntidad() + "' con keyName IN '" + keyNam + "'");
 					}
 				}
 			} else {
@@ -720,7 +720,7 @@ public class PmEntidad {
 					cursorStr = null;
 					entidadesLeidas = 1;
 				} catch (EntityNotFoundException e) {
-					throw new Exception("No exite la entidad '" + entidadCns.getEntidad() + "' con keyName '" + keyName + "'");
+					// throw new Exception("No existe la entidad '" + entidadCns.getEntidad() + "' con keyName '" + keyName + "'");
 				}
 			}
 		} else {
@@ -843,10 +843,10 @@ public class PmEntidad {
 				if (!dbEntidadTemp.getKey().getKind().equals("DbReporte") || !dbEntidadTemp.getString(mapCamposBd.get("empresa")).equals("neoreportes"))
 					if (!dbEntidadTemp.getString(mapCamposBd.get("empresa")).equals(empresa))
 						throw new ExcepcionControlada("La empresa de la entidad no coincide con la de la firma - " + dbEntidadTemp.getString(mapCamposBd.get("empresa")));
-			if (!usuarioAdmin && entidadCns.getDbEntidad().getValidarSucursal() && (dbEntidadTemp.getKey().getName() == null || !dbEntidadTemp.getKey().getName().equals("Null")) && mapCamposBd.containsKey("temporada"))
-				if (dbEntidadTemp.getLong(mapCamposBd.get("temporada")).longValue() != temporada)
-					// if (!(dbEntidadTemp.getKey().getKind().equals("DbParametro") && ClsUtil.esNulo(dbEntidadTemp.getString(mapCamposBd.get("temporada"))))) // Si es un parámetro por empresa no se valida la sucursal
-					throw new ExcepcionControlada("La temporada de la entidad no coincide con la de la firma - " + dbEntidadTemp.getLong(mapCamposBd.get("temporada")));
+			// if (!usuarioAdmin && entidadCns.getDbEntidad().getValidarSucursal() && (dbEntidadTemp.getKey().getName() == null || !dbEntidadTemp.getKey().getName().equals("Null")) && mapCamposBd.containsKey("temporada"))
+			// if (dbEntidadTemp.getLong(mapCamposBd.get("temporada")).longValue() != temporada)
+			// // if (!(dbEntidadTemp.getKey().getKind().equals("DbParametro") && ClsUtil.esNulo(dbEntidadTemp.getString(mapCamposBd.get("temporada"))))) // Si es un parámetro por empresa no se valida la sucursal
+			// throw new ExcepcionControlada("La temporada de la entidad no coincide con la de la firma - " + dbEntidadTemp.getLong(mapCamposBd.get("temporada")));
 			// Reviso si hay sub entidades y las obtengo
 			if (entidadCns.getSubEntidad() != null) {
 				boolean ejecutarConsulta = true;
@@ -1613,9 +1613,6 @@ public class PmEntidad {
 			lstCampos = db.getCampos();
 		} else if (entidad.equals("DbProceso")) {
 			DbProceso db = new DbProceso(entity);
-			lstCampos = db.getCampos();
-		} else if (entidad.equals("DbProduccion")) {
-			DbAlmEntrada db = new DbAlmEntrada(entity);
 			lstCampos = db.getCampos();
 		} else if (entidad.equals("DbProduccion")) {
 			DbProduccion db = new DbProduccion(entity);

@@ -62,7 +62,7 @@ public class EpAlmacen extends HttpServlet {
 			// AlmEntrada /////////////////////////////////////////////
 			if (ep.esMetodo("almEntrada_agregar") && ep.esVersion("v1")) {
 				SerAlmEntrada serAlmEntrada = ep.getObjetFromBody(SerAlmEntrada.class);
-				serAlmEntrada = new PmAlmacen().almEntrada_agregar(serAlmEntrada);
+				serAlmEntrada = new PmAlmacen().almEntrada_agregar(serAlmEntrada, null, null);
 				ep.objectEnBody(serAlmEntrada);
 				return;
 			}

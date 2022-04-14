@@ -178,7 +178,8 @@ public class PmModelo {
 
 			tx.commit();
 
-			return dbModelo.toSerModeloCompleto(datastore, tx);
+			dbModelo = new DbModelo(datastore.get(key));
+			return dbModelo.toSerModeloCompleto(datastore, null);
 		} catch (EntityNotFoundException e) {
 			throw new Exception("El modelo '" + serModelo.getModelo() + "' no existe.");
 		} finally {

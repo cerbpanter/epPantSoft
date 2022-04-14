@@ -16,13 +16,15 @@ public class SerAlmEntrada {
 	private long folioMaquilero;
 	private String maquilero;
 	private String detalle;
+	private long folioAlmSalidaTraspaso;
+	private String almacenTraspaso;
 
 	private SerAlmEntradaDet[] dbDetalle;
 
 	public SerAlmEntrada() {
 	}
 
-	public SerAlmEntrada(String empresa, long folioAlmEntrada, String almacen, long tipo, String zonaHoraria, Date fechaAlmEntrada, String usuarioCreo, String usuarioModifico, String observaciones, long folioOrdenProduccion, long folioMaquilero, String maquilero, String detalle) {
+	public SerAlmEntrada(String empresa, long folioAlmEntrada, String almacen, long tipo, String zonaHoraria, Date fechaAlmEntrada, String usuarioCreo, String usuarioModifico, String observaciones, long folioOrdenProduccion, long folioMaquilero, String maquilero, String detalle, long folioAlmSalidaTraspaso, String almacenTraspaso) {
 		setEmpresa(empresa);
 		setFolioAlmEntrada(folioAlmEntrada);
 		setAlmacen(almacen);
@@ -36,6 +38,8 @@ public class SerAlmEntrada {
 		setFolioMaquilero(folioMaquilero);
 		setMaquilero(maquilero);
 		setDetalle(detalle);
+		setFolioAlmSalidaTraspaso(folioAlmSalidaTraspaso);
+		setAlmacenTraspaso(almacenTraspaso);
 	}
 
 	public String getEmpresa() {
@@ -148,6 +152,22 @@ public class SerAlmEntrada {
 
 	public void setDbDetalle(SerAlmEntradaDet[] dbDetalle) {
 		this.dbDetalle = dbDetalle;
+	}
+
+	public long getFolioAlmSalidaTraspaso() {
+		return folioAlmSalidaTraspaso;
+	}
+
+	public void setFolioAlmSalidaTraspaso(long folioAlmSalidaTraspaso) {
+		this.folioAlmSalidaTraspaso = folioAlmSalidaTraspaso;
+	}
+
+	public String getAlmacenTraspaso() {
+		return almacenTraspaso;
+	}
+
+	public void setAlmacenTraspaso(String almacenTraspaso) {
+		this.almacenTraspaso = almacenTraspaso;
 	}
 
 }

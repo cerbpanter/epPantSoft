@@ -23,7 +23,7 @@ public class DbAlmEntrada extends ClsEntidad {
 	private final ClsCampo empresa = new ClsCampo("empresa", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 1, NO_SUSTITUIR_NULL);
 	private final ClsCampo folioAlmEntrada = new ClsCampo("folioAlmEntrada", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 2, NO_SUSTITUIR_NULL);
 	private final ClsCampo almacen = new ClsCampo("almacen", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
-	private final ClsCampo tipo = new ClsCampo("tipo", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo tipo = new ClsCampo("tipo", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL, "1:Ajuste, 2:Orden de producción");
 	private final ClsCampo zonaHoraria = new ClsCampo("zonaHoraria", Tipo.String, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo fechaAlmEntrada = new ClsCampo("fechaAlmEntrada", Tipo.Date, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo dia = new ClsCampo("dia", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
@@ -36,6 +36,10 @@ public class DbAlmEntrada extends ClsEntidad {
 	private final ClsCampo folioMaquilero = new ClsCampo("folioMaquilero", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo maquilero = new ClsCampo("maquilero", Tipo.String, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo detalle = new ClsCampo("detalle", Tipo.Text, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_GRANDE, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo modelos = new ClsCampo("modelos", Tipo.ArrayString, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo modelosTemporada = new ClsCampo("modelosTemporada", Tipo.ArrayString, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo folioAlmSalidaTraspaso = new ClsCampo("folioAlmSalidaTraspaso", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, SUSTITUIR_NULL);
+	private final ClsCampo almacenTraspaso = new ClsCampo("almacenTraspaso", Tipo.String, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 
 	// Dependencias
 	private List<DbAlmEntradaDet> dbDetalle = null;
@@ -56,10 +60,13 @@ public class DbAlmEntrada extends ClsEntidad {
 		setFolioMaquilero(serAlmEntrada.getFolioMaquilero());
 		setMaquilero(serAlmEntrada.getMaquilero());
 		setDetalle(serAlmEntrada.getDetalle());
+		setFolioAlmSalidaTraspaso(serAlmEntrada.getFolioAlmSalidaTraspaso());
+		setAlmacenTraspaso(serAlmEntrada.getAlmacenTraspaso());
 	}
 
-	public DbAlmEntrada(Entity entidad) {
+	public DbAlmEntrada(Entity entidad) throws ExcepcionControlada {
 		this.entidad = entidad;
+		asignarValoresDefault();
 	}
 
 	public boolean getLiberado() {
@@ -67,15 +74,15 @@ public class DbAlmEntrada extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, folioAlmEntrada, almacen, tipo, zonaHoraria, fechaAlmEntrada, dia, mes, anio, usuarioCreo, usuarioModifico, observaciones, folioOrdenProduccion, folioMaquilero, maquilero, detalle);
+		return Arrays.asList(empresa, folioAlmEntrada, almacen, tipo, zonaHoraria, fechaAlmEntrada, dia, mes, anio, usuarioCreo, usuarioModifico, observaciones, folioOrdenProduccion, folioMaquilero, maquilero, detalle, modelos, modelosTemporada, almacenTraspaso);
 	}
 
 	public SerAlmEntrada toSerAlmEntrada() throws ExcepcionControlada {
-		return new SerAlmEntrada(getEmpresa(), getFolioAlmEntrada(), getAlmacen(), getTipo(), getZonaHoraria(), getFechaAlmEntrada(), getUsuarioCreo(), getUsuarioModifico(), getObservaciones(), getFolioOrdenProduccion(), getFolioMaquilero(), getMaquilero(), getDetalle());
+		return new SerAlmEntrada(getEmpresa(), getFolioAlmEntrada(), getAlmacen(), getTipo(), getZonaHoraria(), getFechaAlmEntrada(), getUsuarioCreo(), getUsuarioModifico(), getObservaciones(), getFolioOrdenProduccion(), getFolioMaquilero(), getMaquilero(), getDetalle(), getFolioAlmSalidaTraspaso(), getAlmacenTraspaso());
 	}
 
 	public SerAlmEntrada toSerAlmEntradaCompleto(DatastoreService datastore, Transaction tx) throws ExcepcionControlada {
-		SerAlmEntrada serAlmEntrada = new SerAlmEntrada(getEmpresa(), getFolioAlmEntrada(), getAlmacen(), getTipo(), getZonaHoraria(), getFechaAlmEntrada(), getUsuarioCreo(), getUsuarioModifico(), getObservaciones(), getFolioOrdenProduccion(), getFolioMaquilero(), getMaquilero(), getDetalle());
+		SerAlmEntrada serAlmEntrada = new SerAlmEntrada(getEmpresa(), getFolioAlmEntrada(), getAlmacen(), getTipo(), getZonaHoraria(), getFechaAlmEntrada(), getUsuarioCreo(), getUsuarioModifico(), getObservaciones(), getFolioOrdenProduccion(), getFolioMaquilero(), getMaquilero(), getDetalle(), getFolioAlmSalidaTraspaso(), getAlmacenTraspaso());
 
 		// Agrego el detalle
 		getDbDetalle(datastore, tx);
@@ -203,6 +210,22 @@ public class DbAlmEntrada extends ClsEntidad {
 		setText(this.detalle, detalle);
 	}
 
+	public ArrayList<String> getModelos() throws ExcepcionControlada {
+		return getArrayString(modelos);
+	}
+
+	public void setModelos(ArrayList<String> modelos) throws ExcepcionControlada {
+		setArrayString(this.modelos, modelos);
+	}
+
+	public ArrayList<String> getModelosTemporada() throws ExcepcionControlada {
+		return getArrayString(modelosTemporada);
+	}
+
+	public void setModelosTemporada(ArrayList<String> modelosTemporada) throws ExcepcionControlada {
+		setArrayString(this.modelosTemporada, modelosTemporada);
+	}
+
 	public List<DbAlmEntradaDet> getDbDetalle(DatastoreService datastore, Transaction tx) throws ExcepcionControlada {
 		if (dbDetalle == null) {
 			List<Entity> lstDetalle = ejecutarConsulta(datastore, tx, "DbAlmEntradaDet", getKey());
@@ -212,4 +235,21 @@ public class DbAlmEntrada extends ClsEntidad {
 		}
 		return dbDetalle;
 	}
+
+	public Long getFolioAlmSalidaTraspaso() throws ExcepcionControlada {
+		return getLong(folioAlmSalidaTraspaso);
+	}
+
+	public void setFolioAlmSalidaTraspaso(Long folioAlmSalidaTraspaso) throws ExcepcionControlada {
+		setLong(this.folioAlmSalidaTraspaso, folioAlmSalidaTraspaso);
+	}
+
+	public String getAlmacenTraspaso() throws ExcepcionControlada {
+		return getString(almacenTraspaso);
+	}
+
+	public void setAlmacenTraspaso(String almacenTraspaso) throws ExcepcionControlada {
+		setString(this.almacenTraspaso, almacenTraspaso);
+	}
+
 }

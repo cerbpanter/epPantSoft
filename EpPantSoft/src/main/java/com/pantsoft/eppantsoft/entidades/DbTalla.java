@@ -37,7 +37,7 @@ public class DbTalla extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, temporada, talla);
+		return Arrays.asList(empresa, temporada, talla, orden);
 	}
 
 	public SerTalla toSerTalla() throws ExcepcionControlada {

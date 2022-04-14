@@ -7,6 +7,7 @@ import java.util.List;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.pantsoft.eppantsoft.serializable.SerAlmEntradaDet;
 import com.pantsoft.eppantsoft.serializable.SerAlmSalidaDet;
 import com.pantsoft.eppantsoft.util.ClsCampo;
 import com.pantsoft.eppantsoft.util.ClsCampo.Tipo;
@@ -61,6 +62,10 @@ public class DbAlmSalidaDet extends ClsEntidad {
 
 	public SerAlmSalidaDet toSerAlmSalidaDet() throws ExcepcionControlada {
 		return new SerAlmSalidaDet(getEmpresa(), getFolioAlmSalida(), getAlmacen(), getModelo(), getTemporada(), getColor(), getTalla(), getCodigoDeBarras(), getFechaAlmSalida(), getDia(), getMes(), getAnio(), getCantidad());
+	}
+
+	public SerAlmEntradaDet toSerAlmEntradaDetTraspaso(String almacen) throws ExcepcionControlada {
+		return new SerAlmEntradaDet(getEmpresa(), 0L, almacen, getModelo(), getTemporada(), getColor(), getTalla(), getCodigoDeBarras(), getFechaAlmSalida(), getDia(), getMes(), getAnio(), getCantidad());
 	}
 
 	public String getEmpresa() throws ExcepcionControlada {

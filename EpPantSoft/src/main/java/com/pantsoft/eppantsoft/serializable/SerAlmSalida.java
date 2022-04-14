@@ -17,13 +17,15 @@ public class SerAlmSalida {
 	private long folioCliente;
 	private String cliente;
 	private String detalle;
+	private long folioAlmEntradaTraspaso;
+	private String almacenTraspaso;
 
 	private SerAlmSalidaDet[] dbDetalle;
 
 	public SerAlmSalida() {
 	}
 
-	public SerAlmSalida(String empresa, long folioAlmSalida, String almacen, long tipo, String zonaHoraria, Date fechaAlmSalida, String usuarioCreo, String usuarioModifico, String observaciones, ArrayList<String> facturas, long folioCliente, String cliente, String detalle) {
+	public SerAlmSalida(String empresa, long folioAlmSalida, String almacen, long tipo, String zonaHoraria, Date fechaAlmSalida, String usuarioCreo, String usuarioModifico, String observaciones, ArrayList<String> facturas, long folioCliente, String cliente, String detalle, long folioAlmEntradaTraspaso, String almacenTraspaso) {
 		setEmpresa(empresa);
 		setFolioAlmSalida(folioAlmSalida);
 		setAlmacen(almacen);
@@ -37,6 +39,8 @@ public class SerAlmSalida {
 		setFolioCliente(folioCliente);
 		setCliente(cliente);
 		setDetalle(detalle);
+		setFolioAlmEntradaTraspaso(folioAlmEntradaTraspaso);
+		setAlmacenTraspaso(almacenTraspaso);
 	}
 
 	public String getEmpresa() {
@@ -149,6 +153,22 @@ public class SerAlmSalida {
 
 	public void setDbDetalle(SerAlmSalidaDet[] dbDetalle) {
 		this.dbDetalle = dbDetalle;
+	}
+
+	public long getFolioAlmEntradaTraspaso() {
+		return folioAlmEntradaTraspaso;
+	}
+
+	public void setFolioAlmEntradaTraspaso(long folioAlmEntradaTraspaso) {
+		this.folioAlmEntradaTraspaso = folioAlmEntradaTraspaso;
+	}
+
+	public String getAlmacenTraspaso() {
+		return almacenTraspaso;
+	}
+
+	public void setAlmacenTraspaso(String almacenTraspaso) {
+		this.almacenTraspaso = almacenTraspaso;
 	}
 
 }
