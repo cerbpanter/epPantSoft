@@ -2,16 +2,14 @@ package com.pantsoft.eppantsoft.serializable;
 
 public class SerTallas {
 	private String empresa;
-	private long temporada;
 	private String talla;
 	private String tallas;
 
 	public SerTallas() {
 	}
 
-	public SerTallas(String empresa, long temporada, String talla, String tallas) {
+	public SerTallas(String empresa, String talla, String tallas) {
 		this.empresa = empresa;
-		this.temporada = temporada;
 		this.setTalla(talla);
 		this.setTallas(tallas);
 	}
@@ -22,14 +20,6 @@ public class SerTallas {
 
 	public void setEmpresa(String empresa) {
 		this.empresa = empresa;
-	}
-
-	public long getTemporada() {
-		return temporada;
-	}
-
-	public void setTemporada(long temporada) {
-		this.temporada = temporada;
 	}
 
 	public String getTalla() {

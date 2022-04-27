@@ -2,7 +2,6 @@ package com.pantsoft.eppantsoft.serializable;
 
 public class SerCodigoDeBarras {
 	private String empresa;
-	private long temporada;
 	private String modelo;
 	private String color;
 	private String talla;
@@ -11,9 +10,8 @@ public class SerCodigoDeBarras {
 	public SerCodigoDeBarras() {
 	}
 
-	public SerCodigoDeBarras(String empresa, long temporada, String modelo, String color, String talla, String codigoDeBarras) {
+	public SerCodigoDeBarras(String empresa, String modelo, String color, String talla, String codigoDeBarras) {
 		setEmpresa(empresa);
-		setTemporada(temporada);
 		setModelo(modelo);
 		setColor(color);
 		setTalla(talla);
@@ -26,14 +24,6 @@ public class SerCodigoDeBarras {
 
 	public void setEmpresa(String empresa) {
 		this.empresa = empresa;
-	}
-
-	public long getTemporada() {
-		return temporada;
-	}
-
-	public void setTemporada(long temporada) {
-		this.temporada = temporada;
 	}
 
 	public String getModelo() {

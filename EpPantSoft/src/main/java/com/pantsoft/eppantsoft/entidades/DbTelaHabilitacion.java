@@ -14,19 +14,17 @@ import com.pantsoft.eppantsoft.util.ExcepcionControlada;
 
 public class DbTelaHabilitacion extends ClsEntidad {
 	private final ClsCampo empresa = new ClsCampo("empresa", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 1, NO_SUSTITUIR_NULL);
-	private final ClsCampo temporada = new ClsCampo("temporada", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 2, NO_SUSTITUIR_NULL);
 	private final ClsCampo materia = new ClsCampo("materia", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 15, TAM_NORMAL, VAL_MISSING, 3, NO_SUSTITUIR_NULL);
 	private final ClsCampo tipo = new ClsCampo("tipo", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 1, TAM_NORMAL, "H", 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo precio = new ClsCampo("precio", Tipo.Double, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo ancho = new ClsCampo("ancho", Tipo.Double, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, NO_SUSTITUIR_NULL);
 
 	public DbTelaHabilitacion(SerTelaHabilitacion ser) throws ExcepcionControlada {
-		Key key = KeyFactory.createKey("DbTelaHabilitacion", ser.getEmpresa() + "-" + ser.getTemporada() + "-" + ser.getMateria());
+		Key key = KeyFactory.createKey("DbTelaHabilitacion", ser.getEmpresa() + "-" + ser.getMateria());
 		entidad = new Entity(key);
 		asignarValoresDefault();
 
 		setString(this.empresa, ser.getEmpresa());
-		setLong(this.temporada, ser.getTemporada());
 		setString(this.materia, ser.getMateria());
 		setTipo(ser.getTipo());
 		setPrecio(ser.getPrecio());
@@ -40,11 +38,11 @@ public class DbTelaHabilitacion extends ClsEntidad {
 
 	@Override
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, temporada, materia, tipo, precio, ancho);
+		return Arrays.asList(empresa, materia, tipo, precio, ancho);
 	}
 
 	public SerTelaHabilitacion toSerTelaHabilitacion() throws ExcepcionControlada {
-		return new SerTelaHabilitacion(getEmpresa(), getTemporada(), getMateria(), getTipo(), getPrecio(), getAncho());
+		return new SerTelaHabilitacion(getEmpresa(), getMateria(), getTipo(), getPrecio(), getAncho());
 	}
 
 	@Override
@@ -54,10 +52,6 @@ public class DbTelaHabilitacion extends ClsEntidad {
 
 	public String getEmpresa() throws ExcepcionControlada {
 		return getString(empresa);
-	}
-
-	public long getTemporada() throws ExcepcionControlada {
-		return getLong(temporada);
 	}
 
 	public String getMateria() throws ExcepcionControlada {

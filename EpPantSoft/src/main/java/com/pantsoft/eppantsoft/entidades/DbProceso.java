@@ -14,15 +14,13 @@ import com.pantsoft.eppantsoft.util.ExcepcionControlada;
 
 public class DbProceso extends ClsEntidad {
 	private final ClsCampo empresa = new ClsCampo("empresa", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 1, NO_SUSTITUIR_NULL);
-	private final ClsCampo temporada = new ClsCampo("temporada", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 2, NO_SUSTITUIR_NULL);
 	private final ClsCampo proceso = new ClsCampo("proceso", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 50, TAM_NORMAL, VAL_MISSING, 3, NO_SUSTITUIR_NULL);
 
 	public DbProceso(SerProceso serProceso) throws ExcepcionControlada {
-		Key key = KeyFactory.createKey("DbProceso", serProceso.getEmpresa() + "-" + serProceso.getTemporada() + "-" + serProceso.getProceso());
+		Key key = KeyFactory.createKey("DbProceso", serProceso.getEmpresa() + "-" + serProceso.getProceso());
 		entidad = new Entity(key);
 		asignarValoresDefault();
 		setString(empresa, serProceso.getEmpresa());
-		setLong(temporada, serProceso.getTemporada());
 		setString(proceso, serProceso.getProceso());
 	}
 
@@ -35,19 +33,15 @@ public class DbProceso extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, temporada, proceso);
+		return Arrays.asList(empresa, proceso);
 	}
 
 	public SerProceso toSerProceso() throws ExcepcionControlada {
-		return new SerProceso(getEmpresa(), getTemporada(), getProceso());
+		return new SerProceso(getEmpresa(), getProceso());
 	}
 
 	public String getEmpresa() throws ExcepcionControlada {
 		return getString(empresa);
-	}
-
-	public Long getTemporada() throws ExcepcionControlada {
-		return getLong(temporada);
 	}
 
 	public String getProceso() throws ExcepcionControlada {

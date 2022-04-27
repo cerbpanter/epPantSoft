@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
@@ -57,28 +56,29 @@ public class PmCodigoDeBarras {
 		try {
 			tx = ClsEntidad.iniciarTransaccion(datastore);
 			try {
-				Key key = KeyFactory.createKey("DbCodigoDeBarras", serCodigoDeBarras.getEmpresa() + "-" + serCodigoDeBarras.getTemporada() + "-" + serCodigoDeBarras.getModelo() + "-" + serCodigoDeBarras.getColor() + "-" + serCodigoDeBarras.getTalla());
+				Key key = KeyFactory.createKey("DbCodigoDeBarras", serCodigoDeBarras.getEmpresa() + "-" + serCodigoDeBarras.getModelo() + "-" + serCodigoDeBarras.getColor() + "-" + serCodigoDeBarras.getTalla());
 				dbCodigoDeBarras = new DbCodigoDeBarras(datastore.get(key));
 			} catch (EntityNotFoundException e) {
-				throw new ExcepcionControlada("El CodigoDeBarras '" + serCodigoDeBarras.getEmpresa() + "-" + serCodigoDeBarras.getTemporada() + "-" + serCodigoDeBarras.getModelo() + "-" + serCodigoDeBarras.getColor() + "-" + serCodigoDeBarras.getTalla() + "' no existe.");
+				throw new ExcepcionControlada("El CodigoDeBarras '" + serCodigoDeBarras.getEmpresa() + "-" + serCodigoDeBarras.getModelo() + "-" + serCodigoDeBarras.getColor() + "-" + serCodigoDeBarras.getTalla() + "' no existe.");
 			}
 
 			try {
-				Key key = KeyFactory.createKey("DbCodigoDeBarras_A", dbCodigoDeBarras.getEmpresa() + "-" + dbCodigoDeBarras.getTemporada() + "-" + dbCodigoDeBarras.getCodigoDeBarras());
+				Key key = KeyFactory.createKey("DbCodigoDeBarras_A", dbCodigoDeBarras.getEmpresa() + "-" + dbCodigoDeBarras.getCodigoDeBarras());
 				dbCodigoDeBarras_A = new DbCodigoDeBarras_A(datastore.get(key));
 			} catch (EntityNotFoundException e) {
-				throw new ExcepcionControlada("El CodigoDeBarras_A '" + dbCodigoDeBarras.getEmpresa() + "-" + dbCodigoDeBarras.getTemporada() + "-" + dbCodigoDeBarras.getCodigoDeBarras() + "' no existe.");
+				throw new ExcepcionControlada("El CodigoDeBarras_A '" + dbCodigoDeBarras.getEmpresa() + "-" + dbCodigoDeBarras.getCodigoDeBarras() + "' no existe.");
 			}
 
 			if (!dbCodigoDeBarras.getCodigoDeBarras().equals(serCodigoDeBarras.getCodigoDeBarras())) {
 				// Reviso si ya existe el nuevo codigo de Barras
 				try {
-					Key key = KeyFactory.createKey("DbCodigoDeBarras_A", dbCodigoDeBarras.getEmpresa() + "-" + dbCodigoDeBarras.getTemporada() + "-" + serCodigoDeBarras.getCodigoDeBarras());
+					Key key = KeyFactory.createKey("DbCodigoDeBarras_A", dbCodigoDeBarras.getEmpresa() + "-" + serCodigoDeBarras.getCodigoDeBarras());
 					DbCodigoDeBarras_A dbCodigoDeBarras_A2 = new DbCodigoDeBarras_A(datastore.get(key));
 					throw new Exception("El código de barras ya existe para '" + dbCodigoDeBarras_A2.getModelo() + "-" + dbCodigoDeBarras_A2.getColor() + "-" + dbCodigoDeBarras_A2.getTalla() + "'");
 				} catch (EntityNotFoundException e) {
 					// Si no existe no hay problema
 				}
+				// FALTA Validar si existe en Entradas Salidas o Inventario
 
 				dbCodigoDeBarras_A_Nuevo = new DbCodigoDeBarras_A(serCodigoDeBarras);
 
@@ -141,23 +141,6 @@ public class PmCodigoDeBarras {
 			if (tx != null && tx.isActive())
 				tx.rollback();
 		}
-	}
-
-	public SerCodigoDeBarras[] dameCodigosDeBarras(String empresa, long temporada, String modelo) throws Exception {
-		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-
-		List<Filter> lstFiltros = new ArrayList<Filter>();
-		lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, empresa));
-		lstFiltros.add(new FilterPredicate("temporada", FilterOperator.EQUAL, temporada));
-		lstFiltros.add(new FilterPredicate("modelo", FilterOperator.EQUAL, modelo));
-		List<Entity> lstCodigoDeBarrass = ClsEntidad.ejecutarConsulta(datastore, "DbCodigoDeBarras", lstFiltros);
-		if (lstCodigoDeBarrass == null || lstCodigoDeBarrass.size() == 0)
-			return new SerCodigoDeBarras[0];
-		SerCodigoDeBarras[] arr = new SerCodigoDeBarras[lstCodigoDeBarrass.size()];
-		for (int i = 0; i < lstCodigoDeBarrass.size(); i++) {
-			arr[i] = new DbCodigoDeBarras(lstCodigoDeBarrass.get(i)).toSerCodigoDeBarras();
-		}
-		return arr;
 	}
 
 }

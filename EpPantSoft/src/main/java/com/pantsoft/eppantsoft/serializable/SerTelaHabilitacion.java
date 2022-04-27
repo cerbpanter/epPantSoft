@@ -2,7 +2,6 @@ package com.pantsoft.eppantsoft.serializable;
 
 public class SerTelaHabilitacion {
 	private String empresa;
-	private long temporada;
 	private String materia;
 	private String tipo;
 	private double precio;
@@ -11,9 +10,8 @@ public class SerTelaHabilitacion {
 	public SerTelaHabilitacion() {
 	}
 
-	public SerTelaHabilitacion(String empresa, long temporada, String materia, String tipo, double precio, double ancho) {
+	public SerTelaHabilitacion(String empresa, String materia, String tipo, double precio, double ancho) {
 		this.empresa = empresa;
-		this.temporada = temporada;
 		this.setMateria(materia);
 		this.setTipo(tipo);
 		this.setPrecio(precio);
@@ -26,14 +24,6 @@ public class SerTelaHabilitacion {
 
 	public void setEmpresa(String empresa) {
 		this.empresa = empresa;
-	}
-
-	public long getTemporada() {
-		return temporada;
-	}
-
-	public void setTemporada(long temporada) {
-		this.temporada = temporada;
 	}
 
 	public String getMateria() {

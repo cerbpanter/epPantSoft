@@ -14,18 +14,16 @@ import com.pantsoft.eppantsoft.util.ExcepcionControlada;
 
 public class DbCodigoDeBarras_A extends ClsEntidad {
 	private final ClsCampo empresa = new ClsCampo("empresa", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 1, NO_SUSTITUIR_NULL);
-	private final ClsCampo temporada = new ClsCampo("temporada", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 2, NO_SUSTITUIR_NULL);
 	private final ClsCampo codigoDeBarras = new ClsCampo("codigoDeBarras", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 3, NO_SUSTITUIR_NULL);
 	private final ClsCampo modelo = new ClsCampo("modelo", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo color = new ClsCampo("color", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo talla = new ClsCampo("talla", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 
 	public DbCodigoDeBarras_A(SerCodigoDeBarras serCodigoDeBarras) throws ExcepcionControlada {
-		Key key = KeyFactory.createKey("DbCodigoDeBarras_A", serCodigoDeBarras.getEmpresa() + "-" + serCodigoDeBarras.getTemporada() + "-" + serCodigoDeBarras.getCodigoDeBarras());
+		Key key = KeyFactory.createKey("DbCodigoDeBarras_A", serCodigoDeBarras.getEmpresa() + "-" + serCodigoDeBarras.getCodigoDeBarras());
 		entidad = new Entity(key);
 		asignarValoresDefault();
 		setString(empresa, serCodigoDeBarras.getEmpresa());
-		setLong(temporada, serCodigoDeBarras.getTemporada());
 		setString(codigoDeBarras, serCodigoDeBarras.getCodigoDeBarras());
 		setString(modelo, serCodigoDeBarras.getModelo());
 		setString(color, serCodigoDeBarras.getColor());
@@ -41,19 +39,15 @@ public class DbCodigoDeBarras_A extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, temporada, codigoDeBarras, modelo, color, talla);
+		return Arrays.asList(empresa, codigoDeBarras, modelo, color, talla);
 	}
 
 	public SerCodigoDeBarras toSerCodigoDeBarras() throws ExcepcionControlada {
-		return new SerCodigoDeBarras(getEmpresa(), getTemporada(), getModelo(), getColor(), getTalla(), getCodigoDeBarras());
+		return new SerCodigoDeBarras(getEmpresa(), getModelo(), getColor(), getTalla(), getCodigoDeBarras());
 	}
 
 	public String getEmpresa() throws ExcepcionControlada {
 		return getString(empresa);
-	}
-
-	public Long getTemporada() throws ExcepcionControlada {
-		return getLong(temporada);
 	}
 
 	public String getCodigoDeBarras() throws ExcepcionControlada {
