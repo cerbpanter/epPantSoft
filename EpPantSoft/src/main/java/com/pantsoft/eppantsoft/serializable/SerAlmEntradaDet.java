@@ -7,7 +7,6 @@ public class SerAlmEntradaDet {
 	private long folioAlmEntrada;
 	private String almacen;
 	private String modelo;
-	private long temporada;
 	private String color;
 	private String talla;
 	private String codigoDeBarras;
@@ -20,12 +19,11 @@ public class SerAlmEntradaDet {
 	public SerAlmEntradaDet() {
 	}
 
-	public SerAlmEntradaDet(String empresa, long folioAlmEntrada, String almacen, String modelo, long temporada, String color, String talla, String codigoDeBarras, Date fechaAlmEntrada, long dia, long mes, long anio, long cantidad) {
+	public SerAlmEntradaDet(String empresa, long folioAlmEntrada, String almacen, String modelo, String color, String talla, String codigoDeBarras, Date fechaAlmEntrada, long dia, long mes, long anio, long cantidad) {
 		setEmpresa(empresa);
 		setFolioAlmEntrada(folioAlmEntrada);
 		setAlmacen(almacen);
 		setModelo(modelo);
-		setTemporada(temporada);
 		setColor(color);
 		setTalla(talla);
 		setCodigoDeBarras(codigoDeBarras);
@@ -66,14 +64,6 @@ public class SerAlmEntradaDet {
 
 	public void setModelo(String modelo) {
 		this.modelo = modelo;
-	}
-
-	public long getTemporada() {
-		return temporada;
-	}
-
-	public void setTemporada(long temporada) {
-		this.temporada = temporada;
 	}
 
 	public String getColor() {

@@ -123,6 +123,18 @@ public class EpModelos extends HttpServlet {
 				ep.objectEnBody(resp);
 				return;
 			}
+			if (ep.esMetodo("modelo_corregirMaterias") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("cursor", "String");
+				Respuesta resp = new PmModelo().modelo_corregirMaterias(ep.dameParametroString("empresa"), ep.dameParametroString("cursor"));
+				ep.objectEnBody(resp);
+				return;
+			}
+			if (ep.esMetodo("modelo_corregirProcesos") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("cursor", "String");
+				Respuesta resp = new PmModelo().modelo_corregirProcesos(ep.dameParametroString("empresa"), ep.dameParametroString("cursor"));
+				ep.objectEnBody(resp);
+				return;
+			}
 
 			// Modelo Imagen ///////////////////////////////////////////////////////////////////////////
 			if (ep.esMetodo("modeloImagen_agregar") && ep.esVersion("v1")) {

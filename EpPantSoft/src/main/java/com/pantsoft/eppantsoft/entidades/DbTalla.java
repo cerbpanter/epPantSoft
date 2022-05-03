@@ -14,7 +14,7 @@ import com.pantsoft.eppantsoft.util.ExcepcionControlada;
 
 public class DbTalla extends ClsEntidad {
 	private final ClsCampo empresa = new ClsCampo("empresa", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 1, NO_SUSTITUIR_NULL);
-	private final ClsCampo talla = new ClsCampo("talla", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 10, TAM_NORMAL, VAL_MISSING, 3, NO_SUSTITUIR_NULL);
+	private final ClsCampo talla = new ClsCampo("talla", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 1, 6, TAM_NORMAL, VAL_MISSING, 3, NO_SUSTITUIR_NULL);
 	private final ClsCampo orden = new ClsCampo("orden", Tipo.Long, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, NO_SUSTITUIR_NULL);
 
 	public DbTalla(SerTalla serTalla) throws ExcepcionControlada {

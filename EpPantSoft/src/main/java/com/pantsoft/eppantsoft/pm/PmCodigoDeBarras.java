@@ -98,21 +98,21 @@ public class PmCodigoDeBarras {
 		}
 	}
 
-	public void eliminar(String empresa, long temporada, String modelo, String color, String talla) throws Exception {
+	public void eliminar(String empresa, String modelo, String color, String talla) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		Transaction tx = null;
 
 		try {
 			tx = ClsEntidad.iniciarTransaccion(datastore);
 
-			Key key = KeyFactory.createKey("DbCodigoDeBarras", empresa + "-" + temporada + "-" + modelo + "-" + color + "-" + talla);
+			Key key = KeyFactory.createKey("DbCodigoDeBarras", empresa + "-" + modelo + "-" + color + "-" + talla);
 			DbCodigoDeBarras dbCodigoDeBarras;
 			try {
 				dbCodigoDeBarras = new DbCodigoDeBarras(datastore.get(tx, key));
 			} catch (EntityNotFoundException e) {
 				throw new Exception("El código de barras no existe (DbCodigoDeBarras)");
 			}
-			key = KeyFactory.createKey("DbCodigoDeBarras_A", empresa + "-" + temporada + "-" + dbCodigoDeBarras.getCodigoDeBarras());
+			key = KeyFactory.createKey("DbCodigoDeBarras_A", empresa + "-" + dbCodigoDeBarras.getCodigoDeBarras());
 			DbCodigoDeBarras_A dbCodigoDeBarras_A;
 			try {
 				dbCodigoDeBarras_A = new DbCodigoDeBarras_A(datastore.get(tx, key));
@@ -122,7 +122,6 @@ public class PmCodigoDeBarras {
 			// Validar que no participe
 			List<Filter> lstFiltros = new ArrayList<Filter>();
 			lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, empresa));
-			lstFiltros.add(new FilterPredicate("temporada", FilterOperator.EQUAL, temporada));
 			lstFiltros.add(new FilterPredicate("CodigoDeBarras", FilterOperator.EQUAL, dbCodigoDeBarras.getCodigoDeBarras()));
 			if (ClsEntidad.ejecutarConsultaHayEntidades(datastore, "DbAlmEntradaDet", lstFiltros))
 				throw new Exception("El CodigoDeBarras " + dbCodigoDeBarras.getCodigoDeBarras() + " tiene registros de Almacén Entrada, imposible eliminar.");

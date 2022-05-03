@@ -32,8 +32,8 @@ public class PmTelaHabilitacion {
 
 			if (!ClsUtil.esIgualConNulo(dbTelaHabilitacion.getTipo(), serTelaHabilitacion.getTipo()))
 				dbTelaHabilitacion.setTipo(serTelaHabilitacion.getTipo());
-			if (dbTelaHabilitacion.getPrecio() != serTelaHabilitacion.getPrecio())
-				dbTelaHabilitacion.setPrecio(serTelaHabilitacion.getPrecio());
+			if (dbTelaHabilitacion.getPrecios() != serTelaHabilitacion.getPrecios())
+				dbTelaHabilitacion.setPrecios(serTelaHabilitacion.getPrecios());
 			if (dbTelaHabilitacion.getAncho() != serTelaHabilitacion.getAncho())
 				dbTelaHabilitacion.setAncho(serTelaHabilitacion.getAncho());
 			dbTelaHabilitacion.guardar(datastore);

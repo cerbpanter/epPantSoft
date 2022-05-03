@@ -274,8 +274,8 @@ public class EpCatalogos extends HttpServlet {
 				return;
 			}
 			if (ep.esMetodo("codigoDeBarras_eliminar") && ep.esVersion("v1")) {
-				ep.addPar("empresa", "String").addPar("temporada", "Long").addPar("modelo", "String").addPar("color", "String").addPar("talla", "String");
-				new PmCodigoDeBarras().eliminar(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"), ep.dameParametroString("modelo"), ep.dameParametroString("color"), ep.dameParametroString("talla"));
+				ep.addPar("empresa", "String").addPar("modelo", "String").addPar("color", "String").addPar("talla", "String");
+				new PmCodigoDeBarras().eliminar(ep.dameParametroString("empresa"), ep.dameParametroString("modelo"), ep.dameParametroString("color"), ep.dameParametroString("talla"));
 				ep.voidEnBody();
 				return;
 			}

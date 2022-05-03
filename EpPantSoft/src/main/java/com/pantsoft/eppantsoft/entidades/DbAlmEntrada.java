@@ -37,7 +37,6 @@ public class DbAlmEntrada extends ClsEntidad {
 	private final ClsCampo maquilero = new ClsCampo("maquilero", Tipo.String, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo detalle = new ClsCampo("detalle", Tipo.Text, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_GRANDE, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo modelos = new ClsCampo("modelos", Tipo.ArrayString, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
-	private final ClsCampo modelosTemporada = new ClsCampo("modelosTemporada", Tipo.ArrayString, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo folioAlmSalidaTraspaso = new ClsCampo("folioAlmSalidaTraspaso", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, SUSTITUIR_NULL);
 	private final ClsCampo almacenTraspaso = new ClsCampo("almacenTraspaso", Tipo.String, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 
@@ -74,7 +73,7 @@ public class DbAlmEntrada extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, folioAlmEntrada, almacen, tipo, zonaHoraria, fechaAlmEntrada, dia, mes, anio, usuarioCreo, usuarioModifico, observaciones, folioOrdenProduccion, folioMaquilero, maquilero, detalle, modelos, modelosTemporada, almacenTraspaso);
+		return Arrays.asList(empresa, folioAlmEntrada, almacen, tipo, zonaHoraria, fechaAlmEntrada, dia, mes, anio, usuarioCreo, usuarioModifico, observaciones, folioOrdenProduccion, folioMaquilero, maquilero, detalle, modelos, almacenTraspaso);
 	}
 
 	public SerAlmEntrada toSerAlmEntrada() throws ExcepcionControlada {
@@ -216,14 +215,6 @@ public class DbAlmEntrada extends ClsEntidad {
 
 	public void setModelos(ArrayList<String> modelos) throws ExcepcionControlada {
 		setArrayString(this.modelos, modelos);
-	}
-
-	public ArrayList<String> getModelosTemporada() throws ExcepcionControlada {
-		return getArrayString(modelosTemporada);
-	}
-
-	public void setModelosTemporada(ArrayList<String> modelosTemporada) throws ExcepcionControlada {
-		setArrayString(this.modelosTemporada, modelosTemporada);
 	}
 
 	public List<DbAlmEntradaDet> getDbDetalle(DatastoreService datastore, Transaction tx) throws ExcepcionControlada {

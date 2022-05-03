@@ -15,6 +15,10 @@ public class PmTallas {
 	public void agregar(SerTallas serTallas) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
+		// Solo acepta letras mayusculas, número y /
+		if (!serTallas.getTalla().matches("^[A-Z0-9/]+$") || serTallas.getTalla().contains("  ") || serTallas.getTalla().startsWith(" ") || serTallas.getTalla().endsWith(" "))
+			throw new Exception("La talla solo acepta mayusculas, numeros y diagonal");
+
 		DbTallas dbTallas = new DbTallas(serTallas);
 
 		if (ClsEntidad.existeEntidad(datastore, "DbTallas", dbTallas.getKey().getName()))

@@ -30,6 +30,7 @@ import com.pantsoft.eppantsoft.serializable.SerModelo;
 import com.pantsoft.eppantsoft.serializable.SerModeloHabilitacion;
 import com.pantsoft.eppantsoft.serializable.SerModeloImagen;
 import com.pantsoft.eppantsoft.serializable.SerModeloProceso;
+import com.pantsoft.eppantsoft.util.ClsBlobReader;
 import com.pantsoft.eppantsoft.util.ClsBlobWriter;
 import com.pantsoft.eppantsoft.util.ClsEntidad;
 import com.pantsoft.eppantsoft.util.ClsEpUtil;
@@ -561,10 +562,18 @@ public class PmModelo {
 		boolean hayTela = false;
 		List<DbModeloHabilitacion> lstHabilitaciones = dbModelo.getHabilitaciones(datastore, null);
 		for (DbModeloHabilitacion dbMateria : lstHabilitaciones) {
-			DbTelaHabilitacion dbMateriaCat = new DbTelaHabilitacion(ClsEntidad.obtenerEntidad(datastore, "DbTelaHabilitacion", dbMateria.getEmpresa() + "-" + dbMateria.getTemporada() + "-" + dbMateria.getMateria()));
-			if (dbMateriaCat.getPrecio() != 0) {
+			DbTelaHabilitacion dbMateriaCat = new DbTelaHabilitacion(ClsEntidad.obtenerEntidad(datastore, "DbTelaHabilitacion", dbMateria.getEmpresa() + "-" + dbMateria.getMateria()));
+			ClsBlobReader blobR = new ClsBlobReader("¬", dbMateriaCat.getPrecios(), true);
+			double precio = 0;
+			while (blobR.siguienteFila()) {
+				if (blobR.getValorLong("temporada") == dbMateria.getTemporada()) {
+					precio = blobR.getValorDbl("precio");
+					break;
+				}
+			}
+			if (precio != 0) {
 				if (dbMateria.getConsumo() != 0) {
-					precosto += ClsUtil.Redondear(dbMateriaCat.getPrecio() * dbMateria.getConsumo(), 2);
+					precosto += ClsUtil.Redondear(precio * dbMateria.getConsumo(), 2);
 				} else {
 					return 0;
 				}
@@ -693,4 +702,67 @@ public class PmModelo {
 		// return arr;
 	}
 
+	public Respuesta modelo_corregirMaterias(String empresa, String cursor) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		if (cursor.equals("Inicio"))
+			cursor = null;
+
+		List<Filter> lstFiltros = new ArrayList<Filter>();
+		lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, empresa));
+
+		List<Entity> lstMaterias = ClsEntidad.ejecutarConsulta(datastore, "DbModeloHabilitacion", lstFiltros, 200, cursor);
+		for (Entity entidad : lstMaterias) {
+			DbModeloHabilitacion dbMateria = new DbModeloHabilitacion(entidad);
+			String materia = dbMateria.getMateria();
+			materia = materia.toUpperCase().trim();
+			while (materia.contains("  ")) {
+				materia = materia.replaceAll("  ", " ");
+			}
+			if (!dbMateria.getMateria().equals(materia)) {
+				Transaction tx = datastore.beginTransaction();
+				try {
+					datastore.delete(dbMateria.getKey());
+					DbModeloHabilitacion dbMateria2 = new DbModeloHabilitacion(new SerModeloHabilitacion(dbMateria.getEmpresa(), dbMateria.getTemporada(), dbMateria.getModelo(), dbMateria.getReferencia(), materia, dbMateria.getConsumo(), dbMateria.getConsumoReal(), dbMateria.getTrazo()));
+					dbMateria2.guardar(datastore, tx);
+					tx.commit();
+				} finally {
+					if (tx != null && tx.isActive() == true)
+						tx.rollback();
+				}
+			}
+		}
+		return new Respuesta(ClsEntidad.getStrCursor());
+	}
+
+	public Respuesta modelo_corregirProcesos(String empresa, String cursor) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		if (cursor.equals("Inicio"))
+			cursor = null;
+
+		List<Filter> lstFiltros = new ArrayList<Filter>();
+		lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, empresa));
+
+		List<Entity> lstProcesos = ClsEntidad.ejecutarConsulta(datastore, "DbModeloProceso", lstFiltros, 200, cursor);
+		for (Entity entidad : lstProcesos) {
+			DbModeloProceso dbProceso = new DbModeloProceso(entidad);
+			String proceso = dbProceso.getProceso();
+			proceso = proceso.toUpperCase().trim();
+			while (proceso.contains("  ")) {
+				proceso = proceso.replaceAll("  ", " ");
+			}
+			if (!dbProceso.getProceso().equals(proceso)) {
+				Transaction tx = datastore.beginTransaction();
+				try {
+					datastore.delete(dbProceso.getKey());
+					DbModeloProceso dbProceso2 = new DbModeloProceso(new SerModeloProceso(dbProceso.getEmpresa(), dbProceso.getTemporada(), dbProceso.getModelo(), dbProceso.getReferencia(), proceso, dbProceso.getPrecosto(), dbProceso.getCosto()));
+					dbProceso2.guardar(datastore, tx);
+					tx.commit();
+				} finally {
+					if (tx != null && tx.isActive() == true)
+						tx.rollback();
+				}
+			}
+		}
+		return new Respuesta(ClsEntidad.getStrCursor());
+	}
 }

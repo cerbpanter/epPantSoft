@@ -4,17 +4,17 @@ public class SerTelaHabilitacion {
 	private String empresa;
 	private String materia;
 	private String tipo;
-	private double precio;
+	private String precios;
 	private double ancho;
 
 	public SerTelaHabilitacion() {
 	}
 
-	public SerTelaHabilitacion(String empresa, String materia, String tipo, double precio, double ancho) {
+	public SerTelaHabilitacion(String empresa, String materia, String tipo, String precios, double ancho) {
 		this.empresa = empresa;
 		this.setMateria(materia);
 		this.setTipo(tipo);
-		this.setPrecio(precio);
+		this.setPrecios(precios);
 		this.setAncho(ancho);
 	}
 
@@ -42,12 +42,12 @@ public class SerTelaHabilitacion {
 		this.tipo = tipo;
 	}
 
-	public double getPrecio() {
-		return precio;
+	public String getPrecios() {
+		return precios;
 	}
 
-	public void setPrecio(double precio) {
-		this.precio = precio;
+	public void setPrecios(String precios) {
+		this.precios = precios;
 	}
 
 	public double getAncho() {

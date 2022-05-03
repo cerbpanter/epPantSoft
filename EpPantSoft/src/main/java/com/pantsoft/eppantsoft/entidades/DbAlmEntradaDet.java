@@ -18,7 +18,6 @@ public class DbAlmEntradaDet extends ClsEntidad {
 	private final ClsCampo folioAlmEntrada = new ClsCampo("folioAlmEntrada", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 2, NO_SUSTITUIR_NULL);
 	private final ClsCampo almacen = new ClsCampo("almacen", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 3, NO_SUSTITUIR_NULL);
 	private final ClsCampo modelo = new ClsCampo("modelo", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 4, NO_SUSTITUIR_NULL);
-	private final ClsCampo temporada = new ClsCampo("temporada", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 5, NO_SUSTITUIR_NULL);
 	private final ClsCampo color = new ClsCampo("color", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 6, NO_SUSTITUIR_NULL);
 	private final ClsCampo talla = new ClsCampo("talla", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 7, NO_SUSTITUIR_NULL);
 	private final ClsCampo codigoDeBarras = new ClsCampo("codigoDeBarras", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
@@ -29,14 +28,13 @@ public class DbAlmEntradaDet extends ClsEntidad {
 	private final ClsCampo cantidad = new ClsCampo("cantidad", Tipo.Long, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 
 	public DbAlmEntradaDet(SerAlmEntradaDet serAlmEntradaDet) throws ExcepcionControlada {
-		Key key = KeyFactory.createKey("DbAlmEntradaDet", serAlmEntradaDet.getEmpresa() + "-" + serAlmEntradaDet.getFolioAlmEntrada() + "-" + serAlmEntradaDet.getAlmacen() + "-" + serAlmEntradaDet.getModelo() + "-" + serAlmEntradaDet.getTemporada() + "-" + serAlmEntradaDet.getColor() + "-" + serAlmEntradaDet.getTalla());
+		Key key = KeyFactory.createKey("DbAlmEntradaDet", serAlmEntradaDet.getEmpresa() + "-" + serAlmEntradaDet.getFolioAlmEntrada() + "-" + serAlmEntradaDet.getAlmacen() + "-" + serAlmEntradaDet.getModelo() + "-" + serAlmEntradaDet.getColor() + "-" + serAlmEntradaDet.getTalla());
 		entidad = new Entity(key);
 		asignarValoresDefault();
 		setString(empresa, serAlmEntradaDet.getEmpresa());
 		setLong(folioAlmEntrada, serAlmEntradaDet.getFolioAlmEntrada());
 		setString(almacen, serAlmEntradaDet.getAlmacen());
 		setString(modelo, serAlmEntradaDet.getModelo());
-		setLong(temporada, serAlmEntradaDet.getTemporada());
 		setString(color, serAlmEntradaDet.getColor());
 		setString(talla, serAlmEntradaDet.getTalla());
 		setCodigoDeBarras(serAlmEntradaDet.getCodigoDeBarras());
@@ -56,11 +54,11 @@ public class DbAlmEntradaDet extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, folioAlmEntrada, almacen, modelo, temporada, color, talla, codigoDeBarras, fechaAlmEntrada, dia, mes, anio, cantidad);
+		return Arrays.asList(empresa, folioAlmEntrada, almacen, modelo, color, talla, codigoDeBarras, fechaAlmEntrada, dia, mes, anio, cantidad);
 	}
 
 	public SerAlmEntradaDet toSerAlmEntradaDet() throws ExcepcionControlada {
-		return new SerAlmEntradaDet(getEmpresa(), getFolioAlmEntrada(), getAlmacen(), getModelo(), getTemporada(), getColor(), getTalla(), getCodigoDeBarras(), getFechaAlmEntrada(), getDia(), getMes(), getAnio(), getCantidad());
+		return new SerAlmEntradaDet(getEmpresa(), getFolioAlmEntrada(), getAlmacen(), getModelo(), getColor(), getTalla(), getCodigoDeBarras(), getFechaAlmEntrada(), getDia(), getMes(), getAnio(), getCantidad());
 	}
 
 	public String getEmpresa() throws ExcepcionControlada {
@@ -77,10 +75,6 @@ public class DbAlmEntradaDet extends ClsEntidad {
 
 	public String getModelo() throws ExcepcionControlada {
 		return getString(modelo);
-	}
-
-	public Long getTemporada() throws ExcepcionControlada {
-		return getLong(temporada);
 	}
 
 	public String getColor() throws ExcepcionControlada {

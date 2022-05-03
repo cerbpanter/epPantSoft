@@ -62,34 +62,30 @@ public class PmAlmacen {
 				throw new Exception("La entrada de almacén debe tener al menos un código de barras");
 
 			ArrayList<String> lstModelos = new ArrayList<String>();
-			ArrayList<String> lstModelosTemporada = new ArrayList<String>();
 			while (blobR.siguienteFila()) {
-				SerAlmEntradaDet serDet = new SerAlmEntradaDet(dbAlmEntrada.getEmpresa(), folio, dbAlmEntrada.getAlmacen(), blobR.getValorStr("modelo"), blobR.getValorLong("temporada"), blobR.getValorStr("color"), blobR.getValorStr("talla"), blobR.getValorStr("codigoDeBarras"), dbAlmEntrada.getFechaAlmEntrada(), dbAlmEntrada.getDia(), dbAlmEntrada.getAnio(), dbAlmEntrada.getMes(), blobR.getValorLong("cantidad"));
+				SerAlmEntradaDet serDet = new SerAlmEntradaDet(dbAlmEntrada.getEmpresa(), folio, dbAlmEntrada.getAlmacen(), blobR.getValorStr("modelo"), blobR.getValorStr("color"), blobR.getValorStr("talla"), blobR.getValorStr("codigoDeBarras"), dbAlmEntrada.getFechaAlmEntrada(), dbAlmEntrada.getDia(), dbAlmEntrada.getAnio(), dbAlmEntrada.getMes(), blobR.getValorLong("cantidad"));
 				DbAlmEntradaDet dbDet = new DbAlmEntradaDet(serDet);
 				dbDet.guardar(datastore, tx);
 
 				// Calculo los modelos para guardarlos en un array indexado
 				if (!lstModelos.contains(dbDet.getModelo()))
 					lstModelos.add(dbDet.getModelo());
-				if (!lstModelosTemporada.contains(dbDet.getModelo() + "|" + dbDet.getTemporada()))
-					lstModelosTemporada.add(dbDet.getModelo() + "|" + dbDet.getTemporada());
 
 				// Aumento el inventario
 				Key keyp = KeyFactory.createKey("DbEmpresa", dbDet.getEmpresa());
-				Key key = KeyFactory.createKey(keyp, "DbInvModeloDet", dbDet.getEmpresa() + "-" + dbDet.getAlmacen() + "-" + dbDet.getModelo() + "-" + dbDet.getTemporada() + "-" + dbDet.getColor() + "-" + dbDet.getTalla());
+				Key key = KeyFactory.createKey(keyp, "DbInvModeloDet", dbDet.getEmpresa() + "-" + dbDet.getAlmacen() + "-" + dbDet.getModelo() + "-" + dbDet.getColor() + "-" + dbDet.getTalla());
 
 				DbInvModeloDet dbInv;
 				try {
 					dbInv = new DbInvModeloDet(datastore.get(tx, key));
 					dbInv.setCantidad(dbInv.getCantidad() + dbDet.getCantidad());
 				} catch (EntityNotFoundException e) {
-					SerInvModeloDet serInv = new SerInvModeloDet(dbDet.getEmpresa(), dbDet.getAlmacen(), dbDet.getModelo(), dbDet.getTemporada(), dbDet.getColor(), dbDet.getTalla(), dbDet.getCodigoDeBarras(), dbDet.getCantidad());
+					SerInvModeloDet serInv = new SerInvModeloDet(dbDet.getEmpresa(), dbDet.getAlmacen(), dbDet.getModelo(), dbDet.getColor(), dbDet.getTalla(), dbDet.getCodigoDeBarras(), dbDet.getCantidad());
 					dbInv = new DbInvModeloDet(serInv);
 				}
 				dbInv.guardar(datastore, tx);
 			}
 			dbAlmEntrada.setModelos(lstModelos);
-			dbAlmEntrada.setModelosTemporada(lstModelosTemporada);
 
 			dbAlmEntrada.guardar(datastore, tx);
 			if (hacerCommit) {
@@ -129,9 +125,8 @@ public class PmAlmacen {
 
 			ArrayList<DbAlmSalidaDet> lstDbDetalle = new ArrayList<DbAlmSalidaDet>();
 			ArrayList<String> lstModelos = new ArrayList<String>();
-			ArrayList<String> lstModelosTemporada = new ArrayList<String>();
 			while (blobR.siguienteFila()) {
-				SerAlmSalidaDet serDet = new SerAlmSalidaDet(dbAlmSalida.getEmpresa(), folio, dbAlmSalida.getAlmacen(), blobR.getValorStr("modelo"), blobR.getValorLong("temporada"), blobR.getValorStr("color"), blobR.getValorStr("talla"), blobR.getValorStr("codigoDeBarras"), dbAlmSalida.getFechaAlmSalida(), dbAlmSalida.getDia(), dbAlmSalida.getMes(), dbAlmSalida.getAnio(), blobR.getValorLong("cantidad"));
+				SerAlmSalidaDet serDet = new SerAlmSalidaDet(dbAlmSalida.getEmpresa(), folio, dbAlmSalida.getAlmacen(), blobR.getValorStr("modelo"), blobR.getValorStr("color"), blobR.getValorStr("talla"), blobR.getValorStr("codigoDeBarras"), dbAlmSalida.getFechaAlmSalida(), dbAlmSalida.getDia(), dbAlmSalida.getMes(), dbAlmSalida.getAnio(), blobR.getValorLong("cantidad"));
 				DbAlmSalidaDet dbDet = new DbAlmSalidaDet(serDet);
 				dbDet.guardar(datastore, tx);
 				lstDbDetalle.add(dbDet);
@@ -139,17 +134,15 @@ public class PmAlmacen {
 				// Calculo los modelos para guardarlos en un array indexado
 				if (!lstModelos.contains(dbDet.getModelo()))
 					lstModelos.add(dbDet.getModelo());
-				if (!lstModelosTemporada.contains(dbDet.getModelo() + "|" + dbDet.getTemporada()))
-					lstModelosTemporada.add(dbDet.getModelo() + "|" + dbDet.getTemporada());
 
 				// Decremento el inventario
 				Key keyp = KeyFactory.createKey("DbEmpresa", dbDet.getEmpresa());
-				Key key = KeyFactory.createKey(keyp, "DbInvModeloDet", dbDet.getEmpresa() + "-" + dbDet.getAlmacen() + "-" + dbDet.getModelo() + "-" + dbDet.getTemporada() + "-" + dbDet.getColor() + "-" + dbDet.getTalla());
+				Key key = KeyFactory.createKey(keyp, "DbInvModeloDet", dbDet.getEmpresa() + "-" + dbDet.getAlmacen() + "-" + dbDet.getModelo() + "-" + dbDet.getColor() + "-" + dbDet.getTalla());
 
 				try {
 					DbInvModeloDet dbInv = new DbInvModeloDet(datastore.get(tx, key));
 					if (dbInv.getCantidad() < dbDet.getCantidad()) {
-						throw new Exception("No hay suficiente inventario para " + dbDet.getModelo() + "-" + dbDet.getTemporada() + "-" + dbDet.getColor() + "-" + dbDet.getTalla() + " (Inv: " + dbInv.getCantidad() + ", Cant: " + dbDet.getCantidad() + ")");
+						throw new Exception("No hay suficiente inventario para " + dbDet.getModelo() + "-" + dbDet.getColor() + "-" + dbDet.getTalla() + " (Inv: " + dbInv.getCantidad() + ", Cant: " + dbDet.getCantidad() + ")");
 					} else if (dbInv.getCantidad() == dbDet.getCantidad()) {
 						// Si se va a cero se elimina el regitro de inventario
 						dbInv.eliminar(datastore, tx);
@@ -158,12 +151,11 @@ public class PmAlmacen {
 						dbInv.guardar(datastore, tx);
 					}
 				} catch (EntityNotFoundException e) {
-					throw new Exception("No hay suficiente inventario para " + dbDet.getModelo() + "-" + dbDet.getTemporada() + "-" + dbDet.getColor() + "-" + dbDet.getTalla() + " (Inv: 0, Cant: " + dbDet.getCantidad() + ")");
+					throw new Exception("No hay suficiente inventario para " + dbDet.getModelo() + "-" + dbDet.getColor() + "-" + dbDet.getTalla() + " (Inv: 0, Cant: " + dbDet.getCantidad() + ")");
 				}
 			}
 			dbAlmSalida.setDbDetalle(lstDbDetalle);
 			dbAlmSalida.setModelos(lstModelos);
-			dbAlmSalida.setModelosTemporada(lstModelosTemporada);
 
 			if (dbAlmSalida.getTipo() == 3) {
 				// Es traspaso, se hace la entrada de almacen

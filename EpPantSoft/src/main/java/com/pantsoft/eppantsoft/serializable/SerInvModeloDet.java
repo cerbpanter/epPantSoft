@@ -4,7 +4,6 @@ public class SerInvModeloDet {
 	private String empresa;
 	private String almacen;
 	private String modelo;
-	private long temporada;
 	private String color;
 	private String talla;
 	private String codigoDeBarras;
@@ -13,11 +12,10 @@ public class SerInvModeloDet {
 	public SerInvModeloDet() {
 	}
 
-	public SerInvModeloDet(String empresa, String almacen, String modelo, long temporada, String color, String talla, String codigoDeBarras, long cantidad) {
+	public SerInvModeloDet(String empresa, String almacen, String modelo, String color, String talla, String codigoDeBarras, long cantidad) {
 		setEmpresa(empresa);
 		setAlmacen(almacen);
 		setModelo(modelo);
-		setTemporada(temporada);
 		setColor(color);
 		setTalla(talla);
 		setCodigoDeBarras(codigoDeBarras);
@@ -46,14 +44,6 @@ public class SerInvModeloDet {
 
 	public void setModelo(String modelo) {
 		this.modelo = modelo;
-	}
-
-	public long getTemporada() {
-		return temporada;
-	}
-
-	public void setTemporada(long temporada) {
-		this.temporada = temporada;
 	}
 
 	public String getColor() {

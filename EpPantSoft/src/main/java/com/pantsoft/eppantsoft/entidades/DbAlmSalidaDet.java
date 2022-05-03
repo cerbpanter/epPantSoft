@@ -19,7 +19,6 @@ public class DbAlmSalidaDet extends ClsEntidad {
 	private final ClsCampo folioAlmSalida = new ClsCampo("folioAlmSalida", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 2, NO_SUSTITUIR_NULL);
 	private final ClsCampo almacen = new ClsCampo("almacen", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 3, NO_SUSTITUIR_NULL);
 	private final ClsCampo modelo = new ClsCampo("modelo", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 4, NO_SUSTITUIR_NULL);
-	private final ClsCampo temporada = new ClsCampo("temporada", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 5, NO_SUSTITUIR_NULL);
 	private final ClsCampo color = new ClsCampo("color", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 6, NO_SUSTITUIR_NULL);
 	private final ClsCampo talla = new ClsCampo("talla", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 7, NO_SUSTITUIR_NULL);
 	private final ClsCampo codigoDeBarras = new ClsCampo("codigoDeBarras", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
@@ -30,14 +29,13 @@ public class DbAlmSalidaDet extends ClsEntidad {
 	private final ClsCampo cantidad = new ClsCampo("cantidad", Tipo.Long, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 
 	public DbAlmSalidaDet(SerAlmSalidaDet serAlmSalidaDet) throws ExcepcionControlada {
-		Key key = KeyFactory.createKey("DbAlmSalidaDet", serAlmSalidaDet.getEmpresa() + "-" + serAlmSalidaDet.getFolioAlmSalida() + "-" + serAlmSalidaDet.getAlmacen() + "-" + serAlmSalidaDet.getModelo() + "-" + serAlmSalidaDet.getTemporada() + "-" + serAlmSalidaDet.getColor() + "-" + serAlmSalidaDet.getTalla());
+		Key key = KeyFactory.createKey("DbAlmSalidaDet", serAlmSalidaDet.getEmpresa() + "-" + serAlmSalidaDet.getFolioAlmSalida() + "-" + serAlmSalidaDet.getAlmacen() + "-" + serAlmSalidaDet.getModelo() + "-" + serAlmSalidaDet.getColor() + "-" + serAlmSalidaDet.getTalla());
 		entidad = new Entity(key);
 		asignarValoresDefault();
 		setString(empresa, serAlmSalidaDet.getEmpresa());
 		setLong(folioAlmSalida, serAlmSalidaDet.getFolioAlmSalida());
 		setString(almacen, serAlmSalidaDet.getAlmacen());
 		setString(modelo, serAlmSalidaDet.getModelo());
-		setLong(temporada, serAlmSalidaDet.getTemporada());
 		setString(color, serAlmSalidaDet.getColor());
 		setString(talla, serAlmSalidaDet.getTalla());
 		setCodigoDeBarras(serAlmSalidaDet.getCodigoDeBarras());
@@ -57,15 +55,15 @@ public class DbAlmSalidaDet extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, folioAlmSalida, almacen, modelo, temporada, color, talla, codigoDeBarras, fechaAlmSalida, dia, mes, anio, cantidad);
+		return Arrays.asList(empresa, folioAlmSalida, almacen, modelo, color, talla, codigoDeBarras, fechaAlmSalida, dia, mes, anio, cantidad);
 	}
 
 	public SerAlmSalidaDet toSerAlmSalidaDet() throws ExcepcionControlada {
-		return new SerAlmSalidaDet(getEmpresa(), getFolioAlmSalida(), getAlmacen(), getModelo(), getTemporada(), getColor(), getTalla(), getCodigoDeBarras(), getFechaAlmSalida(), getDia(), getMes(), getAnio(), getCantidad());
+		return new SerAlmSalidaDet(getEmpresa(), getFolioAlmSalida(), getAlmacen(), getModelo(), getColor(), getTalla(), getCodigoDeBarras(), getFechaAlmSalida(), getDia(), getMes(), getAnio(), getCantidad());
 	}
 
 	public SerAlmEntradaDet toSerAlmEntradaDetTraspaso(String almacen) throws ExcepcionControlada {
-		return new SerAlmEntradaDet(getEmpresa(), 0L, almacen, getModelo(), getTemporada(), getColor(), getTalla(), getCodigoDeBarras(), getFechaAlmSalida(), getDia(), getMes(), getAnio(), getCantidad());
+		return new SerAlmEntradaDet(getEmpresa(), 0L, almacen, getModelo(), getColor(), getTalla(), getCodigoDeBarras(), getFechaAlmSalida(), getDia(), getMes(), getAnio(), getCantidad());
 	}
 
 	public String getEmpresa() throws ExcepcionControlada {
@@ -82,10 +80,6 @@ public class DbAlmSalidaDet extends ClsEntidad {
 
 	public String getModelo() throws ExcepcionControlada {
 		return getString(modelo);
-	}
-
-	public Long getTemporada() throws ExcepcionControlada {
-		return getLong(temporada);
 	}
 
 	public String getColor() throws ExcepcionControlada {

@@ -16,7 +16,6 @@ public class DbInvModeloDet extends ClsEntidad {
 	private final ClsCampo empresa = new ClsCampo("empresa", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 1, NO_SUSTITUIR_NULL);
 	private final ClsCampo almacen = new ClsCampo("almacen", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 3, NO_SUSTITUIR_NULL);
 	private final ClsCampo modelo = new ClsCampo("modelo", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 4, NO_SUSTITUIR_NULL);
-	private final ClsCampo temporada = new ClsCampo("temporada", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 5, NO_SUSTITUIR_NULL);
 	private final ClsCampo color = new ClsCampo("color", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 6, NO_SUSTITUIR_NULL);
 	private final ClsCampo talla = new ClsCampo("talla", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 7, NO_SUSTITUIR_NULL);
 	private final ClsCampo codigoDeBarras = new ClsCampo("codigoDeBarras", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
@@ -24,13 +23,12 @@ public class DbInvModeloDet extends ClsEntidad {
 
 	public DbInvModeloDet(SerInvModeloDet serInvModeloDet) throws ExcepcionControlada {
 		Key keyp = KeyFactory.createKey("DbEmpresa", serInvModeloDet.getEmpresa());
-		Key key = KeyFactory.createKey(keyp, "DbInvModeloDet", serInvModeloDet.getEmpresa() + "-" + serInvModeloDet.getAlmacen() + "-" + serInvModeloDet.getModelo() + "-" + serInvModeloDet.getTemporada() + "-" + serInvModeloDet.getColor() + "-" + serInvModeloDet.getTalla());
+		Key key = KeyFactory.createKey(keyp, "DbInvModeloDet", serInvModeloDet.getEmpresa() + "-" + serInvModeloDet.getAlmacen() + "-" + serInvModeloDet.getModelo() + "-" + serInvModeloDet.getColor() + "-" + serInvModeloDet.getTalla());
 		entidad = new Entity(key);
 		asignarValoresDefault();
 		setString(empresa, serInvModeloDet.getEmpresa());
 		setString(almacen, serInvModeloDet.getAlmacen());
 		setString(modelo, serInvModeloDet.getModelo());
-		setLong(temporada, serInvModeloDet.getTemporada());
 		setString(color, serInvModeloDet.getColor());
 		setString(talla, serInvModeloDet.getTalla());
 		setCodigoDeBarras(serInvModeloDet.getCodigoDeBarras());
@@ -46,11 +44,11 @@ public class DbInvModeloDet extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, almacen, modelo, temporada, color, talla, codigoDeBarras, cantidad);
+		return Arrays.asList(empresa, almacen, modelo, color, talla, codigoDeBarras, cantidad);
 	}
 
 	public SerInvModeloDet toSerInvModeloDet() throws ExcepcionControlada {
-		return new SerInvModeloDet(getEmpresa(), getAlmacen(), getModelo(), getTemporada(), getColor(), getTalla(), getCodigoDeBarras(), getCantidad());
+		return new SerInvModeloDet(getEmpresa(), getAlmacen(), getModelo(), getColor(), getTalla(), getCodigoDeBarras(), getCantidad());
 	}
 
 	public String getEmpresa() throws ExcepcionControlada {
@@ -63,10 +61,6 @@ public class DbInvModeloDet extends ClsEntidad {
 
 	public String getModelo() throws ExcepcionControlada {
 		return getString(modelo);
-	}
-
-	public Long getTemporada() throws ExcepcionControlada {
-		return getLong(temporada);
 	}
 
 	public String getColor() throws ExcepcionControlada {

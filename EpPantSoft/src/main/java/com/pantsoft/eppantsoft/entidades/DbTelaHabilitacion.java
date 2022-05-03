@@ -16,7 +16,7 @@ public class DbTelaHabilitacion extends ClsEntidad {
 	private final ClsCampo empresa = new ClsCampo("empresa", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 1, NO_SUSTITUIR_NULL);
 	private final ClsCampo materia = new ClsCampo("materia", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 15, TAM_NORMAL, VAL_MISSING, 3, NO_SUSTITUIR_NULL);
 	private final ClsCampo tipo = new ClsCampo("tipo", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 1, TAM_NORMAL, "H", 0, NO_SUSTITUIR_NULL);
-	private final ClsCampo precio = new ClsCampo("precio", Tipo.Double, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo precios = new ClsCampo("precios", Tipo.Text, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo ancho = new ClsCampo("ancho", Tipo.Double, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, NO_SUSTITUIR_NULL);
 
 	public DbTelaHabilitacion(SerTelaHabilitacion ser) throws ExcepcionControlada {
@@ -27,7 +27,7 @@ public class DbTelaHabilitacion extends ClsEntidad {
 		setString(this.empresa, ser.getEmpresa());
 		setString(this.materia, ser.getMateria());
 		setTipo(ser.getTipo());
-		setPrecio(ser.getPrecio());
+		setPrecios(ser.getPrecios());
 		setAncho(ser.getAncho());
 	}
 
@@ -38,11 +38,11 @@ public class DbTelaHabilitacion extends ClsEntidad {
 
 	@Override
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, materia, tipo, precio, ancho);
+		return Arrays.asList(empresa, materia, tipo, precios, ancho);
 	}
 
 	public SerTelaHabilitacion toSerTelaHabilitacion() throws ExcepcionControlada {
-		return new SerTelaHabilitacion(getEmpresa(), getMateria(), getTipo(), getPrecio(), getAncho());
+		return new SerTelaHabilitacion(getEmpresa(), getMateria(), getTipo(), getPrecios(), getAncho());
 	}
 
 	@Override
@@ -66,12 +66,12 @@ public class DbTelaHabilitacion extends ClsEntidad {
 		setString(this.tipo, tipo);
 	}
 
-	public double getPrecio() throws ExcepcionControlada {
-		return getDouble(precio);
+	public String getPrecios() throws ExcepcionControlada {
+		return getText(precios);
 	}
 
-	public void setPrecio(double precio) throws ExcepcionControlada {
-		setDouble(this.precio, precio);
+	public void setPrecios(String precios) throws ExcepcionControlada {
+		setText(this.precios, precios);
 	}
 
 	public double getAncho() throws ExcepcionControlada {
