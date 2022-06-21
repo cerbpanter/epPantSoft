@@ -18,13 +18,17 @@ public class SerAlmEntrada {
 	private String detalle;
 	private long folioAlmSalidaTraspaso;
 	private String almacenTraspaso;
+	private String serieFactura;
+	private long folioFactura;
+	private long folioCliente;
+	private String cliente;
 
 	private SerAlmEntradaDet[] dbDetalle;
 
 	public SerAlmEntrada() {
 	}
 
-	public SerAlmEntrada(String empresa, long folioAlmEntrada, String almacen, long tipo, String zonaHoraria, Date fechaAlmEntrada, String usuarioCreo, String usuarioModifico, String observaciones, long folioOrdenProduccion, long folioMaquilero, String maquilero, String detalle, long folioAlmSalidaTraspaso, String almacenTraspaso) {
+	public SerAlmEntrada(String empresa, long folioAlmEntrada, String almacen, long tipo, String zonaHoraria, Date fechaAlmEntrada, String usuarioCreo, String usuarioModifico, String observaciones, long folioOrdenProduccion, long folioMaquilero, String maquilero, String detalle, long folioAlmSalidaTraspaso, String almacenTraspaso, String serieFactura, long folioFactura, long folioCliente, String cliente) {
 		setEmpresa(empresa);
 		setFolioAlmEntrada(folioAlmEntrada);
 		setAlmacen(almacen);
@@ -40,6 +44,10 @@ public class SerAlmEntrada {
 		setDetalle(detalle);
 		setFolioAlmSalidaTraspaso(folioAlmSalidaTraspaso);
 		setAlmacenTraspaso(almacenTraspaso);
+		setSerieFactura(serieFactura);
+		setFolioFactura(folioFactura);
+		setFolioCliente(folioCliente);
+		setCliente(cliente);
 	}
 
 	public String getEmpresa() {
@@ -168,6 +176,38 @@ public class SerAlmEntrada {
 
 	public void setAlmacenTraspaso(String almacenTraspaso) {
 		this.almacenTraspaso = almacenTraspaso;
+	}
+
+	public String getSerieFactura() {
+		return serieFactura;
+	}
+
+	public void setSerieFactura(String serieFactura) {
+		this.serieFactura = serieFactura;
+	}
+
+	public long getFolioFactura() {
+		return folioFactura;
+	}
+
+	public void setFolioFactura(long folioFactura) {
+		this.folioFactura = folioFactura;
+	}
+
+	public long getFolioCliente() {
+		return folioCliente;
+	}
+
+	public void setFolioCliente(long folioCliente) {
+		this.folioCliente = folioCliente;
+	}
+
+	public String getCliente() {
+		return cliente;
+	}
+
+	public void setCliente(String cliente) {
+		this.cliente = cliente;
 	}
 
 }

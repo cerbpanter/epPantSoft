@@ -1,31 +1,32 @@
 package com.pantsoft.eppantsoft.serializable;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 public class SerAlmSalida {
 	private String empresa;
 	private long folioAlmSalida;
 	private String almacen;
-	private long tipo;
+	private long tipo; // 1-Ajuste, 2-Factura. 3-Traspaso
 	private String zonaHoraria;
 	private Date fechaAlmSalida;
 	private String usuarioCreo;
 	private String usuarioModifico;
 	private String observaciones;
-	private ArrayList<String> facturas;
+	private String serieFactura;
+	private long folioFactura;
 	private long folioCliente;
 	private String cliente;
 	private String detalle;
 	private long folioAlmEntradaTraspaso;
 	private String almacenTraspaso;
+	private boolean tieneError;
 
 	private SerAlmSalidaDet[] dbDetalle;
 
 	public SerAlmSalida() {
 	}
 
-	public SerAlmSalida(String empresa, long folioAlmSalida, String almacen, long tipo, String zonaHoraria, Date fechaAlmSalida, String usuarioCreo, String usuarioModifico, String observaciones, ArrayList<String> facturas, long folioCliente, String cliente, String detalle, long folioAlmEntradaTraspaso, String almacenTraspaso) {
+	public SerAlmSalida(String empresa, long folioAlmSalida, String almacen, long tipo, String zonaHoraria, Date fechaAlmSalida, String usuarioCreo, String usuarioModifico, String observaciones, String serieFactura, long folioFactura, long folioCliente, String cliente, String detalle, long folioAlmEntradaTraspaso, String almacenTraspaso, boolean tieneError) {
 		setEmpresa(empresa);
 		setFolioAlmSalida(folioAlmSalida);
 		setAlmacen(almacen);
@@ -35,12 +36,14 @@ public class SerAlmSalida {
 		setUsuarioCreo(usuarioCreo);
 		setUsuarioModifico(usuarioModifico);
 		setObservaciones(observaciones);
-		setFacturas(facturas);
+		setSerieFactura(serieFactura);
+		setFolioFactura(folioFactura);
 		setFolioCliente(folioCliente);
 		setCliente(cliente);
 		setDetalle(detalle);
 		setFolioAlmEntradaTraspaso(folioAlmEntradaTraspaso);
 		setAlmacenTraspaso(almacenTraspaso);
+		setTieneError(tieneError);
 	}
 
 	public String getEmpresa() {
@@ -115,12 +118,20 @@ public class SerAlmSalida {
 		this.observaciones = observaciones;
 	}
 
-	public ArrayList<String> getFacturas() {
-		return facturas;
+	public String getSerieFactura() {
+		return serieFactura;
 	}
 
-	public void setFacturas(ArrayList<String> facturas) {
-		this.facturas = facturas;
+	public void setSerieFactura(String serieFactura) {
+		this.serieFactura = serieFactura;
+	}
+
+	public long getFolioFactura() {
+		return folioFactura;
+	}
+
+	public void setFolioFactura(long folioFactura) {
+		this.folioFactura = folioFactura;
 	}
 
 	public long getFolioCliente() {
@@ -169,6 +180,14 @@ public class SerAlmSalida {
 
 	public void setAlmacenTraspaso(String almacenTraspaso) {
 		this.almacenTraspaso = almacenTraspaso;
+	}
+
+	public boolean getTieneError() {
+		return tieneError;
+	}
+
+	public void setTieneError(boolean tieneError) {
+		this.tieneError = tieneError;
 	}
 
 }

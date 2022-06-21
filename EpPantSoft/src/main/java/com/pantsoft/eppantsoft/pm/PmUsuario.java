@@ -60,6 +60,21 @@ public class PmUsuario {
 		}
 	}
 
+	public void actualizarAlmacenesTipos(SerUsuario serUsuario) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		try {
+			Key key = KeyFactory.createKey("DbUsuario", serUsuario.getEmpresa() + "-" + serUsuario.getUsuario());
+			DbUsuario dbUsuario = new DbUsuario(datastore.get(key));
+
+			dbUsuario.setAlmacenes(serUsuario.getAlmacenes());
+			dbUsuario.setTipoEntrada(serUsuario.getTiposEntrada());
+			dbUsuario.setTipoSalida(serUsuario.getTiposSalida());
+			dbUsuario.guardar(datastore);
+		} catch (EntityNotFoundException e) {
+			throw new Exception("El usuario '" + serUsuario.getUsuario() + "' no existe.");
+		}
+	}
+
 	public SerUsuario[] dameUsuarios(String empresa) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 

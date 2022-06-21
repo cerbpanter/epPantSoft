@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.pantsoft.eppantsoft.pm.PmAlmacen;
 import com.pantsoft.eppantsoft.pm.PmCodigoDeBarras;
 import com.pantsoft.eppantsoft.pm.PmColor;
+import com.pantsoft.eppantsoft.pm.PmParametro;
 import com.pantsoft.eppantsoft.pm.PmProceso;
 import com.pantsoft.eppantsoft.pm.PmTalla;
 import com.pantsoft.eppantsoft.pm.PmTallas;
@@ -20,6 +21,7 @@ import com.pantsoft.eppantsoft.pm.PmVista;
 import com.pantsoft.eppantsoft.serializable.SerAlmacen;
 import com.pantsoft.eppantsoft.serializable.SerCodigoDeBarras;
 import com.pantsoft.eppantsoft.serializable.SerColor;
+import com.pantsoft.eppantsoft.serializable.SerParametro;
 import com.pantsoft.eppantsoft.serializable.SerProceso;
 import com.pantsoft.eppantsoft.serializable.SerTalla;
 import com.pantsoft.eppantsoft.serializable.SerTallas;
@@ -86,6 +88,12 @@ public class EpCatalogos extends HttpServlet {
 			if (ep.esMetodo("usuario_actualizarTalleres") && ep.esVersion("v1")) {
 				SerUsuario serUsuario = ep.getObjetFromBody(SerUsuario.class);
 				new PmUsuario().actualizarTalleres(serUsuario);
+				ep.voidEnBody();
+				return;
+			}
+			if (ep.esMetodo("usuario_actualizarAlmacenesTipos") && ep.esVersion("v1")) {
+				SerUsuario serUsuario = ep.getObjetFromBody(SerUsuario.class);
+				new PmUsuario().actualizarAlmacenesTipos(serUsuario);
 				ep.voidEnBody();
 				return;
 			}
@@ -276,6 +284,20 @@ public class EpCatalogos extends HttpServlet {
 			if (ep.esMetodo("codigoDeBarras_eliminar") && ep.esVersion("v1")) {
 				ep.addPar("empresa", "String").addPar("modelo", "String").addPar("color", "String").addPar("talla", "String");
 				new PmCodigoDeBarras().eliminar(ep.dameParametroString("empresa"), ep.dameParametroString("modelo"), ep.dameParametroString("color"), ep.dameParametroString("talla"));
+				ep.voidEnBody();
+				return;
+			}
+
+			// Parametros ///////////////////////////////////////////////////////////
+			if (ep.esMetodo("parametro_grabar") && ep.esVersion("v1")) {
+				SerParametro serParametro = ep.getObjetFromBody(SerParametro.class);
+				new PmParametro().grabar(serParametro);
+				ep.voidEnBody();
+				return;
+			}
+			if (ep.esMetodo("parametro_eliminar") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("parametro", "String");
+				new PmParametro().eliminar(ep.dameParametroString("empresa"), ep.dameParametroString("parametro"));
 				ep.voidEnBody();
 				return;
 			}

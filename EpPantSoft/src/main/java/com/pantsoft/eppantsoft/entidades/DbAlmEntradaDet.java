@@ -28,7 +28,8 @@ public class DbAlmEntradaDet extends ClsEntidad {
 	private final ClsCampo cantidad = new ClsCampo("cantidad", Tipo.Long, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 
 	public DbAlmEntradaDet(SerAlmEntradaDet serAlmEntradaDet) throws ExcepcionControlada {
-		Key key = KeyFactory.createKey("DbAlmEntradaDet", serAlmEntradaDet.getEmpresa() + "-" + serAlmEntradaDet.getFolioAlmEntrada() + "-" + serAlmEntradaDet.getAlmacen() + "-" + serAlmEntradaDet.getModelo() + "-" + serAlmEntradaDet.getColor() + "-" + serAlmEntradaDet.getTalla());
+		Key keyp = KeyFactory.createKey("DbAlmEntrada", serAlmEntradaDet.getEmpresa() + "-" + serAlmEntradaDet.getFolioAlmEntrada());
+		Key key = KeyFactory.createKey(keyp, "DbAlmEntradaDet", serAlmEntradaDet.getEmpresa() + "-" + serAlmEntradaDet.getFolioAlmEntrada() + "-" + serAlmEntradaDet.getAlmacen() + "-" + serAlmEntradaDet.getModelo() + "-" + serAlmEntradaDet.getColor() + "-" + serAlmEntradaDet.getTalla());
 		entidad = new Entity(key);
 		asignarValoresDefault();
 		setString(empresa, serAlmEntradaDet.getEmpresa());

@@ -74,6 +74,12 @@ public class EpAlmacen extends HttpServlet {
 				ep.objectEnBody(serAlmSalida);
 				return;
 			}
+			if (ep.esMetodo("almSalida_actualizarConError") && ep.esVersion("v1")) {
+				SerAlmSalida serAlmSalida = ep.getObjetFromBody(SerAlmSalida.class);
+				serAlmSalida = new PmAlmacen().almSalida_actualizarConError(serAlmSalida);
+				ep.objectEnBody(serAlmSalida);
+				return;
+			}
 
 			// Catálogo de Almacén ///////////////////////////////////////////////////////////////////////////
 			if (ep.esMetodo("catAlmacen_agregar") && ep.esVersion("v1")) {

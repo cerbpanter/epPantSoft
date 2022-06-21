@@ -8,6 +8,9 @@ public class SerUsuario {
 	private String[] talleres;
 	private String sesion;
 	private long vigencia;
+	private String[] almacenes;
+	private long[] tiposEntrada;
+	private long[] tiposSalida;
 
 	public SerUsuario() {
 	}
@@ -76,5 +79,29 @@ public class SerUsuario {
 
 	public void setVigencia(long vigencia) {
 		this.vigencia = vigencia;
+	}
+
+	public String[] getAlmacenes() {
+		return almacenes;
+	}
+
+	public void setAlmacenes(String[] almacenes) {
+		this.almacenes = almacenes;
+	}
+
+	public long[] getTiposEntrada() {
+		return tiposEntrada;
+	}
+
+	public void setTiposEntrada(long[] tiposEntrada) {
+		this.tiposEntrada = tiposEntrada;
+	}
+
+	public long[] getTiposSalida() {
+		return tiposSalida;
+	}
+
+	public void setTiposSalida(long[] tiposSalida) {
+		this.tiposSalida = tiposSalida;
 	}
 }

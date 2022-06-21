@@ -25,7 +25,7 @@ public class DbAlmSalida extends ClsEntidad {
 	private final ClsCampo empresa = new ClsCampo("empresa", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 1, NO_SUSTITUIR_NULL);
 	private final ClsCampo folioAlmSalida = new ClsCampo("folioAlmSalida", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 2, NO_SUSTITUIR_NULL);
 	private final ClsCampo almacen = new ClsCampo("almacen", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
-	private final ClsCampo tipo = new ClsCampo("tipo", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo tipo = new ClsCampo("tipo", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL, "1-Ajuste, 2-Factura. 3-Traspaso");
 	private final ClsCampo zonaHoraria = new ClsCampo("zonaHoraria", Tipo.String, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo fechaAlmSalida = new ClsCampo("fechaAlmSalida", Tipo.Date, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo dia = new ClsCampo("dia", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
@@ -34,13 +34,15 @@ public class DbAlmSalida extends ClsEntidad {
 	private final ClsCampo usuarioCreo = new ClsCampo("usuarioCreo", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo usuarioModifico = new ClsCampo("usuarioModifico", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo observaciones = new ClsCampo("observaciones", Tipo.String, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
-	private final ClsCampo facturas = new ClsCampo("facturas", Tipo.ArrayString, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo serieFactura = new ClsCampo("serieFactura", Tipo.String, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo folioFactura = new ClsCampo("folioFactura", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, SUSTITUIR_NULL);
 	private final ClsCampo folioCliente = new ClsCampo("folioCliente", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo cliente = new ClsCampo("cliente", Tipo.String, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
-	private final ClsCampo detalle = new ClsCampo("detalle", Tipo.Text, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_GRANDE, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
-	private final ClsCampo modelos = new ClsCampo("modelos", Tipo.ArrayString, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo detalle = new ClsCampo("detalle", Tipo.Text, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_GRANDE, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo modelos = new ClsCampo("modelos", Tipo.ArrayString, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo folioAlmEntradaTraspaso = new ClsCampo("folioAlmEntradaTraspaso", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, SUSTITUIR_NULL);
 	private final ClsCampo almacenTraspaso = new ClsCampo("almacenTraspaso", Tipo.String, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo tieneError = new ClsCampo("tieneError", Tipo.Boolean, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_FALSE, 0, SUSTITUIR_NULL);
 
 	// Dependencias
 	private List<DbAlmSalidaDet> dbDetalle = null;
@@ -57,12 +59,14 @@ public class DbAlmSalida extends ClsEntidad {
 		setUsuarioCreo(serAlmSalida.getUsuarioCreo());
 		setUsuarioModifico(serAlmSalida.getUsuarioModifico());
 		setObservaciones(serAlmSalida.getObservaciones());
-		setFacturas(serAlmSalida.getFacturas());
+		setSerieFactura(serAlmSalida.getSerieFactura());
+		setFolioFactura(serAlmSalida.getFolioFactura());
 		setFolioCliente(serAlmSalida.getFolioCliente());
 		setCliente(serAlmSalida.getCliente());
 		setDetalle(serAlmSalida.getDetalle());
 		setFolioAlmEntradaTraspaso(serAlmSalida.getFolioAlmEntradaTraspaso());
 		setAlmacenTraspaso(serAlmSalida.getAlmacenTraspaso());
+		setTieneError(serAlmSalida.getTieneError());
 	}
 
 	public DbAlmSalida(Entity entidad) throws ExcepcionControlada {
@@ -75,15 +79,15 @@ public class DbAlmSalida extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, folioAlmSalida, almacen, tipo, zonaHoraria, fechaAlmSalida, dia, mes, anio, usuarioCreo, usuarioModifico, observaciones, facturas, folioCliente, cliente, detalle, modelos, almacenTraspaso);
+		return Arrays.asList(empresa, folioAlmSalida, almacen, tipo, zonaHoraria, fechaAlmSalida, dia, mes, anio, usuarioCreo, usuarioModifico, observaciones, serieFactura, folioFactura, folioCliente, cliente, detalle, modelos, almacenTraspaso, tieneError);
 	}
 
 	public SerAlmSalida toSerAlmSalida() throws ExcepcionControlada {
-		return new SerAlmSalida(getEmpresa(), getFolioAlmSalida(), getAlmacen(), getTipo(), getZonaHoraria(), getFechaAlmSalida(), getUsuarioCreo(), getUsuarioModifico(), getObservaciones(), getFacturas(), getFolioCliente(), getCliente(), getDetalle(), getFolioAlmEntradaTraspaso(), getAlmacenTraspaso());
+		return new SerAlmSalida(getEmpresa(), getFolioAlmSalida(), getAlmacen(), getTipo(), getZonaHoraria(), getFechaAlmSalida(), getUsuarioCreo(), getUsuarioModifico(), getObservaciones(), getSerieFactura(), getFolioFactura(), getFolioCliente(), getCliente(), getDetalle(), getFolioAlmEntradaTraspaso(), getAlmacenTraspaso(), getTieneError());
 	}
 
 	public SerAlmSalida toSerAlmSalidaCompleto(DatastoreService datastore, Transaction tx) throws ExcepcionControlada {
-		SerAlmSalida serAlmSalida = new SerAlmSalida(getEmpresa(), getFolioAlmSalida(), getAlmacen(), getTipo(), getZonaHoraria(), getFechaAlmSalida(), getUsuarioCreo(), getUsuarioModifico(), getObservaciones(), getFacturas(), getFolioCliente(), getCliente(), getDetalle(), getFolioAlmEntradaTraspaso(), getAlmacenTraspaso());
+		SerAlmSalida serAlmSalida = new SerAlmSalida(getEmpresa(), getFolioAlmSalida(), getAlmacen(), getTipo(), getZonaHoraria(), getFechaAlmSalida(), getUsuarioCreo(), getUsuarioModifico(), getObservaciones(), getSerieFactura(), getFolioFactura(), getFolioCliente(), getCliente(), getDetalle(), getFolioAlmEntradaTraspaso(), getAlmacenTraspaso(), getTieneError());
 
 		// Agrego el detalle
 		getDbDetalle(datastore, tx);
@@ -96,7 +100,7 @@ public class DbAlmSalida extends ClsEntidad {
 	}
 
 	public SerAlmEntrada toSerAlmEntradaTraspaso(DatastoreService datastore, Transaction tx) throws ExcepcionControlada {
-		SerAlmEntrada serAlmEntrada = new SerAlmEntrada(getEmpresa(), 0L, getAlmacenTraspaso(), 3L, getZonaHoraria(), getFechaAlmSalida(), getUsuarioCreo(), getUsuarioModifico(), getObservaciones(), 0L, 0L, null, getDetalle(), getFolioAlmSalida(), getAlmacen());
+		SerAlmEntrada serAlmEntrada = new SerAlmEntrada(getEmpresa(), 0L, getAlmacenTraspaso(), 3L, getZonaHoraria(), getFechaAlmSalida(), getUsuarioCreo(), getUsuarioModifico(), getObservaciones(), 0L, 0L, null, getDetalle(), getFolioAlmSalida(), getAlmacen(), null, 0L, 0L, null);
 
 		// Agrego el detalle
 		getDbDetalle(datastore, tx);
@@ -203,12 +207,20 @@ public class DbAlmSalida extends ClsEntidad {
 		setString(this.observaciones, observaciones);
 	}
 
-	public ArrayList<String> getFacturas() throws ExcepcionControlada {
-		return getArrayString(facturas);
+	public String getSerieFactura() throws ExcepcionControlada {
+		return getString(serieFactura);
 	}
 
-	public void setFacturas(ArrayList<String> facturas) throws ExcepcionControlada {
-		setArrayString(this.facturas, facturas);
+	public void setSerieFactura(String serieFactura) throws ExcepcionControlada {
+		setString(this.serieFactura, serieFactura);
+	}
+
+	public Long getFolioFactura() throws ExcepcionControlada {
+		return getLong(folioFactura);
+	}
+
+	public void setFolioFactura(Long folioFactura) throws ExcepcionControlada {
+		setLong(this.folioFactura, folioFactura);
 	}
 
 	public Long getFolioCliente() throws ExcepcionControlada {
@@ -271,6 +283,14 @@ public class DbAlmSalida extends ClsEntidad {
 
 	public void setAlmacenTraspaso(String almacenTraspaso) throws ExcepcionControlada {
 		setString(this.almacenTraspaso, almacenTraspaso);
+	}
+
+	public boolean getTieneError() throws ExcepcionControlada {
+		return getBoolean(tieneError);
+	}
+
+	public void setTieneError(boolean tieneError) throws ExcepcionControlada {
+		setBoolean(this.tieneError, tieneError);
 	}
 
 }

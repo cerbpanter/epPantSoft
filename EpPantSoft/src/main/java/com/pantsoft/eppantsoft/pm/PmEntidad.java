@@ -40,6 +40,7 @@ import com.pantsoft.eppantsoft.entidades.DbModeloHabilitacion;
 import com.pantsoft.eppantsoft.entidades.DbModeloImagen;
 import com.pantsoft.eppantsoft.entidades.DbModeloProceso;
 import com.pantsoft.eppantsoft.entidades.DbModeloProducido;
+import com.pantsoft.eppantsoft.entidades.DbParametro;
 import com.pantsoft.eppantsoft.entidades.DbProceso;
 import com.pantsoft.eppantsoft.entidades.DbProduccion;
 import com.pantsoft.eppantsoft.entidades.DbTalla;
@@ -1610,6 +1611,9 @@ public class PmEntidad {
 			lstCampos = db.getCampos();
 		} else if (entidad.equals("DbModeloProducido")) {
 			DbModeloProducido db = new DbModeloProducido(entity);
+			lstCampos = db.getCampos();
+		} else if (entidad.equals("DbParametro")) {
+			DbParametro db = new DbParametro(entity);
 			lstCampos = db.getCampos();
 		} else if (entidad.equals("DbProceso")) {
 			DbProceso db = new DbProceso(entity);

@@ -79,6 +79,15 @@ public class PmCodigoDeBarras {
 					// Si no existe no hay problema
 				}
 				// FALTA Validar si existe en Entradas Salidas o Inventario
+				List<Filter> lstFiltros = new ArrayList<Filter>();
+				lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, dbCodigoDeBarras.getEmpresa()));
+				lstFiltros.add(new FilterPredicate("codigoDeBarras", FilterOperator.EQUAL, dbCodigoDeBarras.getCodigoDeBarras()));
+				if (ClsEntidad.ejecutarConsultaHayEntidades(datastore, "DbAlmEntradaDet", lstFiltros))
+					throw new Exception("El código de barras " + dbCodigoDeBarras.getCodigoDeBarras() + " tiene registros en entradas de almacén, imposible eliminar.");
+				if (ClsEntidad.ejecutarConsultaHayEntidades(datastore, "DbAlmSalidaDet", lstFiltros))
+					throw new Exception("El código de barras " + dbCodigoDeBarras.getCodigoDeBarras() + " tiene registros en salidas de almacén, imposible eliminar.");
+				if (ClsEntidad.ejecutarConsultaHayEntidades(datastore, "DbInvModeloDet", lstFiltros))
+					throw new Exception("El código de barras " + dbCodigoDeBarras.getCodigoDeBarras() + " tiene registros en inventario, imposible eliminar.");
 
 				dbCodigoDeBarras_A_Nuevo = new DbCodigoDeBarras_A(serCodigoDeBarras);
 
