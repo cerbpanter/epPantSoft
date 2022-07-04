@@ -170,9 +170,9 @@ public class PmAlmacen {
 
 					try {
 						DbInvModeloDet dbInv = new DbInvModeloDet(datastore.get(tx, key));
-						// if (dbInv.getCantidad() < dbDet.getCantidad()) {
-						// throw new Exception("No hay suficiente inventario para " + dbDet.getModelo() + "-" + dbDet.getColor() + "-" + dbDet.getTalla() + " (Inv: " + dbInv.getCantidad() + ", Cant: " + dbDet.getCantidad() + ")");
-						// } else
+						if (dbInv.getCantidad() < dbDet.getCantidad() && serAlmSalida.getValidarInventario()) {
+							throw new Exception("No hay suficiente inventario para " + dbDet.getModelo() + "-" + dbDet.getColor() + "-" + dbDet.getTalla() + " (Inv: " + dbInv.getCantidad() + ", Cant: " + dbDet.getCantidad() + ")");
+						}
 						if (dbInv.getCantidad() == dbDet.getCantidad()) {
 							// Si se va a cero se elimina el regitro de inventario
 							dbInv.eliminar(datastore, tx);
@@ -181,7 +181,8 @@ public class PmAlmacen {
 							dbInv.guardar(datastore, tx);
 						}
 					} catch (EntityNotFoundException e) {
-						// throw new Exception("No hay suficiente inventario para " + dbDet.getModelo() + "-" + dbDet.getColor() + "-" + dbDet.getTalla() + " (Inv: 0, Cant: " + dbDet.getCantidad() + ")");
+						if (serAlmSalida.getValidarInventario())
+							throw new Exception("No hay suficiente inventario para " + dbDet.getModelo() + "-" + dbDet.getColor() + "-" + dbDet.getTalla() + " (Inv: 0, Cant: " + dbDet.getCantidad() + ")");
 						SerInvModeloDet serInv = new SerInvModeloDet(dbDet.getEmpresa(), dbDet.getAlmacen(), dbDet.getModelo(), dbDet.getColor(), dbDet.getTalla(), dbDet.getCodigoDeBarras(), dbDet.getCantidad() * -1);
 						DbInvModeloDet dbInv = new DbInvModeloDet(serInv);
 						dbInv.guardar(datastore, tx);
@@ -243,8 +244,11 @@ public class PmAlmacen {
 			if (serAlmSalida.getFolioFactura() != dbAlmSalida.getFolioFactura())
 				throw new Exception("No coincide el folio, imposible reprocesar");
 			if (serAlmSalida.getTieneError())
-				throw new Exception("El serielizable tieneError=true, imposible reprocesar");
+				throw new Exception("El serializable tieneError=true, imposible reprocesar");
+			if (ClsUtil.esNulo(serAlmSalida.getAlmacen()))
+				throw new Exception("El serializable no tiene almacén, imposible reprocesar");
 
+			dbAlmSalida.setAlmacen(serAlmSalida.getAlmacen());
 			dbAlmSalida.setDetalle(serAlmSalida.getDetalle());
 			dbAlmSalida.setObservaciones(serAlmSalida.getObservaciones());
 			dbAlmSalida.setTieneError(false);
@@ -271,9 +275,9 @@ public class PmAlmacen {
 
 				try {
 					DbInvModeloDet dbInv = new DbInvModeloDet(datastore.get(tx, key));
-					// if (dbInv.getCantidad() < dbDet.getCantidad()) {
-					// throw new Exception("No hay suficiente inventario para " + dbDet.getModelo() + "-" + dbDet.getColor() + "-" + dbDet.getTalla() + " (Inv: " + dbInv.getCantidad() + ", Cant: " + dbDet.getCantidad() + ")");
-					// } else
+					if (dbInv.getCantidad() < dbDet.getCantidad() && serAlmSalida.getValidarInventario()) {
+						throw new Exception("No hay suficiente inventario para " + dbDet.getModelo() + "-" + dbDet.getColor() + "-" + dbDet.getTalla() + " (Inv: " + dbInv.getCantidad() + ", Cant: " + dbDet.getCantidad() + ")");
+					}
 					if (dbInv.getCantidad() == dbDet.getCantidad()) {
 						// Si se va a cero se elimina el regitro de inventario
 						dbInv.eliminar(datastore, tx);
@@ -282,7 +286,8 @@ public class PmAlmacen {
 						dbInv.guardar(datastore, tx);
 					}
 				} catch (EntityNotFoundException e) {
-					// throw new Exception("No hay suficiente inventario para " + dbDet.getModelo() + "-" + dbDet.getColor() + "-" + dbDet.getTalla() + " (Inv: 0, Cant: " + dbDet.getCantidad() + ")");
+					if (serAlmSalida.getValidarInventario())
+						throw new Exception("No hay suficiente inventario para " + dbDet.getModelo() + "-" + dbDet.getColor() + "-" + dbDet.getTalla() + " (Inv: 0, Cant: " + dbDet.getCantidad() + ")");
 					SerInvModeloDet serInv = new SerInvModeloDet(dbDet.getEmpresa(), dbDet.getAlmacen(), dbDet.getModelo(), dbDet.getColor(), dbDet.getTalla(), dbDet.getCodigoDeBarras(), dbDet.getCantidad() * -1);
 					DbInvModeloDet dbInv = new DbInvModeloDet(serInv);
 					dbInv.guardar(datastore, tx);
@@ -292,6 +297,48 @@ public class PmAlmacen {
 			dbAlmSalida.setModelos(lstModelos);
 
 			dbAlmSalida.guardar(datastore, tx);
+
+			tx.commit();
+
+			return dbAlmSalida.toSerAlmSalida();
+		} finally {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+		}
+	}
+
+	public SerAlmSalida almSalida_eliminar(String empresa, long folioAlmSalida) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Transaction tx = null;
+
+		try {
+			tx = ClsEntidad.iniciarTransaccion(datastore);
+
+			DbAlmSalida dbAlmSalida;
+			try {
+				dbAlmSalida = new DbAlmSalida(ClsEntidad.obtenerEntidad(datastore, tx, "DbAlmSalida", empresa + "-" + folioAlmSalida));
+			} catch (EntityNotFoundException e1) {
+				throw new ExcepcionControlada("El folio AlmSalida '" + folioAlmSalida + "' no existe.");
+			}
+
+			List<DbAlmSalidaDet> lstDetalle = dbAlmSalida.getDbDetalle(datastore, tx);
+			for (DbAlmSalidaDet dbDet : lstDetalle) {
+				// Aumento el inventario
+				Key keyp = KeyFactory.createKey("DbEmpresa", dbDet.getEmpresa());
+				Key key = KeyFactory.createKey(keyp, "DbInvModeloDet", dbDet.getEmpresa() + "-" + dbDet.getAlmacen() + "-" + dbDet.getModelo() + "-" + dbDet.getColor() + "-" + dbDet.getTalla());
+
+				DbInvModeloDet dbInv;
+				try {
+					dbInv = new DbInvModeloDet(datastore.get(tx, key));
+					dbInv.setCantidad(dbInv.getCantidad() + dbDet.getCantidad());
+				} catch (EntityNotFoundException e) {
+					SerInvModeloDet serInv = new SerInvModeloDet(dbDet.getEmpresa(), dbDet.getAlmacen(), dbDet.getModelo(), dbDet.getColor(), dbDet.getTalla(), dbDet.getCodigoDeBarras(), dbDet.getCantidad());
+					dbInv = new DbInvModeloDet(serInv);
+				}
+				dbInv.guardar(datastore, tx);
+			}
+
+			dbAlmSalida.eliminar(datastore, tx);
 
 			tx.commit();
 

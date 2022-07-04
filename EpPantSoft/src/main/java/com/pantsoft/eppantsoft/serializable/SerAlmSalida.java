@@ -20,6 +20,7 @@ public class SerAlmSalida {
 	private long folioAlmEntradaTraspaso;
 	private String almacenTraspaso;
 	private boolean tieneError;
+	private boolean validarInventario;
 
 	private SerAlmSalidaDet[] dbDetalle;
 
@@ -188,6 +189,14 @@ public class SerAlmSalida {
 
 	public void setTieneError(boolean tieneError) {
 		this.tieneError = tieneError;
+	}
+
+	public boolean getValidarInventario() {
+		return validarInventario;
+	}
+
+	public void setValidarInventario(boolean validarInventario) {
+		this.validarInventario = validarInventario;
 	}
 
 }
