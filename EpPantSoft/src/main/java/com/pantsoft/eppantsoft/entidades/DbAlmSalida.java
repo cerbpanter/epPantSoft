@@ -79,7 +79,7 @@ public class DbAlmSalida extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, folioAlmSalida, almacen, tipo, zonaHoraria, fechaAlmSalida, dia, mes, anio, usuarioCreo, usuarioModifico, observaciones, serieFactura, folioFactura, folioCliente, cliente, detalle, modelos, almacenTraspaso, tieneError);
+		return Arrays.asList(empresa, folioAlmSalida, almacen, tipo, zonaHoraria, fechaAlmSalida, dia, mes, anio, usuarioCreo, usuarioModifico, observaciones, serieFactura, folioFactura, folioCliente, cliente, detalle, modelos, folioAlmEntradaTraspaso, almacenTraspaso, tieneError);
 	}
 
 	public SerAlmSalida toSerAlmSalida() throws ExcepcionControlada {
