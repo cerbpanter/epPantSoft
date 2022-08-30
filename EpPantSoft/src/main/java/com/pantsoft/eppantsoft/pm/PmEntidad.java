@@ -85,7 +85,7 @@ public class PmEntidad {
 		}
 	}
 
-	public String ejecutarConsultaSql(String empresa, long temporada, String cns, boolean usuarioAdmin) throws Exception {
+	public String ejecutarConsultaSql(String empresa, String cns, boolean usuarioAdmin) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
 		String valor;
@@ -735,13 +735,13 @@ public class PmEntidad {
 		blob.agregarStr("");
 		blob.agregarStr(cursorStr);
 		generarEncabezado = true;
-		procesarEntidadesSql(datastore, empresa, temporada, entidadCns, lstCamposCns, lstEntidades, blob, usuarioAdmin, entidadCns.getFiltrosOn());
+		procesarEntidadesSql(datastore, empresa, entidadCns, lstCamposCns, lstEntidades, blob, usuarioAdmin, entidadCns.getFiltrosOn());
 
 		blob.insertarAlInicioStr(String.valueOf(entidadesLeidas));
 		return blob.getString();
 	}
 
-	private void procesarEntidadesSql(DatastoreService datastore, String empresa, long temporada, ClsEntidadCns entidadCns, List<ClsCampoCns> lstCamposCns, List<Entity> lstEntidades, ClsBlobWriter blob, boolean usuarioAdmin, List<ClsCampoCns> lstFiltrosWhere) throws Exception {
+	private void procesarEntidadesSql(DatastoreService datastore, String empresa, ClsEntidadCns entidadCns, List<ClsCampoCns> lstCamposCns, List<Entity> lstEntidades, ClsBlobWriter blob, boolean usuarioAdmin, List<ClsCampoCns> lstFiltrosWhere) throws Exception {
 		if (lstEntidades.size() == 0 && !entidadCns.getInnerJoin() && entidadCns.getEntidadPadre() != null)
 			lstEntidades.add(new Entity(KeyFactory.createKey(entidadCns.getEntidad(), "Null")));
 		Map<String, ClsCampo> mapCamposBd = entidadCns.getMapCamposBd();
@@ -1105,7 +1105,7 @@ public class PmEntidad {
 					// Se omite la consulta porque hay un long = null en el WHERE (ON)
 					lstEntidades = new ArrayList<Entity>(0);
 				}
-				procesarEntidadesSql(datastore, empresa, temporada, subEntidadCns, lstCamposCns, lstEntidades, blob, usuarioAdmin, lstFiltrosWhere);
+				procesarEntidadesSql(datastore, empresa, subEntidadCns, lstCamposCns, lstEntidades, blob, usuarioAdmin, lstFiltrosWhere);
 			} else {
 				// Si es la primer fila se generan los encabezados con los nombres de columna y tipo de datos
 				if (generarEncabezado) {

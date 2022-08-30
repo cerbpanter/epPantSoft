@@ -66,6 +66,12 @@ public class EpAlmacen extends HttpServlet {
 				ep.objectEnBody(serAlmEntrada);
 				return;
 			}
+			if (ep.esMetodo("almEntrada_eliminar") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("folioAlmEntrada", "Long");
+				new PmAlmacen().almEntrada_eliminar(ep.dameParametroString("empresa"), ep.dameParametroLong("folioAlmEntrada"));
+				ep.voidEnBody();
+				return;
+			}
 
 			// AlmSalida /////////////////////////////////////////////
 			if (ep.esMetodo("almSalida_agregar") && ep.esVersion("v1")) {

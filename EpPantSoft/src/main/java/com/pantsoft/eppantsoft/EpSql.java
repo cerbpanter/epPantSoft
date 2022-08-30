@@ -37,10 +37,9 @@ public class EpSql extends HttpServlet {
 				return;
 			}
 			if (ep.esMetodo("ejecutarConsultaSql") && ep.esVersion("v1")) {
-				ep.addPar("empresa", "String").addPar("temporada", "Long").addPar("cns", "String");
+				ep.addPar("empresa", "String").addPar("cns", "String");
 				String blob;
 				String empresa = ep.dameParametroString("empresa");
-				Long temporada = ep.dameParametroLong("temporada");
 				String cns = ep.dameParametroString("cns");
 
 				boolean noAdminSiNube = cns.endsWith("NOADMINSINUBE");
@@ -62,7 +61,7 @@ public class EpSql extends HttpServlet {
 				// }
 				// }
 				// } else {
-				blob = new PmEntidad().ejecutarConsultaSql(empresa, temporada, cns, usuarioAdmin);
+				blob = new PmEntidad().ejecutarConsultaSql(empresa, cns, usuarioAdmin);
 				// }
 
 				Respuesta resp = new Respuesta(blob);

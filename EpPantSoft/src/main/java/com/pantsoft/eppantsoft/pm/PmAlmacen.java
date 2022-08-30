@@ -47,11 +47,11 @@ public class PmAlmacen {
 
 			long folio = ClsUtil.dameSiguienteId(serAlmEntrada.getEmpresa(), 0L, "AlmEntrada", datastore, tx);
 			serAlmEntrada.setFolioAlmEntrada(folio);
-			if (serAlmEntrada.getTipo() != 3) {
+			if (serAlmEntrada.getTipo() != 4) {
 				serAlmEntrada.setFechaAlmEntrada(new Date());
 			} else {
 				if (serAlmEntrada.getFechaAlmEntrada() == null)
-					throw new Exception("La salidas tipo factura deben traer fecha");
+					throw new Exception("La entradas tipo factura deben traer fecha");
 			}
 
 			DbAlmEntrada dbAlmEntrada = new DbAlmEntrada(serAlmEntrada);
@@ -60,12 +60,12 @@ public class PmAlmacen {
 				throw new ExcepcionControlada("El folio AlmEntrada '" + serAlmEntrada.getFolioAlmEntrada() + "' ya existe.");
 			if (ClsUtil.esNulo(dbAlmEntrada.getDetalle()))
 				throw new Exception("El detalle no puede estar vacío");
-			if (serAlmEntrada.getTipo() == 3) {
+			if (serAlmEntrada.getTipo() == 4) {
 				if (serAlmEntrada.getSerieFactura() == null || serAlmEntrada.getFolioFactura() == 0)
-					throw new Exception("Las salida tipo factura deben tener serie y folio");
+					throw new Exception("Las entradas tipo factura deben tener serie y folio");
 			} else {
 				if (serAlmEntrada.getSerieFactura() != null || serAlmEntrada.getFolioFactura() != 0)
-					throw new Exception("Solo las salida tipo factura deben tener serie y folio");
+					throw new Exception("Solo las entradas tipo factura deben tener serie y folio");
 			}
 
 			ClsBlobReader blobR = new ClsBlobReader("¬", dbAlmEntrada.getDetalle(), true);
@@ -106,6 +106,48 @@ public class PmAlmacen {
 			return dbAlmEntrada.toSerAlmEntrada();
 		} finally {
 			if (tx != null && tx.isActive() && hacerCommit == true)
+				tx.rollback();
+		}
+	}
+
+	public SerAlmEntrada almEntrada_eliminar(String empresa, long folioAlmEntrada) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Transaction tx = null;
+
+		try {
+			tx = ClsEntidad.iniciarTransaccion(datastore);
+
+			DbAlmEntrada dbAlmEntrada;
+			try {
+				dbAlmEntrada = new DbAlmEntrada(ClsEntidad.obtenerEntidad(datastore, tx, "DbAlmEntrada", empresa + "-" + folioAlmEntrada));
+			} catch (EntityNotFoundException e1) {
+				throw new ExcepcionControlada("El folio AlmEntrada '" + folioAlmEntrada + "' no existe.");
+			}
+
+			List<DbAlmEntradaDet> lstDetalle = dbAlmEntrada.getDbDetalle(datastore, tx);
+			for (DbAlmEntradaDet dbDet : lstDetalle) {
+				// Decremento el inventario
+				Key keyp = KeyFactory.createKey("DbEmpresa", dbDet.getEmpresa());
+				Key key = KeyFactory.createKey(keyp, "DbInvModeloDet", dbDet.getEmpresa() + "-" + dbDet.getAlmacen() + "-" + dbDet.getModelo() + "-" + dbDet.getColor() + "-" + dbDet.getTalla());
+
+				DbInvModeloDet dbInv;
+				try {
+					dbInv = new DbInvModeloDet(datastore.get(tx, key));
+					dbInv.setCantidad(dbInv.getCantidad() - dbDet.getCantidad());
+				} catch (EntityNotFoundException e) {
+					SerInvModeloDet serInv = new SerInvModeloDet(dbDet.getEmpresa(), dbDet.getAlmacen(), dbDet.getModelo(), dbDet.getColor(), dbDet.getTalla(), dbDet.getCodigoDeBarras(), dbDet.getCantidad() * -1);
+					dbInv = new DbInvModeloDet(serInv);
+				}
+				dbInv.guardar(datastore, tx);
+			}
+
+			dbAlmEntrada.eliminar(datastore, tx);
+
+			tx.commit();
+
+			return dbAlmEntrada.toSerAlmEntrada();
+		} finally {
+			if (tx != null && tx.isActive())
 				tx.rollback();
 		}
 	}

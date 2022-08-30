@@ -16,6 +16,7 @@ import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.pantsoft.eppantsoft.entidades.DbUsuario;
+import com.pantsoft.eppantsoft.serializable.Respuesta;
 import com.pantsoft.eppantsoft.serializable.SerUsuario;
 import com.pantsoft.eppantsoft.util.ClsEntidad;
 import com.pantsoft.eppantsoft.util.ExcepcionControlada;
@@ -187,6 +188,24 @@ public class PmUsuario {
 		serUsuario.setTalleres(dbUsuario.getTalleres());
 
 		return serUsuario;
+	}
+
+	public Respuesta dameEmpresas(String usuario) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		List<Filter> lstFiltros = new ArrayList<Filter>();
+		lstFiltros.add(new FilterPredicate("usuario", FilterOperator.EQUAL, usuario));
+		List<Entity> lstUsuarios = ClsEntidad.ejecutarConsulta(datastore, "DbUsuario", lstFiltros);
+		if (lstUsuarios == null || lstUsuarios.size() == 0)
+			return new Respuesta();
+		String arr = null;
+		for (Entity entidad : lstUsuarios) {
+			if (arr == null) {
+				arr = (String) entidad.getProperty("empresa");
+			} else {
+				arr += "," + (String) entidad.getProperty("empresa");
+			}
+		}
+		return new Respuesta(arr);
 	}
 
 }

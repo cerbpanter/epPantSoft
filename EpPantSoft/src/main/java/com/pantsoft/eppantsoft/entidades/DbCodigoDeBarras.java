@@ -18,6 +18,10 @@ public class DbCodigoDeBarras extends ClsEntidad {
 	private final ClsCampo color = new ClsCampo("color", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 5, NO_SUSTITUIR_NULL);
 	private final ClsCampo talla = new ClsCampo("talla", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 4, NO_SUSTITUIR_NULL);
 	private final ClsCampo codigoDeBarras = new ClsCampo("codigoDeBarras", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo aplicaMinimoMaximo = new ClsCampo("aplicaMinimoMaximo", Tipo.Boolean, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_FALSE, 0, SUSTITUIR_NULL);
+	private final ClsCampo minimo = new ClsCampo("minimo", Tipo.Long, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo maximo = new ClsCampo("maximo", Tipo.Long, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo loteMinimoMaximo = new ClsCampo("loteMinimoMaximo", Tipo.Long, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 
 	public DbCodigoDeBarras(SerCodigoDeBarras serCodigoDeBarras) throws ExcepcionControlada {
 		Key key = KeyFactory.createKey("DbCodigoDeBarras", serCodigoDeBarras.getEmpresa() + "-" + serCodigoDeBarras.getModelo() + "-" + serCodigoDeBarras.getColor() + "-" + serCodigoDeBarras.getTalla());
@@ -28,6 +32,10 @@ public class DbCodigoDeBarras extends ClsEntidad {
 		setString(color, serCodigoDeBarras.getColor());
 		setString(talla, serCodigoDeBarras.getTalla());
 		setCodigoDeBarras(serCodigoDeBarras.getCodigoDeBarras());
+		setAplicaMinimoMaximo(serCodigoDeBarras.getAplicaMinimoMaximo());
+		setMinimo(serCodigoDeBarras.getMinimo());
+		setMaximo(serCodigoDeBarras.getMaximo());
+		setLoteMinimoMaximo(serCodigoDeBarras.getLoteMinimoMaximo());
 	}
 
 	public DbCodigoDeBarras(Entity entidad) {
@@ -39,11 +47,11 @@ public class DbCodigoDeBarras extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, modelo, color, talla, codigoDeBarras);
+		return Arrays.asList(empresa, modelo, color, talla, codigoDeBarras, aplicaMinimoMaximo, minimo, maximo, loteMinimoMaximo);
 	}
 
 	public SerCodigoDeBarras toSerCodigoDeBarras() throws ExcepcionControlada {
-		return new SerCodigoDeBarras(getEmpresa(), getModelo(), getColor(), getTalla(), getCodigoDeBarras());
+		return new SerCodigoDeBarras(getEmpresa(), getModelo(), getColor(), getTalla(), getCodigoDeBarras(), getAplicaMinimoMaximo(), getMinimo(), getMaximo(), getLoteMinimoMaximo());
 	}
 
 	public String getEmpresa() throws ExcepcionControlada {
@@ -68,5 +76,37 @@ public class DbCodigoDeBarras extends ClsEntidad {
 
 	public void setCodigoDeBarras(String codigoDeBarras) throws ExcepcionControlada {
 		setString(this.codigoDeBarras, codigoDeBarras);
+	}
+
+	public Boolean getAplicaMinimoMaximo() throws ExcepcionControlada {
+		return getBoolean(aplicaMinimoMaximo);
+	}
+
+	public void setAplicaMinimoMaximo(boolean aplicaMinimoMaximo) throws ExcepcionControlada {
+		setBoolean(this.aplicaMinimoMaximo, aplicaMinimoMaximo);
+	}
+
+	public Long getMinimo() throws ExcepcionControlada {
+		return getLong(minimo);
+	}
+
+	public void setMinimo(Long minimo) throws ExcepcionControlada {
+		setLong(this.minimo, minimo);
+	}
+
+	public Long getMaximo() throws ExcepcionControlada {
+		return getLong(maximo);
+	}
+
+	public void setMaximo(Long maximo) throws ExcepcionControlada {
+		setLong(this.maximo, maximo);
+	}
+
+	public Long getLoteMinimoMaximo() throws ExcepcionControlada {
+		return getLong(loteMinimoMaximo);
+	}
+
+	public void setLoteMinimoMaximo(Long loteMinimoMaximo) throws ExcepcionControlada {
+		setLong(this.loteMinimoMaximo, loteMinimoMaximo);
 	}
 }

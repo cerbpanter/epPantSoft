@@ -62,14 +62,15 @@ public class PmCodigoDeBarras {
 				throw new ExcepcionControlada("El CodigoDeBarras '" + serCodigoDeBarras.getEmpresa() + "-" + serCodigoDeBarras.getModelo() + "-" + serCodigoDeBarras.getColor() + "-" + serCodigoDeBarras.getTalla() + "' no existe.");
 			}
 
-			try {
-				Key key = KeyFactory.createKey("DbCodigoDeBarras_A", dbCodigoDeBarras.getEmpresa() + "-" + dbCodigoDeBarras.getCodigoDeBarras());
-				dbCodigoDeBarras_A = new DbCodigoDeBarras_A(datastore.get(key));
-			} catch (EntityNotFoundException e) {
-				throw new ExcepcionControlada("El CodigoDeBarras_A '" + dbCodigoDeBarras.getEmpresa() + "-" + dbCodigoDeBarras.getCodigoDeBarras() + "' no existe.");
-			}
-
 			if (!dbCodigoDeBarras.getCodigoDeBarras().equals(serCodigoDeBarras.getCodigoDeBarras())) {
+				// Si cambió el código de barras se graba un nuevo DbCodigoDeBarras_A
+				try {
+					Key key = KeyFactory.createKey("DbCodigoDeBarras_A", dbCodigoDeBarras.getEmpresa() + "-" + dbCodigoDeBarras.getCodigoDeBarras());
+					dbCodigoDeBarras_A = new DbCodigoDeBarras_A(datastore.get(key));
+				} catch (EntityNotFoundException e) {
+					throw new ExcepcionControlada("El CodigoDeBarras_A '" + dbCodigoDeBarras.getEmpresa() + "-" + dbCodigoDeBarras.getCodigoDeBarras() + "' no existe.");
+				}
+
 				// Reviso si ya existe el nuevo codigo de Barras
 				try {
 					Key key = KeyFactory.createKey("DbCodigoDeBarras_A", dbCodigoDeBarras.getEmpresa() + "-" + serCodigoDeBarras.getCodigoDeBarras());
@@ -93,12 +94,18 @@ public class PmCodigoDeBarras {
 
 				dbCodigoDeBarras.setCodigoDeBarras(serCodigoDeBarras.getCodigoDeBarras());
 
-				dbCodigoDeBarras.guardar(datastore, tx);
 				dbCodigoDeBarras_A.eliminar(datastore, tx);
 				dbCodigoDeBarras_A_Nuevo.guardar(datastore, tx);
-
-				tx.commit();
 			}
+
+			dbCodigoDeBarras.setAplicaMinimoMaximo(serCodigoDeBarras.getAplicaMinimoMaximo());
+			dbCodigoDeBarras.setMinimo(serCodigoDeBarras.getMinimo());
+			dbCodigoDeBarras.setMaximo(serCodigoDeBarras.getMaximo());
+			dbCodigoDeBarras.setLoteMinimoMaximo(serCodigoDeBarras.getLoteMinimoMaximo());
+
+			dbCodigoDeBarras.guardar(datastore, tx);
+
+			tx.commit();
 
 			return dbCodigoDeBarras.toSerCodigoDeBarras();
 		} finally {

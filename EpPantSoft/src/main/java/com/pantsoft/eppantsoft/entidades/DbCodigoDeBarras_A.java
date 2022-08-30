@@ -43,7 +43,7 @@ public class DbCodigoDeBarras_A extends ClsEntidad {
 	}
 
 	public SerCodigoDeBarras toSerCodigoDeBarras() throws ExcepcionControlada {
-		return new SerCodigoDeBarras(getEmpresa(), getModelo(), getColor(), getTalla(), getCodigoDeBarras());
+		return new SerCodigoDeBarras(getEmpresa(), getModelo(), getColor(), getTalla(), getCodigoDeBarras(), false, null, null, null);
 	}
 
 	public String getEmpresa() throws ExcepcionControlada {

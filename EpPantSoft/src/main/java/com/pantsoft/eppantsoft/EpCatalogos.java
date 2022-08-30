@@ -18,6 +18,7 @@ import com.pantsoft.eppantsoft.pm.PmTelaHabilitacion;
 import com.pantsoft.eppantsoft.pm.PmTemporada;
 import com.pantsoft.eppantsoft.pm.PmUsuario;
 import com.pantsoft.eppantsoft.pm.PmVista;
+import com.pantsoft.eppantsoft.serializable.Respuesta;
 import com.pantsoft.eppantsoft.serializable.SerAlmacen;
 import com.pantsoft.eppantsoft.serializable.SerCodigoDeBarras;
 import com.pantsoft.eppantsoft.serializable.SerColor;
@@ -131,6 +132,12 @@ public class EpCatalogos extends HttpServlet {
 				ep.addPar("empresa", "String").addPar("usuario", "String");
 				SerUsuario serUsuario = new PmUsuario().dameTalleresUsuario(ep.dameParametroString("empresa"), ep.dameParametroString("usuario"));
 				ep.objectEnBody(serUsuario);
+				return;
+			}
+			if (ep.esMetodo("usuario_dameEmpresas") && ep.esVersion("v1")) {
+				ep.addPar("usuario", "String");
+				Respuesta resp = new PmUsuario().dameEmpresas(ep.dameParametroString("usuario"));
+				ep.objectEnBody(resp);
 				return;
 			}
 

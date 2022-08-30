@@ -6,16 +6,24 @@ public class SerCodigoDeBarras {
 	private String color;
 	private String talla;
 	private String codigoDeBarras;
+	private boolean aplicaMinimoMaximo;
+	private Long minimo;
+	private Long maximo;
+	private Long loteMinimoMaximo;
 
 	public SerCodigoDeBarras() {
 	}
 
-	public SerCodigoDeBarras(String empresa, String modelo, String color, String talla, String codigoDeBarras) {
+	public SerCodigoDeBarras(String empresa, String modelo, String color, String talla, String codigoDeBarras, boolean aplicaMinimoMaximo, Long minimo, Long maximo, Long loteMinimoMaximo) {
 		setEmpresa(empresa);
 		setModelo(modelo);
 		setColor(color);
 		setTalla(talla);
 		setCodigoDeBarras(codigoDeBarras);
+		setAplicaMinimoMaximo(aplicaMinimoMaximo);
+		setMinimo(minimo);
+		setMaximo(maximo);
+		setLoteMinimoMaximo(loteMinimoMaximo);
 	}
 
 	public String getEmpresa() {
@@ -56,6 +64,38 @@ public class SerCodigoDeBarras {
 
 	public void setCodigoDeBarras(String codigoDeBarras) {
 		this.codigoDeBarras = codigoDeBarras;
+	}
+
+	public boolean getAplicaMinimoMaximo() {
+		return aplicaMinimoMaximo;
+	}
+
+	public void setAplicaMinimoMaximo(boolean aplicaMinimoMaximo) {
+		this.aplicaMinimoMaximo = aplicaMinimoMaximo;
+	}
+
+	public Long getMinimo() {
+		return minimo;
+	}
+
+	public void setMinimo(Long minimo) {
+		this.minimo = minimo;
+	}
+
+	public Long getMaximo() {
+		return maximo;
+	}
+
+	public void setMaximo(Long maximo) {
+		this.maximo = maximo;
+	}
+
+	public Long getLoteMinimoMaximo() {
+		return loteMinimoMaximo;
+	}
+
+	public void setLoteMinimoMaximo(Long loteMinimoMaximo) {
+		this.loteMinimoMaximo = loteMinimoMaximo;
 	}
 
 }
