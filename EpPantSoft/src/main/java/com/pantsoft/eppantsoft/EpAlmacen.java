@@ -12,6 +12,7 @@ import com.pantsoft.eppantsoft.pm.PmAlmacen;
 import com.pantsoft.eppantsoft.pm.PmModelo;
 import com.pantsoft.eppantsoft.serializable.Respuesta;
 import com.pantsoft.eppantsoft.serializable.SerAlmEntrada;
+import com.pantsoft.eppantsoft.serializable.SerAlmEntradaDet;
 import com.pantsoft.eppantsoft.serializable.SerAlmSalida;
 import com.pantsoft.eppantsoft.serializable.SerAlmacen;
 import com.pantsoft.eppantsoft.util.ClsEpUtil;
@@ -66,6 +67,12 @@ public class EpAlmacen extends HttpServlet {
 				ep.objectEnBody(serAlmEntrada);
 				return;
 			}
+			if (ep.esMetodo("almEntrada_cambiarCodigoDeBarras") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("codigoDeBarras", "String").addPar("codigoDeBarrasNuevo", "String").addPar("cursor", "String");
+				Respuesta respuesta = new PmAlmacen().almEntrada_cambiarCodigoDeBarras(ep.dameParametroString("empresa"), ep.dameParametroString("codigoDeBarras"), ep.dameParametroString("codigoDeBarrasNuevo"), ep.dameParametroString("cursor"));
+				ep.objectEnBody(respuesta);
+				return;
+			}
 			if (ep.esMetodo("almEntrada_eliminar") && ep.esVersion("v1")) {
 				ep.addPar("empresa", "String").addPar("folioAlmEntrada", "Long");
 				new PmAlmacen().almEntrada_eliminar(ep.dameParametroString("empresa"), ep.dameParametroLong("folioAlmEntrada"));
@@ -89,6 +96,20 @@ public class EpAlmacen extends HttpServlet {
 			if (ep.esMetodo("almSalida_eliminar") && ep.esVersion("v1")) {
 				ep.addPar("empresa", "String").addPar("folioAlmSalida", "Long");
 				new PmAlmacen().almSalida_eliminar(ep.dameParametroString("empresa"), ep.dameParametroLong("folioAlmSalida"));
+				ep.voidEnBody();
+				return;
+			}
+			if (ep.esMetodo("almSalida_cambiarCodigoDeBarras") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("codigoDeBarras", "String").addPar("codigoDeBarrasNuevo", "String").addPar("cursor", "String");
+				Respuesta respuesta = new PmAlmacen().almSalida_cambiarCodigoDeBarras(ep.dameParametroString("empresa"), ep.dameParametroString("codigoDeBarras"), ep.dameParametroString("codigoDeBarrasNuevo"), ep.dameParametroString("cursor"));
+				ep.objectEnBody(respuesta);
+				return;
+			}
+
+			// Inventario /////////////////////////////////////////////
+			if (ep.esMetodo("inventario_actualizar") && ep.esVersion("v1")) {
+				SerAlmEntradaDet serDet = ep.getObjetFromBody(SerAlmEntradaDet.class);
+				new PmAlmacen().inventario_actualizar(serDet);
 				ep.voidEnBody();
 				return;
 			}

@@ -28,6 +28,7 @@ import com.pantsoft.eppantsoft.serializable.SerAlmSalidaDet;
 import com.pantsoft.eppantsoft.serializable.SerAlmacen;
 import com.pantsoft.eppantsoft.serializable.SerInvModeloDet;
 import com.pantsoft.eppantsoft.util.ClsBlobReader;
+import com.pantsoft.eppantsoft.util.ClsBlobWriter;
 import com.pantsoft.eppantsoft.util.ClsEntidad;
 import com.pantsoft.eppantsoft.util.ClsUtil;
 import com.pantsoft.eppantsoft.util.ExcepcionControlada;
@@ -162,34 +163,57 @@ public class PmAlmacen {
 	public Respuesta almEntrada_cambiarCodigoDeBarras(String empresa, String codigoDeBarras, String codigoDeBarrasNuevo, String cursor) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		Respuesta resp = new Respuesta();
+		Transaction tx = null;
+
+		if (cursor != null && cursor.equals("inicio"))
+			cursor = null;
 
 		List<Filter> lstFiltros = new ArrayList<Filter>();
 		lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, empresa));
 		lstFiltros.add(new FilterPredicate("codigoDeBarras", FilterOperator.EQUAL, codigoDeBarras));
-		List<Entity> lstDetalle = ClsEntidad.ejecutarConsulta(datastore, "DbAlmEntradadet", lstFiltros, 200, cursor);
+		List<Entity> lstDetalle = ClsEntidad.ejecutarConsultaSoloKeys(datastore, "DbAlmEntradaDet", lstFiltros, 200, cursor);
 		if (lstDetalle != null && lstDetalle.size() > 0) {
 			if (lstDetalle.size() == 200)
 				resp.setCadena(ClsEntidad.getStrCursor());
+			resp.setLargo(lstDetalle.size());
 			for (Entity entidad : lstDetalle) {
-				DbAlmEntradaDet dbDet = new DbAlmEntradaDet(entidad);
-				dbDet.setCodigoDeBarras(codigoDeBarrasNuevo);
-				dbDet.guardar(datastore);
-				// Decremento el inventario en el original
-				// Key keyp = KeyFactory.createKey("DbEmpresa", dbDet.getEmpresa());
-				// Key key = KeyFactory.createKey(keyp, "DbInvModeloDet", dbDet.getEmpresa() + "-" + dbDet.getAlmacen() + "-" + dbDet.getModelo() + "-" + dbDet.getColor() + "-" + dbDet.getTalla());
-				//
-				// DbInvModeloDet dbInv;
-				// try {
-				// dbInv = new DbInvModeloDet(datastore.get(key));
-				// dbInv.setCantidad(dbInv.getCantidad() - dbDet.getCantidad());
-				// } catch (EntityNotFoundException e) {
-				// SerInvModeloDet serInv = new SerInvModeloDet(dbDet.getEmpresa(), dbDet.getAlmacen(), dbDet.getModelo(), dbDet.getColor(), dbDet.getTalla(), dbDet.getCodigoDeBarras(), dbDet.getCantidad() * -1);
-				// dbInv = new DbInvModeloDet(serInv);
-				// }
-				// if (dbInv.getCantidad() == 0)
-				// dbInv.eliminar(datastore);
-				// else
-				// dbInv.guardar(datastore);
+				try {
+					tx = datastore.beginTransaction();
+
+					DbAlmEntradaDet dbDet = new DbAlmEntradaDet(ClsEntidad.obtenerEntidad(datastore, tx, "DbAlmEntradaDet", entidad.getKey().getName(), entidad.getKey().getParent()));
+					dbDet.setCodigoDeBarras(codigoDeBarrasNuevo);
+					dbDet.guardar(datastore, tx);
+					// Corrigo el detalle en el encabezado
+					DbAlmEntrada dbAlmEntrada;
+					try {
+						dbAlmEntrada = new DbAlmEntrada(ClsEntidad.obtenerEntidad(datastore, tx, "DbAlmEntrada", dbDet.getEmpresa() + "-" + dbDet.getFolioAlmEntrada()));
+					} catch (EntityNotFoundException e) {
+						throw new Exception("La entrada de almacén '" + dbDet.getFolioAlmEntrada() + "' no existe");
+					}
+					ClsBlobReader blobR = new ClsBlobReader("¬", dbAlmEntrada.getDetalle(), true);
+					ClsBlobWriter blobW = new ClsBlobWriter("¬");
+					blobW.insertarAlInicioBlobStr("0|&NullSiNube;|modelo|String|color|String|talla|String|codigoDeBarras|String|cantidad|Long");
+					while (blobR.siguienteFila()) {
+						blobW.nuevaFila();
+						blobW.agregarStr(blobR.getValorStr("modelo"));
+						blobW.agregarStr(blobR.getValorStr("color"));
+						blobW.agregarStr(blobR.getValorStr("talla"));
+						if (blobR.getValorStr("modelo").equals(dbDet.getModelo()) && blobR.getValorStr("color").equals(dbDet.getColor()) && blobR.getValorStr("talla").equals(dbDet.getTalla())) {
+							blobW.agregarStr(dbDet.getCodigoDeBarras());
+						} else {
+							blobW.agregarStr(blobR.getValorStr("codigoDeBarras"));
+						}
+						blobW.agregarLong(blobR.getValorLong("cantidad"));
+					}
+					dbAlmEntrada.setDetalle(blobW.getString());
+
+					dbAlmEntrada.guardar(datastore, tx);
+					tx.commit();
+				} finally {
+					if (tx != null && tx.isActive())
+						tx.rollback();
+					tx = null;
+				}
 			}
 		}
 		return resp;
@@ -437,41 +461,63 @@ public class PmAlmacen {
 	public Respuesta almSalida_cambiarCodigoDeBarras(String empresa, String codigoDeBarras, String codigoDeBarrasNuevo, String cursor) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		Respuesta resp = new Respuesta();
+		Transaction tx = null;
+
+		if (cursor != null && cursor.equals("inicio"))
+			cursor = null;
 
 		List<Filter> lstFiltros = new ArrayList<Filter>();
 		lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, empresa));
 		lstFiltros.add(new FilterPredicate("codigoDeBarras", FilterOperator.EQUAL, codigoDeBarras));
-		List<Entity> lstDetalle = ClsEntidad.ejecutarConsulta(datastore, "DbAlmSalidadet", lstFiltros, 200, cursor);
+		List<Entity> lstDetalle = ClsEntidad.ejecutarConsulta(datastore, "DbAlmSalidaDet", lstFiltros, 200, cursor);
 		if (lstDetalle != null && lstDetalle.size() > 0) {
 			if (lstDetalle.size() == 200)
 				resp.setCadena(ClsEntidad.getStrCursor());
+			resp.setLargo(lstDetalle.size());
 			for (Entity entidad : lstDetalle) {
-				DbAlmSalidaDet dbDet = new DbAlmSalidaDet(entidad);
-				dbDet.setCodigoDeBarras(codigoDeBarrasNuevo);
-				dbDet.guardar(datastore);
-				// Decremento el inventario en el original
-				// Key keyp = KeyFactory.createKey("DbEmpresa", dbDet.getEmpresa());
-				// Key key = KeyFactory.createKey(keyp, "DbInvModeloDet", dbDet.getEmpresa() + "-" + dbDet.getAlmacen() + "-" + dbDet.getModelo() + "-" + dbDet.getColor() + "-" + dbDet.getTalla());
-				//
-				// DbInvModeloDet dbInv;
-				// try {
-				// dbInv = new DbInvModeloDet(datastore.get(key));
-				// dbInv.setCantidad(dbInv.getCantidad() - dbDet.getCantidad());
-				// } catch (EntityNotFoundException e) {
-				// SerInvModeloDet serInv = new SerInvModeloDet(dbDet.getEmpresa(), dbDet.getAlmacen(), dbDet.getModelo(), dbDet.getColor(), dbDet.getTalla(), dbDet.getCodigoDeBarras(), dbDet.getCantidad() * -1);
-				// dbInv = new DbInvModeloDet(serInv);
-				// }
-				// if (dbInv.getCantidad() == 0)
-				// dbInv.eliminar(datastore);
-				// else
-				// dbInv.guardar(datastore);
+				try {
+					tx = datastore.beginTransaction();
+
+					DbAlmSalidaDet dbDet = new DbAlmSalidaDet(ClsEntidad.obtenerEntidad(datastore, tx, "DbAlmSalidaDet", entidad.getKey().getName(), entidad.getKey().getParent()));
+					dbDet.setCodigoDeBarras(codigoDeBarrasNuevo);
+					dbDet.guardar(datastore, tx);
+					// Corrigo el detalle en el encabezado
+					DbAlmSalida dbAlmSalida;
+					try {
+						dbAlmSalida = new DbAlmSalida(ClsEntidad.obtenerEntidad(datastore, tx, "DbAlmSalida", dbDet.getEmpresa() + "-" + dbDet.getFolioAlmSalida()));
+					} catch (EntityNotFoundException e) {
+						throw new Exception("La salida de almacén '" + dbDet.getFolioAlmSalida() + "' no existe");
+					}
+					ClsBlobReader blobR = new ClsBlobReader("¬", dbAlmSalida.getDetalle(), true);
+					ClsBlobWriter blobW = new ClsBlobWriter("¬");
+					blobW.insertarAlInicioBlobStr("0|&NullSiNube;|modelo|String|color|String|talla|String|codigoDeBarras|String|cantidad|Long");
+					while (blobR.siguienteFila()) {
+						blobW.nuevaFila();
+						blobW.agregarStr(blobR.getValorStr("modelo"));
+						blobW.agregarStr(blobR.getValorStr("color"));
+						blobW.agregarStr(blobR.getValorStr("talla"));
+						if (blobR.getValorStr("modelo").equals(dbDet.getModelo()) && blobR.getValorStr("color").equals(dbDet.getColor()) && blobR.getValorStr("talla").equals(dbDet.getTalla())) {
+							blobW.agregarStr(dbDet.getCodigoDeBarras());
+						} else {
+							blobW.agregarStr(blobR.getValorStr("codigoDeBarras"));
+						}
+						blobW.agregarLong(blobR.getValorLong("cantidad"));
+					}
+					dbAlmSalida.setDetalle(blobW.getString());
+
+					dbAlmSalida.guardar(datastore, tx);
+					tx.commit();
+				} finally {
+					if (tx != null && tx.isActive())
+						tx.rollback();
+					tx = null;
+				}
 			}
 		}
 		return resp;
 	}
 
 	// Inventario
-
 	public void inventario_actualizar(SerAlmEntradaDet serDet) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 

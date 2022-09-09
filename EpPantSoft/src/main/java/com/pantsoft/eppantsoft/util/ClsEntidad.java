@@ -648,6 +648,12 @@ public abstract class ClsEntidad {
 		return ent;
 	}
 
+	public static Entity obtenerEntidad(DatastoreService datastore, Transaction tx, String entidad, String keyName, Key parent) throws EntityNotFoundException {
+		Key key = KeyFactory.createKey(parent, entidad, keyName);
+		Entity ent = datastore.get(tx, key);
+		return ent;
+	}
+
 	public static boolean existeEntidad(DatastoreService datastore, String entidad, String keyName) {
 		Key key = KeyFactory.createKey(entidad, keyName);
 		try {
