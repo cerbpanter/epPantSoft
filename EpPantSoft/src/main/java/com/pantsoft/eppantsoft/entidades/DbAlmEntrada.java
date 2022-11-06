@@ -43,6 +43,7 @@ public class DbAlmEntrada extends ClsEntidad {
 	private final ClsCampo folioFactura = new ClsCampo("folioFactura", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, SUSTITUIR_NULL);
 	private final ClsCampo folioCliente = new ClsCampo("folioCliente", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo cliente = new ClsCampo("cliente", Tipo.String, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo tieneError = new ClsCampo("tieneError", Tipo.Boolean, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_FALSE, 0, SUSTITUIR_NULL);
 
 	// Dependencias
 	private List<DbAlmEntradaDet> dbDetalle = null;
@@ -69,6 +70,7 @@ public class DbAlmEntrada extends ClsEntidad {
 		setFolioFactura(serAlmEntrada.getFolioFactura());
 		setFolioCliente(serAlmEntrada.getFolioCliente());
 		setCliente(serAlmEntrada.getCliente());
+		setTieneError(serAlmEntrada.getTieneError());
 	}
 
 	public DbAlmEntrada(Entity entidad) throws ExcepcionControlada {
@@ -81,15 +83,15 @@ public class DbAlmEntrada extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, folioAlmEntrada, almacen, tipo, zonaHoraria, fechaAlmEntrada, dia, mes, anio, usuarioCreo, usuarioModifico, observaciones, folioOrdenProduccion, folioMaquilero, maquilero, detalle, modelos, folioAlmSalidaTraspaso, almacenTraspaso, serieFactura, folioFactura, folioCliente, cliente);
+		return Arrays.asList(empresa, folioAlmEntrada, almacen, tipo, zonaHoraria, fechaAlmEntrada, dia, mes, anio, usuarioCreo, usuarioModifico, observaciones, folioOrdenProduccion, folioMaquilero, maquilero, detalle, modelos, folioAlmSalidaTraspaso, almacenTraspaso, serieFactura, folioFactura, folioCliente, cliente, tieneError);
 	}
 
 	public SerAlmEntrada toSerAlmEntrada() throws ExcepcionControlada {
-		return new SerAlmEntrada(getEmpresa(), getFolioAlmEntrada(), getAlmacen(), getTipo(), getZonaHoraria(), getFechaAlmEntrada(), getUsuarioCreo(), getUsuarioModifico(), getObservaciones(), getFolioOrdenProduccion(), getFolioMaquilero(), getMaquilero(), getDetalle(), getFolioAlmSalidaTraspaso(), getAlmacenTraspaso(), getSerieFactura(), getFolioFactura(), getFolioCliente(), getCliente());
+		return new SerAlmEntrada(getEmpresa(), getFolioAlmEntrada(), getAlmacen(), getTipo(), getZonaHoraria(), getFechaAlmEntrada(), getUsuarioCreo(), getUsuarioModifico(), getObservaciones(), getFolioOrdenProduccion(), getFolioMaquilero(), getMaquilero(), getDetalle(), getFolioAlmSalidaTraspaso(), getAlmacenTraspaso(), getSerieFactura(), getFolioFactura(), getFolioCliente(), getCliente(), getTieneError());
 	}
 
 	public SerAlmEntrada toSerAlmEntradaCompleto(DatastoreService datastore, Transaction tx) throws ExcepcionControlada {
-		SerAlmEntrada serAlmEntrada = new SerAlmEntrada(getEmpresa(), getFolioAlmEntrada(), getAlmacen(), getTipo(), getZonaHoraria(), getFechaAlmEntrada(), getUsuarioCreo(), getUsuarioModifico(), getObservaciones(), getFolioOrdenProduccion(), getFolioMaquilero(), getMaquilero(), getDetalle(), getFolioAlmSalidaTraspaso(), getAlmacenTraspaso(), getSerieFactura(), getFolioFactura(), getFolioCliente(), getCliente());
+		SerAlmEntrada serAlmEntrada = new SerAlmEntrada(getEmpresa(), getFolioAlmEntrada(), getAlmacen(), getTipo(), getZonaHoraria(), getFechaAlmEntrada(), getUsuarioCreo(), getUsuarioModifico(), getObservaciones(), getFolioOrdenProduccion(), getFolioMaquilero(), getMaquilero(), getDetalle(), getFolioAlmSalidaTraspaso(), getAlmacenTraspaso(), getSerieFactura(), getFolioFactura(), getFolioCliente(), getCliente(), getTieneError());
 
 		// Agrego el detalle
 		getDbDetalle(datastore, tx);
@@ -235,6 +237,10 @@ public class DbAlmEntrada extends ClsEntidad {
 		return dbDetalle;
 	}
 
+	public void setDbDetalle(List<DbAlmEntradaDet> dbDetalle) throws ExcepcionControlada {
+		this.dbDetalle = dbDetalle;
+	}
+
 	public Long getFolioAlmSalidaTraspaso() throws ExcepcionControlada {
 		return getLong(folioAlmSalidaTraspaso);
 	}
@@ -281,6 +287,14 @@ public class DbAlmEntrada extends ClsEntidad {
 
 	public void setCliente(String cliente) throws ExcepcionControlada {
 		setString(this.cliente, cliente);
+	}
+
+	public boolean getTieneError() throws ExcepcionControlada {
+		return getBoolean(tieneError);
+	}
+
+	public void setTieneError(boolean tieneError) throws ExcepcionControlada {
+		setBoolean(this.tieneError, tieneError);
 	}
 
 }

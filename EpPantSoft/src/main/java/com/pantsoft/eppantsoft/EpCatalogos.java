@@ -294,6 +294,12 @@ public class EpCatalogos extends HttpServlet {
 				ep.voidEnBody();
 				return;
 			}
+			if (ep.esMetodo("codigoDeBarras_actualizarMinimoMaximo") && ep.esVersion("v1")) {
+				SerCodigoDeBarras serCodigoDeBarras = ep.getObjetFromBody(SerCodigoDeBarras.class);
+				serCodigoDeBarras = new PmCodigoDeBarras().actualizarMinimoMaximo(serCodigoDeBarras);
+				ep.objectEnBody(serCodigoDeBarras);
+				return;
+			}
 
 			// Parametros ///////////////////////////////////////////////////////////
 			if (ep.esMetodo("parametro_grabar") && ep.esVersion("v1")) {

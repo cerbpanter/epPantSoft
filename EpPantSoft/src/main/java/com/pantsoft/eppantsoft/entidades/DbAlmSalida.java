@@ -100,7 +100,7 @@ public class DbAlmSalida extends ClsEntidad {
 	}
 
 	public SerAlmEntrada toSerAlmEntradaTraspaso(DatastoreService datastore, Transaction tx) throws ExcepcionControlada {
-		SerAlmEntrada serAlmEntrada = new SerAlmEntrada(getEmpresa(), 0L, getAlmacenTraspaso(), 3L, getZonaHoraria(), getFechaAlmSalida(), getUsuarioCreo(), getUsuarioModifico(), getObservaciones(), 0L, 0L, null, getDetalle(), getFolioAlmSalida(), getAlmacen(), null, 0L, 0L, null);
+		SerAlmEntrada serAlmEntrada = new SerAlmEntrada(getEmpresa(), 0L, getAlmacenTraspaso(), 3L, getZonaHoraria(), getFechaAlmSalida(), getUsuarioCreo(), getUsuarioModifico(), getObservaciones(), 0L, 0L, null, getDetalle(), getFolioAlmSalida(), getAlmacen(), null, 0L, 0L, null, false);
 
 		// Agrego el detalle
 		getDbDetalle(datastore, tx);

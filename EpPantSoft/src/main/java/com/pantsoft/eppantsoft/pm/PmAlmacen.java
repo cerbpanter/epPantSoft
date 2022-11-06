@@ -60,8 +60,11 @@ public class PmAlmacen {
 
 			if (ClsEntidad.existeEntidad(datastore, tx, "DbAlmEntrada", dbAlmEntrada.getKey().getName()))
 				throw new ExcepcionControlada("El folio AlmEntrada '" + serAlmEntrada.getFolioAlmEntrada() + "' ya existe.");
-			if (ClsUtil.esNulo(dbAlmEntrada.getDetalle()))
+
+			if (!serAlmEntrada.getTieneError() && ClsUtil.esNulo(dbAlmEntrada.getDetalle()))
 				throw new Exception("El detalle no puede estar vacío");
+			if (serAlmEntrada.getTieneError() && !ClsUtil.esNulo(dbAlmEntrada.getDetalle()))
+				throw new Exception("El detalle debe estar vacío si tieneError");
 			if (serAlmEntrada.getTipo() == 4) {
 				if (serAlmEntrada.getSerieFactura() == null || serAlmEntrada.getFolioFactura() == 0)
 					throw new Exception("Las entradas tipo factura deben tener serie y folio");
@@ -70,15 +73,105 @@ public class PmAlmacen {
 					throw new Exception("Solo las entradas tipo factura deben tener serie y folio");
 			}
 
+			if (serAlmEntrada.getTieneError()) {
+				dbAlmEntrada.setDbDetalle(null);
+				dbAlmEntrada.setModelos(null);
+			} else {
+
+				ClsBlobReader blobR = new ClsBlobReader("¬", dbAlmEntrada.getDetalle(), true);
+				if (blobR.getLengthFilas() == 0)
+					throw new Exception("La entrada de almacén debe tener al menos un código de barras");
+
+				ArrayList<DbAlmEntradaDet> lstDbDetalle = new ArrayList<DbAlmEntradaDet>();
+				ArrayList<String> lstModelos = new ArrayList<String>();
+				while (blobR.siguienteFila()) {
+					SerAlmEntradaDet serDet = new SerAlmEntradaDet(dbAlmEntrada.getEmpresa(), folio, dbAlmEntrada.getAlmacen(), blobR.getValorStr("modelo"), blobR.getValorStr("color"), blobR.getValorStr("talla"), blobR.getValorStr("codigoDeBarras"), dbAlmEntrada.getFechaAlmEntrada(), dbAlmEntrada.getDia(), dbAlmEntrada.getAnio(), dbAlmEntrada.getMes(), blobR.getValorLong("cantidad"));
+					DbAlmEntradaDet dbDet = new DbAlmEntradaDet(serDet);
+					dbDet.guardar(datastore, tx);
+					lstDbDetalle.add(dbDet);
+
+					// Calculo los modelos para guardarlos en un array indexado
+					if (!lstModelos.contains(dbDet.getModelo()))
+						lstModelos.add(dbDet.getModelo());
+
+					// Aumento el inventario
+					Key keyp = KeyFactory.createKey("DbEmpresa", dbDet.getEmpresa());
+					Key key = KeyFactory.createKey(keyp, "DbInvModeloDet", dbDet.getEmpresa() + "-" + dbDet.getAlmacen() + "-" + dbDet.getModelo() + "-" + dbDet.getColor() + "-" + dbDet.getTalla());
+
+					DbInvModeloDet dbInv;
+					try {
+						dbInv = new DbInvModeloDet(datastore.get(tx, key));
+						dbInv.setCantidad(dbInv.getCantidad() + dbDet.getCantidad());
+					} catch (EntityNotFoundException e) {
+						SerInvModeloDet serInv = new SerInvModeloDet(dbDet.getEmpresa(), dbDet.getAlmacen(), dbDet.getModelo(), dbDet.getColor(), dbDet.getTalla(), dbDet.getCodigoDeBarras(), dbDet.getCantidad());
+						dbInv = new DbInvModeloDet(serInv);
+					}
+					if (dbInv.getCantidad() == 0)
+						dbInv.eliminar(datastore, tx);
+					else
+						dbInv.guardar(datastore, tx);
+				}
+				dbAlmEntrada.setDbDetalle(lstDbDetalle);
+				dbAlmEntrada.setModelos(lstModelos);
+			}
+
+			dbAlmEntrada.guardar(datastore, tx);
+			if (hacerCommit) {
+				tx.commit();
+			}
+
+			return dbAlmEntrada.toSerAlmEntrada();
+		} finally {
+			if (tx != null && tx.isActive() && hacerCommit == true)
+				tx.rollback();
+		}
+	}
+
+	public SerAlmEntrada almEntrada_actualizarConError(SerAlmEntrada serAlmEntrada) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Transaction tx = null;
+
+		try {
+			tx = ClsEntidad.iniciarTransaccion(datastore);
+
+			DbAlmEntrada dbAlmEntrada;
+			try {
+				dbAlmEntrada = new DbAlmEntrada(ClsEntidad.obtenerEntidad(datastore, tx, "DbAlmEntrada", serAlmEntrada.getEmpresa() + "-" + serAlmEntrada.getFolioAlmEntrada()));
+			} catch (EntityNotFoundException e1) {
+				throw new ExcepcionControlada("El folio AlmSalida '" + serAlmEntrada.getFolioAlmEntrada() + "' no existe.");
+			}
+
+			if (!dbAlmEntrada.getTieneError())
+				throw new Exception("La Entrada no tiene error, no se puede reprocesar");
+			if (dbAlmEntrada.getTipo() != 2)
+				throw new Exception("La entrada no es de tipo factura, no se puede reprocesar");
+			if (dbAlmEntrada.getDetalle() != null)
+				throw new Exception("La Entrada tiene detalle != null, imposible reprocesar");
+			if (!serAlmEntrada.getSerieFactura().equals(dbAlmEntrada.getSerieFactura()))
+				throw new Exception("No coincide la serie, imposible reprocesar");
+			if (serAlmEntrada.getFolioFactura() != dbAlmEntrada.getFolioFactura())
+				throw new Exception("No coincide el folio, imposible reprocesar");
+			if (serAlmEntrada.getTieneError())
+				throw new Exception("El serializable tieneError=true, imposible reprocesar");
+			if (ClsUtil.esNulo(serAlmEntrada.getAlmacen()))
+				throw new Exception("El serializable no tiene almacén, imposible reprocesar");
+
+			dbAlmEntrada.setAlmacen(serAlmEntrada.getAlmacen());
+			dbAlmEntrada.setDetalle(serAlmEntrada.getDetalle());
+			dbAlmEntrada.setObservaciones(serAlmEntrada.getObservaciones());
+			dbAlmEntrada.setTieneError(false);
+
 			ClsBlobReader blobR = new ClsBlobReader("¬", dbAlmEntrada.getDetalle(), true);
 			if (blobR.getLengthFilas() == 0)
 				throw new Exception("La entrada de almacén debe tener al menos un código de barras");
 
+			ArrayList<DbAlmEntradaDet> lstDbDetalle = new ArrayList<DbAlmEntradaDet>();
 			ArrayList<String> lstModelos = new ArrayList<String>();
 			while (blobR.siguienteFila()) {
-				SerAlmEntradaDet serDet = new SerAlmEntradaDet(dbAlmEntrada.getEmpresa(), folio, dbAlmEntrada.getAlmacen(), blobR.getValorStr("modelo"), blobR.getValorStr("color"), blobR.getValorStr("talla"), blobR.getValorStr("codigoDeBarras"), dbAlmEntrada.getFechaAlmEntrada(), dbAlmEntrada.getDia(), dbAlmEntrada.getAnio(), dbAlmEntrada.getMes(), blobR.getValorLong("cantidad"));
+				SerAlmEntradaDet serDet = new SerAlmEntradaDet(dbAlmEntrada.getEmpresa(), dbAlmEntrada.getFolioAlmEntrada(), dbAlmEntrada.getAlmacen(), blobR.getValorStr("modelo"), blobR.getValorStr("color"), blobR.getValorStr("talla"), blobR.getValorStr("codigoDeBarras"), dbAlmEntrada.getFechaAlmEntrada(), dbAlmEntrada.getDia(), dbAlmEntrada.getAnio(), dbAlmEntrada.getMes(), blobR.getValorLong("cantidad"));
 				DbAlmEntradaDet dbDet = new DbAlmEntradaDet(serDet);
 				dbDet.guardar(datastore, tx);
+				lstDbDetalle.add(dbDet);
 
 				// Calculo los modelos para guardarlos en un array indexado
 				if (!lstModelos.contains(dbDet.getModelo()))
@@ -101,16 +194,16 @@ public class PmAlmacen {
 				else
 					dbInv.guardar(datastore, tx);
 			}
+			dbAlmEntrada.setDbDetalle(lstDbDetalle);
 			dbAlmEntrada.setModelos(lstModelos);
 
 			dbAlmEntrada.guardar(datastore, tx);
-			if (hacerCommit) {
-				tx.commit();
-			}
+
+			tx.commit();
 
 			return dbAlmEntrada.toSerAlmEntrada();
 		} finally {
-			if (tx != null && tx.isActive() && hacerCommit == true)
+			if (tx != null && tx.isActive())
 				tx.rollback();
 		}
 	}

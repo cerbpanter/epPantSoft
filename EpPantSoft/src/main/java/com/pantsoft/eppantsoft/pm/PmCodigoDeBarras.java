@@ -114,6 +114,26 @@ public class PmCodigoDeBarras {
 		}
 	}
 
+	public SerCodigoDeBarras actualizarMinimoMaximo(SerCodigoDeBarras serCodigoDeBarras) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		DbCodigoDeBarras dbCodigoDeBarras;
+
+		try {
+			Key key = KeyFactory.createKey("DbCodigoDeBarras", serCodigoDeBarras.getEmpresa() + "-" + serCodigoDeBarras.getModelo() + "-" + serCodigoDeBarras.getColor() + "-" + serCodigoDeBarras.getTalla());
+			dbCodigoDeBarras = new DbCodigoDeBarras(datastore.get(key));
+		} catch (EntityNotFoundException e) {
+			throw new ExcepcionControlada("El CodigoDeBarras '" + serCodigoDeBarras.getEmpresa() + "-" + serCodigoDeBarras.getModelo() + "-" + serCodigoDeBarras.getColor() + "-" + serCodigoDeBarras.getTalla() + "' no existe.");
+		}
+
+		dbCodigoDeBarras.setAplicaMinimoMaximo(serCodigoDeBarras.getAplicaMinimoMaximo());
+		dbCodigoDeBarras.setMinimo(serCodigoDeBarras.getMinimo());
+		dbCodigoDeBarras.setMaximo(serCodigoDeBarras.getMaximo());
+		dbCodigoDeBarras.setLoteMinimoMaximo(serCodigoDeBarras.getLoteMinimoMaximo());
+
+		dbCodigoDeBarras.guardar(datastore);
+		return dbCodigoDeBarras.toSerCodigoDeBarras();
+	}
+
 	public void eliminar(String empresa, String modelo, String color, String talla) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		Transaction tx = null;
