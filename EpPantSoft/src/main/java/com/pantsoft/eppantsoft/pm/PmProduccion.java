@@ -152,7 +152,7 @@ public class PmProduccion {
 					for (int i = 0; i < lstMaterias.size(); i++) {
 						DbModeloHabilitacion dbModeloHabilitacion = new DbModeloHabilitacion(lstMaterias.get(i));
 						try {
-							DbTelaHabilitacion dbTelaHabilitacion = new DbTelaHabilitacion(ClsEntidad.obtenerEntidad(datastore, "DbTelaHabilitacion", dbModeloHabilitacion.getEmpresa() + "-" + dbModeloHabilitacion.getTemporada() + "-" + dbModeloHabilitacion.getMateria()));
+							DbTelaHabilitacion dbTelaHabilitacion = new DbTelaHabilitacion(ClsEntidad.obtenerEntidad(datastore, "DbTelaHabilitacion", dbModeloHabilitacion.getEmpresa() + "-" + dbModeloHabilitacion.getMateria()));
 							if (dbTelaHabilitacion.getTipo().equals("T")) {
 								if (dbTela == null) {
 									dbTela = new DbModeloHabilitacion(datastore.get(tx, dbModeloHabilitacion.getKey()));
@@ -164,10 +164,16 @@ public class PmProduccion {
 						}
 					}
 				}
-				if (actualizar && dbTela != null) {
-					dbTela.setTrazo(dbProduccion.getConsumo1());
-					dbTela.setConsumoReal(ClsUtil.Redondear((dbProduccion.getMtsEnviados1() - dbProduccion.getMtsDevolucion1()) / dbProduccion.getCantidadCorte(), 2));
-					dbTela.guardar(datastore, tx);
+				if (actualizar) {
+					if (dbTela != null) {
+						dbTela.setTrazo(dbProduccion.getConsumo1());
+						dbTela.setConsumoReal(ClsUtil.Redondear((dbProduccion.getMtsEnviados1() - dbProduccion.getMtsDevolucion1()) / dbProduccion.getCantidadCorte(), 2));
+						dbTela.guardar(datastore, tx);
+					} else {
+						throw new Exception("El modelo " + dbProduccion.getTemporada() + "-" + dbProduccion.getModelo() + "-" + dbProduccion.getReferencia() + " no tiene tela");
+					}
+				} else {
+					throw new Exception("El modelo " + dbProduccion.getTemporada() + "-" + dbProduccion.getModelo() + "-" + dbProduccion.getReferencia() + " tiene varias telas");
 				}
 			}
 
