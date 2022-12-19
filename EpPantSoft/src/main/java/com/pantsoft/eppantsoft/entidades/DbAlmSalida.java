@@ -43,6 +43,7 @@ public class DbAlmSalida extends ClsEntidad {
 	private final ClsCampo folioAlmEntradaTraspaso = new ClsCampo("folioAlmEntradaTraspaso", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, SUSTITUIR_NULL);
 	private final ClsCampo almacenTraspaso = new ClsCampo("almacenTraspaso", Tipo.String, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo tieneError = new ClsCampo("tieneError", Tipo.Boolean, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_FALSE, 0, SUSTITUIR_NULL);
+	private final ClsCampo cantidadTotal = new ClsCampo("cantidadTotal", Tipo.Long, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, NO_SUSTITUIR_NULL);
 
 	// Dependencias
 	private List<DbAlmSalidaDet> dbDetalle = null;
@@ -79,7 +80,7 @@ public class DbAlmSalida extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, folioAlmSalida, almacen, tipo, zonaHoraria, fechaAlmSalida, dia, mes, anio, usuarioCreo, usuarioModifico, observaciones, serieFactura, folioFactura, folioCliente, cliente, detalle, modelos, folioAlmEntradaTraspaso, almacenTraspaso, tieneError);
+		return Arrays.asList(empresa, folioAlmSalida, almacen, tipo, zonaHoraria, fechaAlmSalida, dia, mes, anio, usuarioCreo, usuarioModifico, observaciones, serieFactura, folioFactura, folioCliente, cliente, detalle, modelos, folioAlmEntradaTraspaso, almacenTraspaso, tieneError, cantidadTotal);
 	}
 
 	public SerAlmSalida toSerAlmSalida() throws ExcepcionControlada {
@@ -291,6 +292,14 @@ public class DbAlmSalida extends ClsEntidad {
 
 	public void setTieneError(boolean tieneError) throws ExcepcionControlada {
 		setBoolean(this.tieneError, tieneError);
+	}
+
+	public Long getCantidadTotal() throws ExcepcionControlada {
+		return getLong(cantidadTotal);
+	}
+
+	public void setCantidadTotal(Long cantidadTotal) throws ExcepcionControlada {
+		setLong(this.cantidadTotal, cantidadTotal);
 	}
 
 }

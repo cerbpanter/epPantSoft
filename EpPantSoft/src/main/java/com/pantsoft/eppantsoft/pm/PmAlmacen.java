@@ -84,11 +84,14 @@ public class PmAlmacen {
 
 				ArrayList<DbAlmEntradaDet> lstDbDetalle = new ArrayList<DbAlmEntradaDet>();
 				ArrayList<String> lstModelos = new ArrayList<String>();
+				long cantidadTotal = 0;
 				while (blobR.siguienteFila()) {
 					SerAlmEntradaDet serDet = new SerAlmEntradaDet(dbAlmEntrada.getEmpresa(), folio, dbAlmEntrada.getAlmacen(), blobR.getValorStr("modelo"), blobR.getValorStr("color"), blobR.getValorStr("talla"), blobR.getValorStr("codigoDeBarras"), dbAlmEntrada.getFechaAlmEntrada(), dbAlmEntrada.getDia(), dbAlmEntrada.getAnio(), dbAlmEntrada.getMes(), blobR.getValorLong("cantidad"));
 					DbAlmEntradaDet dbDet = new DbAlmEntradaDet(serDet);
 					dbDet.guardar(datastore, tx);
 					lstDbDetalle.add(dbDet);
+
+					cantidadTotal += dbDet.getCantidad();
 
 					// Calculo los modelos para guardarlos en un array indexado
 					if (!lstModelos.contains(dbDet.getModelo()))
@@ -112,6 +115,7 @@ public class PmAlmacen {
 						dbInv.guardar(datastore, tx);
 				}
 				dbAlmEntrada.setDbDetalle(lstDbDetalle);
+				dbAlmEntrada.setCantidadTotal(cantidadTotal);
 				dbAlmEntrada.setModelos(lstModelos);
 			}
 
@@ -167,6 +171,7 @@ public class PmAlmacen {
 
 			ArrayList<DbAlmEntradaDet> lstDbDetalle = new ArrayList<DbAlmEntradaDet>();
 			ArrayList<String> lstModelos = new ArrayList<String>();
+			long cantidadTotal = 0;
 			while (blobR.siguienteFila()) {
 				SerAlmEntradaDet serDet = new SerAlmEntradaDet(dbAlmEntrada.getEmpresa(), dbAlmEntrada.getFolioAlmEntrada(), dbAlmEntrada.getAlmacen(), blobR.getValorStr("modelo"), blobR.getValorStr("color"), blobR.getValorStr("talla"), blobR.getValorStr("codigoDeBarras"), dbAlmEntrada.getFechaAlmEntrada(), dbAlmEntrada.getDia(), dbAlmEntrada.getAnio(), dbAlmEntrada.getMes(), blobR.getValorLong("cantidad"));
 				DbAlmEntradaDet dbDet = new DbAlmEntradaDet(serDet);
@@ -176,6 +181,8 @@ public class PmAlmacen {
 				// Calculo los modelos para guardarlos en un array indexado
 				if (!lstModelos.contains(dbDet.getModelo()))
 					lstModelos.add(dbDet.getModelo());
+
+				cantidadTotal += dbDet.getCantidad();
 
 				// Aumento el inventario
 				Key keyp = KeyFactory.createKey("DbEmpresa", dbDet.getEmpresa());
@@ -195,6 +202,7 @@ public class PmAlmacen {
 					dbInv.guardar(datastore, tx);
 			}
 			dbAlmEntrada.setDbDetalle(lstDbDetalle);
+			dbAlmEntrada.setCantidadTotal(cantidadTotal);
 			dbAlmEntrada.setModelos(lstModelos);
 
 			dbAlmEntrada.guardar(datastore, tx);
@@ -356,6 +364,7 @@ public class PmAlmacen {
 
 				ArrayList<DbAlmSalidaDet> lstDbDetalle = new ArrayList<DbAlmSalidaDet>();
 				ArrayList<String> lstModelos = new ArrayList<String>();
+				long cantidadTotal = 0;
 				while (blobR.siguienteFila()) {
 					SerAlmSalidaDet serDet = new SerAlmSalidaDet(dbAlmSalida.getEmpresa(), folio, dbAlmSalida.getAlmacen(), blobR.getValorStr("modelo"), blobR.getValorStr("color"), blobR.getValorStr("talla"), blobR.getValorStr("codigoDeBarras"), dbAlmSalida.getFechaAlmSalida(), dbAlmSalida.getDia(), dbAlmSalida.getMes(), dbAlmSalida.getAnio(), blobR.getValorLong("cantidad"));
 					DbAlmSalidaDet dbDet = new DbAlmSalidaDet(serDet);
@@ -365,6 +374,8 @@ public class PmAlmacen {
 					// Calculo los modelos para guardarlos en un array indexado
 					if (!lstModelos.contains(dbDet.getModelo()))
 						lstModelos.add(dbDet.getModelo());
+
+					cantidadTotal += dbDet.getCantidad();
 
 					// Decremento el inventario
 					Key keyp = KeyFactory.createKey("DbEmpresa", dbDet.getEmpresa());
@@ -391,6 +402,7 @@ public class PmAlmacen {
 					}
 				}
 				dbAlmSalida.setDbDetalle(lstDbDetalle);
+				dbAlmSalida.setCantidadTotal(cantidadTotal);
 				dbAlmSalida.setModelos(lstModelos);
 			}
 
@@ -461,6 +473,7 @@ public class PmAlmacen {
 
 			ArrayList<DbAlmSalidaDet> lstDbDetalle = new ArrayList<DbAlmSalidaDet>();
 			ArrayList<String> lstModelos = new ArrayList<String>();
+			long cantidadTotal = 0;
 			while (blobR.siguienteFila()) {
 				SerAlmSalidaDet serDet = new SerAlmSalidaDet(dbAlmSalida.getEmpresa(), dbAlmSalida.getFolioAlmSalida(), dbAlmSalida.getAlmacen(), blobR.getValorStr("modelo"), blobR.getValorStr("color"), blobR.getValorStr("talla"), blobR.getValorStr("codigoDeBarras"), dbAlmSalida.getFechaAlmSalida(), dbAlmSalida.getDia(), dbAlmSalida.getMes(), dbAlmSalida.getAnio(), blobR.getValorLong("cantidad"));
 				DbAlmSalidaDet dbDet = new DbAlmSalidaDet(serDet);
@@ -470,6 +483,8 @@ public class PmAlmacen {
 				// Calculo los modelos para guardarlos en un array indexado
 				if (!lstModelos.contains(dbDet.getModelo()))
 					lstModelos.add(dbDet.getModelo());
+
+				cantidadTotal += dbDet.getCantidad();
 
 				// Decremento el inventario
 				Key keyp = KeyFactory.createKey("DbEmpresa", dbDet.getEmpresa());
@@ -496,6 +511,7 @@ public class PmAlmacen {
 				}
 			}
 			dbAlmSalida.setDbDetalle(lstDbDetalle);
+			dbAlmSalida.setCantidadTotal(cantidadTotal);
 			dbAlmSalida.setModelos(lstModelos);
 
 			dbAlmSalida.guardar(datastore, tx);
