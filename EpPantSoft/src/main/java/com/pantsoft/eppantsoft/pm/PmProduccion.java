@@ -147,7 +147,6 @@ public class PmProduccion {
 				List<Entity> lstMaterias = ClsEntidad.ejecutarConsulta(datastore, "DbModeloHabilitacion", lstFiltros);
 
 				DbModeloHabilitacion dbTela = null;
-				boolean actualizar = true;
 				if (lstMaterias != null && lstMaterias.size() > 0) {
 					for (int i = 0; i < lstMaterias.size(); i++) {
 						DbModeloHabilitacion dbModeloHabilitacion = new DbModeloHabilitacion(lstMaterias.get(i));
@@ -157,23 +156,25 @@ public class PmProduccion {
 								if (dbTela == null) {
 									dbTela = new DbModeloHabilitacion(datastore.get(tx, dbModeloHabilitacion.getKey()));
 								} else {
-									actualizar = false;
+									if (dbTela.getConsumo() < dbModeloHabilitacion.getConsumo()) {
+										dbTela = new DbModeloHabilitacion(datastore.get(tx, dbModeloHabilitacion.getKey()));
+									}
 								}
 							}
 						} catch (EntityNotFoundException e) {
 						}
 					}
 				}
-				if (actualizar) {
-					if (dbTela != null) {
-						dbTela.setTrazo(dbProduccion.getConsumo1());
-						dbTela.setConsumoReal(ClsUtil.Redondear((dbProduccion.getMtsEnviados1() - dbProduccion.getMtsDevolucion1()) / dbProduccion.getCantidadCorte(), 2));
-						dbTela.guardar(datastore, tx);
+				if (dbTela != null) {
+					dbTela.setTrazo(dbProduccion.getConsumo1());
+					if (dbProduccion.getCantidadCorte() <= 0) {
+						dbTela.setConsumoReal(0D);
 					} else {
-						throw new Exception("El modelo " + dbProduccion.getTemporada() + "-" + dbProduccion.getModelo() + "-" + dbProduccion.getReferencia() + " no tiene tela");
+						dbTela.setConsumoReal(ClsUtil.Redondear((dbProduccion.getMtsEnviados1() - dbProduccion.getMtsDevolucion1()) / dbProduccion.getCantidadCorte(), 2));
 					}
+					dbTela.guardar(datastore, tx);
 				} else {
-					throw new Exception("El modelo " + dbProduccion.getTemporada() + "-" + dbProduccion.getModelo() + "-" + dbProduccion.getReferencia() + " tiene varias telas");
+					throw new Exception("El modelo " + dbProduccion.getTemporada() + "-" + dbProduccion.getModelo() + "-" + dbProduccion.getReferencia() + " no tiene tela");
 				}
 			}
 
