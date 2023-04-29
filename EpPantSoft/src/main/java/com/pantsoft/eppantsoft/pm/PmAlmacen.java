@@ -13,7 +13,6 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
-import com.google.appengine.api.datastore.Text;
 import com.google.appengine.api.datastore.Transaction;
 import com.pantsoft.eppantsoft.entidades.DbAlmEntrada;
 import com.pantsoft.eppantsoft.entidades.DbAlmEntradaDet;
@@ -324,26 +323,31 @@ public class PmAlmacen {
 					resp.setCadena(ClsEntidad.getStrCursor());
 				pos = "for";
 				for (Entity entidad : lstDetalle) {
-					long cantidadTotal = 0;
-					pos = "blobR";
-					if (entidad.getProperty("detalle") != null) {
-						ClsBlobReader blobR = new ClsBlobReader("¬", ((Text) entidad.getProperty("detalle")).getValue(), true);
-
-						pos = "while";
-						while (blobR.siguienteFila()) {
-							pos = "cantidad";
-							cantidadTotal += blobR.getValorLong("cantidad");
-						}
+					if (!entidad.hasProperty("semana")) {
+						DbAlmEntrada dbAlmEntrada = new DbAlmEntrada(entidad);
+						dbAlmEntrada.setFechaAlmEntrada(dbAlmEntrada.getFechaAlmEntrada(), dbAlmEntrada.getZonaHoraria());
+						dbAlmEntrada.guardar(datastore);
 					}
-
-					pos = "if";
-					if (!entidad.hasProperty("cantidadTotal") || cantidadTotal != ((Long) entidad.getProperty("cantidadTotal")).longValue()) {
-						pos = "set";
-						entidad.setUnindexedProperty("cantidadTotal", cantidadTotal);
-						pos = "put";
-						datastore.put(entidad);
-						resp.setLargo(resp.getLargo() + 1);
-					}
+					// long cantidadTotal = 0;
+					// pos = "blobR";
+					// if (entidad.getProperty("detalle") != null) {
+					// ClsBlobReader blobR = new ClsBlobReader("¬", ((Text) entidad.getProperty("detalle")).getValue(), true);
+					//
+					// pos = "while";
+					// while (blobR.siguienteFila()) {
+					// pos = "cantidad";
+					// cantidadTotal += blobR.getValorLong("cantidad");
+					// }
+					// }
+					//
+					// pos = "if";
+					// if (!entidad.hasProperty("cantidadTotal") || cantidadTotal != ((Long) entidad.getProperty("cantidadTotal")).longValue()) {
+					// pos = "set";
+					// entidad.setUnindexedProperty("cantidadTotal", cantidadTotal);
+					// pos = "put";
+					// datastore.put(entidad);
+					// resp.setLargo(resp.getLargo() + 1);
+					// }
 				}
 			}
 			pos = "return";
@@ -693,26 +697,31 @@ public class PmAlmacen {
 					resp.setCadena(ClsEntidad.getStrCursor());
 				pos = "for";
 				for (Entity entidad : lstDetalle) {
-					long cantidadTotal = 0;
-					pos = "blobR";
-					if (entidad.getProperty("detalle") != null) {
-						ClsBlobReader blobR = new ClsBlobReader("¬", ((Text) entidad.getProperty("detalle")).getValue(), true);
-
-						pos = "while";
-						while (blobR.siguienteFila()) {
-							pos = "cantidad";
-							cantidadTotal += blobR.getValorLong("cantidad");
-						}
+					if (!entidad.hasProperty("semana")) {
+						DbAlmSalida dbAlmSalida = new DbAlmSalida(entidad);
+						dbAlmSalida.setFechaAlmSalida(dbAlmSalida.getFechaAlmSalida(), dbAlmSalida.getZonaHoraria());
+						dbAlmSalida.guardar(datastore);
 					}
-
-					pos = "if";
-					if (!entidad.hasProperty("cantidadTotal") || cantidadTotal != ((Long) entidad.getProperty("cantidadTotal")).longValue()) {
-						pos = "set";
-						entidad.setUnindexedProperty("cantidadTotal", cantidadTotal);
-						pos = "put";
-						datastore.put(entidad);
-						resp.setLargo(resp.getLargo() + 1);
-					}
+					// long cantidadTotal = 0;
+					// pos = "blobR";
+					// if (entidad.getProperty("detalle") != null) {
+					// ClsBlobReader blobR = new ClsBlobReader("¬", ((Text) entidad.getProperty("detalle")).getValue(), true);
+					//
+					// pos = "while";
+					// while (blobR.siguienteFila()) {
+					// pos = "cantidad";
+					// cantidadTotal += blobR.getValorLong("cantidad");
+					// }
+					// }
+					//
+					// pos = "if";
+					// if (!entidad.hasProperty("cantidadTotal") || cantidadTotal != ((Long) entidad.getProperty("cantidadTotal")).longValue()) {
+					// pos = "set";
+					// entidad.setUnindexedProperty("cantidadTotal", cantidadTotal);
+					// pos = "put";
+					// datastore.put(entidad);
+					// resp.setLargo(resp.getLargo() + 1);
+					// }
 				}
 			}
 			pos = "return";
