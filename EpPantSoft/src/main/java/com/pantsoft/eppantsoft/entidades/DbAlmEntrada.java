@@ -45,6 +45,7 @@ public class DbAlmEntrada extends ClsEntidad {
 	private final ClsCampo cliente = new ClsCampo("cliente", Tipo.String, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo tieneError = new ClsCampo("tieneError", Tipo.Boolean, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_FALSE, 0, SUSTITUIR_NULL);
 	private final ClsCampo cantidadTotal = new ClsCampo("cantidadTotal", Tipo.Long, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo ok = new ClsCampo("ok", Tipo.Boolean, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_FALSE, 0, SUSTITUIR_NULL);
 
 	// Dependencias
 	private List<DbAlmEntradaDet> dbDetalle = null;
@@ -72,6 +73,7 @@ public class DbAlmEntrada extends ClsEntidad {
 		setFolioCliente(serAlmEntrada.getFolioCliente());
 		setCliente(serAlmEntrada.getCliente());
 		setTieneError(serAlmEntrada.getTieneError());
+		setOk(serAlmEntrada.getOk());
 	}
 
 	public DbAlmEntrada(Entity entidad) throws ExcepcionControlada {
@@ -84,15 +86,15 @@ public class DbAlmEntrada extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, folioAlmEntrada, almacen, tipo, zonaHoraria, fechaAlmEntrada, dia, mes, anio, usuarioCreo, usuarioModifico, observaciones, folioOrdenProduccion, folioMaquilero, maquilero, detalle, modelos, folioAlmSalidaTraspaso, almacenTraspaso, serieFactura, folioFactura, folioCliente, cliente, tieneError, cantidadTotal);
+		return Arrays.asList(empresa, folioAlmEntrada, almacen, tipo, zonaHoraria, fechaAlmEntrada, dia, mes, anio, usuarioCreo, usuarioModifico, observaciones, folioOrdenProduccion, folioMaquilero, maquilero, detalle, modelos, folioAlmSalidaTraspaso, almacenTraspaso, serieFactura, folioFactura, folioCliente, cliente, tieneError, cantidadTotal, ok);
 	}
 
 	public SerAlmEntrada toSerAlmEntrada() throws ExcepcionControlada {
-		return new SerAlmEntrada(getEmpresa(), getFolioAlmEntrada(), getAlmacen(), getTipo(), getZonaHoraria(), getFechaAlmEntrada(), getUsuarioCreo(), getUsuarioModifico(), getObservaciones(), getFolioOrdenProduccion(), getFolioMaquilero(), getMaquilero(), getDetalle(), getFolioAlmSalidaTraspaso(), getAlmacenTraspaso(), getSerieFactura(), getFolioFactura(), getFolioCliente(), getCliente(), getTieneError());
+		return new SerAlmEntrada(getEmpresa(), getFolioAlmEntrada(), getAlmacen(), getTipo(), getZonaHoraria(), getFechaAlmEntrada(), getUsuarioCreo(), getUsuarioModifico(), getObservaciones(), getFolioOrdenProduccion(), getFolioMaquilero(), getMaquilero(), getDetalle(), getFolioAlmSalidaTraspaso(), getAlmacenTraspaso(), getSerieFactura(), getFolioFactura(), getFolioCliente(), getCliente(), getTieneError(), getOk());
 	}
 
 	public SerAlmEntrada toSerAlmEntradaCompleto(DatastoreService datastore, Transaction tx) throws ExcepcionControlada {
-		SerAlmEntrada serAlmEntrada = new SerAlmEntrada(getEmpresa(), getFolioAlmEntrada(), getAlmacen(), getTipo(), getZonaHoraria(), getFechaAlmEntrada(), getUsuarioCreo(), getUsuarioModifico(), getObservaciones(), getFolioOrdenProduccion(), getFolioMaquilero(), getMaquilero(), getDetalle(), getFolioAlmSalidaTraspaso(), getAlmacenTraspaso(), getSerieFactura(), getFolioFactura(), getFolioCliente(), getCliente(), getTieneError());
+		SerAlmEntrada serAlmEntrada = new SerAlmEntrada(getEmpresa(), getFolioAlmEntrada(), getAlmacen(), getTipo(), getZonaHoraria(), getFechaAlmEntrada(), getUsuarioCreo(), getUsuarioModifico(), getObservaciones(), getFolioOrdenProduccion(), getFolioMaquilero(), getMaquilero(), getDetalle(), getFolioAlmSalidaTraspaso(), getAlmacenTraspaso(), getSerieFactura(), getFolioFactura(), getFolioCliente(), getCliente(), getTieneError(), getOk());
 
 		// Agrego el detalle
 		getDbDetalle(datastore, tx);
@@ -304,6 +306,14 @@ public class DbAlmEntrada extends ClsEntidad {
 
 	public void setCantidadTotal(Long cantidadTotal) throws ExcepcionControlada {
 		setLong(this.cantidadTotal, cantidadTotal);
+	}
+
+	public boolean getOk() throws ExcepcionControlada {
+		return getBoolean(ok);
+	}
+
+	public void setOk(boolean ok) throws ExcepcionControlada {
+		setBoolean(this.ok, ok);
 	}
 
 }

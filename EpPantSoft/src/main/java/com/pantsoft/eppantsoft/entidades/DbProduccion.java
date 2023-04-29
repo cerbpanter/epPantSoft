@@ -137,7 +137,7 @@ public class DbProduccion extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, temporada, numOrden, maquileroCorte, cliente, departamento, descripcion, estatus, fechaProgramada, modelo, cantidad, corteSobreTela, cantidadCorte, cantidadEntrega, faltanteMaquilero, faltanteCorte, taller, precio, costura, total, precioFaltante, totalPorPagar, fechaSalida, fechaEntrega, proceso1, tallerProceso1, precioProceso1, proceso2, tallerProceso2, precioProceso2, consumo1, mtsSolicitados1, mtsEnviados1, mtsDevolucion1, mtsFaltante1, diferencia1, consumo2, mtsSolicitados2, mtsEnviados2, diferencia2, consumo3, mtsSolicitados3, mtsEnviados3, diferencia3, observaciones, revisado, isaac, mes, usuarioModifico, fechaModifico, habilitacionEnviada);
+		return Arrays.asList(empresa, temporada, numOrden, maquileroCorte, cliente, departamento, descripcion, estatus, fechaProgramada, modelo, referencia, cantidad, corteSobreTela, cantidadCorte, cantidadEntrega, faltanteMaquilero, faltanteCorte, taller, precio, costura, total, precioFaltante, totalPorPagar, fechaSalida, fechaEntrega, proceso1, tallerProceso1, precioProceso1, proceso2, tallerProceso2, precioProceso2, consumo1, mtsSolicitados1, mtsEnviados1, mtsDevolucion1, mtsFaltante1, diferencia1, consumo2, mtsSolicitados2, mtsEnviados2, diferencia2, consumo3, mtsSolicitados3, mtsEnviados3, diferencia3, observaciones, revisado, isaac, mes, usuarioModifico, fechaModifico, habilitacionEnviada);
 	}
 
 	public SerProduccion toSerProduccion() throws ExcepcionControlada {

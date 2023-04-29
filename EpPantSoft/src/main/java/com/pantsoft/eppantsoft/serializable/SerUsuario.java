@@ -6,6 +6,7 @@ public class SerUsuario {
 	private String password;
 	private long[] permisos;
 	private String[] talleres;
+	private String[] clientes;
 	private String sesion;
 	private long vigencia;
 	private String[] almacenes;
@@ -15,12 +16,13 @@ public class SerUsuario {
 	public SerUsuario() {
 	}
 
-	public SerUsuario(String empresa, String usuario, String password, long[] permisos, String[] talleres, String sesion, long vigencia) {
+	public SerUsuario(String empresa, String usuario, String password, long[] permisos, String[] talleres, String[] clientes, String sesion, long vigencia) {
 		this.empresa = empresa;
 		this.usuario = usuario;
 		this.password = password;
 		this.permisos = permisos;
 		this.setTalleres(talleres);
+		this.setClientes(clientes);
 		this.setSesion(sesion);
 		this.setVigencia(vigencia);
 	}
@@ -65,6 +67,14 @@ public class SerUsuario {
 		this.talleres = talleres;
 	}
 
+	public String[] getClientes() {
+		return clientes;
+	}
+
+	public void setClientes(String[] clientes) {
+		this.clientes = clientes;
+	}
+
 	public String getSesion() {
 		return sesion;
 	}
@@ -104,4 +114,5 @@ public class SerUsuario {
 	public void setTiposSalida(long[] tiposSalida) {
 		this.tiposSalida = tiposSalida;
 	}
+
 }

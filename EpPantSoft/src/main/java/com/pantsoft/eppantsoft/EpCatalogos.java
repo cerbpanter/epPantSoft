@@ -92,6 +92,12 @@ public class EpCatalogos extends HttpServlet {
 				ep.voidEnBody();
 				return;
 			}
+			if (ep.esMetodo("usuario_actualizarClientes") && ep.esVersion("v1")) {
+				SerUsuario serUsuario = ep.getObjetFromBody(SerUsuario.class);
+				new PmUsuario().actualizarClientes(serUsuario);
+				ep.voidEnBody();
+				return;
+			}
 			if (ep.esMetodo("usuario_actualizarAlmacenesTipos") && ep.esVersion("v1")) {
 				SerUsuario serUsuario = ep.getObjetFromBody(SerUsuario.class);
 				new PmUsuario().actualizarAlmacenesTipos(serUsuario);
@@ -131,6 +137,18 @@ public class EpCatalogos extends HttpServlet {
 			if (ep.esMetodo("usuario_dameTalleresUsuario") && ep.esVersion("v1")) {
 				ep.addPar("empresa", "String").addPar("usuario", "String");
 				SerUsuario serUsuario = new PmUsuario().dameTalleresUsuario(ep.dameParametroString("empresa"), ep.dameParametroString("usuario"));
+				ep.objectEnBody(serUsuario);
+				return;
+			}
+			if (ep.esMetodo("usuario_dameClientesUsuario") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("usuario", "String");
+				SerUsuario serUsuario = new PmUsuario().dameClientesUsuario(ep.dameParametroString("empresa"), ep.dameParametroString("usuario"));
+				ep.objectEnBody(serUsuario);
+				return;
+			}
+			if (ep.esMetodo("usuario_dameTalleresClientesUsuario") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("usuario", "String");
+				SerUsuario serUsuario = new PmUsuario().dameTalleresClientesUsuario(ep.dameParametroString("empresa"), ep.dameParametroString("usuario"));
 				ep.objectEnBody(serUsuario);
 				return;
 			}

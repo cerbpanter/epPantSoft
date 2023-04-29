@@ -61,6 +61,19 @@ public class PmUsuario {
 		}
 	}
 
+	public void actualizarClientes(SerUsuario serUsuario) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		try {
+			Key key = KeyFactory.createKey("DbUsuario", serUsuario.getEmpresa() + "-" + serUsuario.getUsuario());
+			DbUsuario dbUsuario = new DbUsuario(datastore.get(key));
+
+			dbUsuario.setClientes(serUsuario.getClientes());
+			dbUsuario.guardar(datastore);
+		} catch (EntityNotFoundException e) {
+			throw new Exception("El usuario '" + serUsuario.getUsuario() + "' no existe.");
+		}
+	}
+
 	public void actualizarAlmacenesTipos(SerUsuario serUsuario) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		try {
@@ -186,6 +199,41 @@ public class PmUsuario {
 		SerUsuario serUsuario = new SerUsuario();
 		serUsuario.setUsuario(dbUsuario.getUsuario());
 		serUsuario.setTalleres(dbUsuario.getTalleres());
+
+		return serUsuario;
+	}
+
+	public SerUsuario dameClientesUsuario(String empresa, String usuario) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		DbUsuario dbUsuario;
+		try {
+			Key key = KeyFactory.createKey("DbUsuario", empresa + "-" + usuario);
+			dbUsuario = new DbUsuario(datastore.get(key));
+		} catch (EntityNotFoundException e) {
+			throw new Exception("El usuario '" + usuario + "' no existe.");
+		}
+
+		SerUsuario serUsuario = new SerUsuario();
+		serUsuario.setUsuario(dbUsuario.getUsuario());
+		serUsuario.setClientes(dbUsuario.getClientes());
+
+		return serUsuario;
+	}
+
+	public SerUsuario dameTalleresClientesUsuario(String empresa, String usuario) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		DbUsuario dbUsuario;
+		try {
+			Key key = KeyFactory.createKey("DbUsuario", empresa + "-" + usuario);
+			dbUsuario = new DbUsuario(datastore.get(key));
+		} catch (EntityNotFoundException e) {
+			throw new Exception("El usuario '" + usuario + "' no existe.");
+		}
+
+		SerUsuario serUsuario = new SerUsuario();
+		serUsuario.setUsuario(dbUsuario.getUsuario());
+		serUsuario.setTalleres(dbUsuario.getTalleres());
+		serUsuario.setClientes(dbUsuario.getClientes());
 
 		return serUsuario;
 	}

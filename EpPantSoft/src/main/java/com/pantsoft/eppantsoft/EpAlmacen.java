@@ -73,6 +73,18 @@ public class EpAlmacen extends HttpServlet {
 				ep.objectEnBody(serAlmEntrada);
 				return;
 			}
+			if (ep.esMetodo("almEntrada_actualizarCantidadTotal") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("cursorString", "String");
+				Respuesta respuesta = new PmAlmacen().almEntrada_actualizarCantidadTotal(ep.dameParametroString("empresa"), ep.dameParametroString("cursorString"));
+				ep.objectEnBody(respuesta);
+				return;
+			}
+			if (ep.esMetodo("almEntrada_actualizarOk") && ep.esVersion("v1")) {
+				SerAlmEntrada serAlmEntrada = ep.getObjetFromBody(SerAlmEntrada.class);
+				new PmAlmacen().almEntrada_actualizarOk(serAlmEntrada);
+				ep.voidEnBody();
+				return;
+			}
 			if (ep.esMetodo("almEntrada_cambiarCodigoDeBarras") && ep.esVersion("v1")) {
 				ep.addPar("empresa", "String").addPar("codigoDeBarras", "String").addPar("codigoDeBarrasNuevo", "String").addPar("cursor", "String");
 				Respuesta respuesta = new PmAlmacen().almEntrada_cambiarCodigoDeBarras(ep.dameParametroString("empresa"), ep.dameParametroString("codigoDeBarras"), ep.dameParametroString("codigoDeBarrasNuevo"), ep.dameParametroString("cursor"));
@@ -97,6 +109,12 @@ public class EpAlmacen extends HttpServlet {
 				SerAlmSalida serAlmSalida = ep.getObjetFromBody(SerAlmSalida.class);
 				serAlmSalida = new PmAlmacen().almSalida_actualizarConError(serAlmSalida);
 				ep.objectEnBody(serAlmSalida);
+				return;
+			}
+			if (ep.esMetodo("almSalida_actualizarCantidadTotal") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("cursorString", "String");
+				Respuesta respuesta = new PmAlmacen().almSalida_actualizarCantidadTotal(ep.dameParametroString("empresa"), ep.dameParametroString("cursorString"));
+				ep.objectEnBody(respuesta);
 				return;
 			}
 			if (ep.esMetodo("almSalida_eliminar") && ep.esVersion("v1")) {

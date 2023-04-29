@@ -23,13 +23,14 @@ public class SerAlmEntrada {
 	private long folioCliente;
 	private String cliente;
 	private boolean tieneError;
+	private boolean ok;
 
 	private SerAlmEntradaDet[] dbDetalle;
 
 	public SerAlmEntrada() {
 	}
 
-	public SerAlmEntrada(String empresa, long folioAlmEntrada, String almacen, long tipo, String zonaHoraria, Date fechaAlmEntrada, String usuarioCreo, String usuarioModifico, String observaciones, long folioOrdenProduccion, long folioMaquilero, String maquilero, String detalle, long folioAlmSalidaTraspaso, String almacenTraspaso, String serieFactura, long folioFactura, long folioCliente, String cliente, boolean tieneError) {
+	public SerAlmEntrada(String empresa, long folioAlmEntrada, String almacen, long tipo, String zonaHoraria, Date fechaAlmEntrada, String usuarioCreo, String usuarioModifico, String observaciones, long folioOrdenProduccion, long folioMaquilero, String maquilero, String detalle, long folioAlmSalidaTraspaso, String almacenTraspaso, String serieFactura, long folioFactura, long folioCliente, String cliente, boolean tieneError, boolean ok) {
 		setEmpresa(empresa);
 		setFolioAlmEntrada(folioAlmEntrada);
 		setAlmacen(almacen);
@@ -50,6 +51,7 @@ public class SerAlmEntrada {
 		setFolioCliente(folioCliente);
 		setCliente(cliente);
 		setTieneError(tieneError);
+		setOk(ok);
 	}
 
 	public String getEmpresa() {
@@ -218,6 +220,14 @@ public class SerAlmEntrada {
 
 	public void setTieneError(boolean tieneError) {
 		this.tieneError = tieneError;
+	}
+
+	public boolean getOk() {
+		return ok;
+	}
+
+	public void setOk(boolean ok) {
+		this.ok = ok;
 	}
 
 }

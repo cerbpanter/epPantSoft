@@ -13,6 +13,7 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.api.datastore.Text;
 import com.google.appengine.api.datastore.Transaction;
 import com.pantsoft.eppantsoft.entidades.DbAlmEntrada;
 import com.pantsoft.eppantsoft.entidades.DbAlmEntradaDet;
@@ -20,6 +21,7 @@ import com.pantsoft.eppantsoft.entidades.DbAlmSalida;
 import com.pantsoft.eppantsoft.entidades.DbAlmSalidaDet;
 import com.pantsoft.eppantsoft.entidades.DbAlmacen;
 import com.pantsoft.eppantsoft.entidades.DbInvModeloDet;
+import com.pantsoft.eppantsoft.entidades.DbProduccion;
 import com.pantsoft.eppantsoft.serializable.Respuesta;
 import com.pantsoft.eppantsoft.serializable.SerAlmEntrada;
 import com.pantsoft.eppantsoft.serializable.SerAlmEntradaDet;
@@ -38,6 +40,7 @@ public class PmAlmacen {
 	// AlmEntrada
 	public SerAlmEntrada almEntrada_agregar(SerAlmEntrada serAlmEntrada, DatastoreService datastore, Transaction tx) throws Exception {
 		boolean hacerCommit = false;
+		String pos = "inicio";
 		try {
 			if (datastore == null) {
 				if (tx != null)
@@ -49,6 +52,7 @@ public class PmAlmacen {
 
 			long folio = ClsUtil.dameSiguienteId(serAlmEntrada.getEmpresa(), 0L, "AlmEntrada", datastore, tx);
 			serAlmEntrada.setFolioAlmEntrada(folio);
+			serAlmEntrada.setOk(false);
 			if (serAlmEntrada.getTipo() != 4) {
 				serAlmEntrada.setFechaAlmEntrada(new Date());
 			} else {
@@ -117,14 +121,63 @@ public class PmAlmacen {
 				dbAlmEntrada.setDbDetalle(lstDbDetalle);
 				dbAlmEntrada.setCantidadTotal(cantidadTotal);
 				dbAlmEntrada.setModelos(lstModelos);
+
+				pos = "tipo2";
+				if (dbAlmEntrada.getTipo() == 2) {
+					// Actualizo la cantidad entrega y el estatus de la orden de producción
+					List<Filter> lstFiltros = new ArrayList<Filter>();
+					lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, serAlmEntrada.getEmpresa()));
+					lstFiltros.add(new FilterPredicate("numOrden", FilterOperator.EQUAL, serAlmEntrada.getFolioOrdenProduccion()));
+					pos = "ejecutaCns";
+					List<Entity> lstOP = ClsEntidad.ejecutarConsulta(datastore, "DbProduccion", lstFiltros);
+					if (lstOP.size() > 0) {
+						pos = "obtenerOP";
+						DbProduccion dbProduccion = null;
+						try {
+							Key key = KeyFactory.createKey("DbProduccion", dbAlmEntrada.getEmpresa() + "-" + (Long) lstOP.get(0).getProperty("temporada") + "-" + dbAlmEntrada.getFolioOrdenProduccion());
+							dbProduccion = new DbProduccion(datastore.get(tx, key));
+						} catch (EntityNotFoundException e) {
+							throw new Exception("No existe la orde de producción " + dbAlmEntrada.getFolioOrdenProduccion());
+						}
+						pos = "setCantiddEntrega";
+						dbProduccion.setCantidadEntrega(dbProduccion.getCantidadEntrega() + cantidadTotal);
+						pos = "calculaEstatus";
+						int estatus = 0;
+						if (!ClsUtil.esNulo(dbProduccion.getTaller())) {
+							estatus = 1;
+							if (dbProduccion.getMtsEnviados1() > 0) { // M enviados 1
+								estatus = 2;
+								if (dbProduccion.getHabilitacionEnviada() == true) { // Habilitación enviada
+									estatus = 3;
+									if (dbProduccion.getCantidadCorte() > 0) { // CCorte
+										estatus = 4;
+										if (dbProduccion.getCantidadEntrega() > 0) { // CEntrega
+											if (dbProduccion.getCantidadEntrega() < (dbProduccion.getCantidadCorte() * .9))
+												estatus = 5;
+											else
+												estatus = 6;
+										}
+									}
+								}
+							}
+						}
+						pos = "setEstatus";
+						dbProduccion.setEstatus(estatus);
+						pos = "guardarProd";
+						dbProduccion.guardar(datastore, tx);
+					}
+				}
 			}
 
+			pos = "guardarAlmEnt";
 			dbAlmEntrada.guardar(datastore, tx);
 			if (hacerCommit) {
 				tx.commit();
 			}
 
 			return dbAlmEntrada.toSerAlmEntrada();
+		} catch (Exception e) {
+			throw new Exception(pos + " - " + e.getMessage());
 		} finally {
 			if (tx != null && tx.isActive() && hacerCommit == true)
 				tx.rollback();
@@ -142,7 +195,7 @@ public class PmAlmacen {
 			try {
 				dbAlmEntrada = new DbAlmEntrada(ClsEntidad.obtenerEntidad(datastore, tx, "DbAlmEntrada", serAlmEntrada.getEmpresa() + "-" + serAlmEntrada.getFolioAlmEntrada()));
 			} catch (EntityNotFoundException e1) {
-				throw new ExcepcionControlada("El folio AlmSalida '" + serAlmEntrada.getFolioAlmEntrada() + "' no existe.");
+				throw new ExcepcionControlada("La entrada '" + serAlmEntrada.getFolioAlmEntrada() + "' no existe.");
 			}
 
 			if (!dbAlmEntrada.getTieneError())
@@ -205,8 +258,46 @@ public class PmAlmacen {
 			dbAlmEntrada.setCantidadTotal(cantidadTotal);
 			dbAlmEntrada.setModelos(lstModelos);
 
-			dbAlmEntrada.guardar(datastore, tx);
+			if (dbAlmEntrada.getTipo() == 2) {
+				// Actualizo la cantidad entrega y el estatus de la orden de producción
+				List<Filter> lstFiltros = new ArrayList<Filter>();
+				lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, serAlmEntrada.getEmpresa()));
+				lstFiltros.add(new FilterPredicate("numOrden", FilterOperator.EQUAL, serAlmEntrada.getFolioOrdenProduccion()));
+				List<Entity> lstOP = ClsEntidad.ejecutarConsulta(datastore, "DbProduccion", lstFiltros);
+				if (lstOP.size() > 0) {
+					DbProduccion dbProduccion = null;
+					try {
+						Key key = KeyFactory.createKey("DbProduccion", dbAlmEntrada.getEmpresa() + "-" + (String) lstOP.get(0).getProperty("temporada") + "-" + dbAlmEntrada.getFolioOrdenProduccion());
+						dbProduccion = new DbProduccion(datastore.get(tx, key));
+					} catch (EntityNotFoundException e) {
+						throw new Exception("No existe la orde de producción " + dbAlmEntrada.getFolioOrdenProduccion());
+					}
+					dbProduccion.setCantidadEntrega(dbProduccion.getCantidadEntrega() + cantidadTotal);
+					int estatus = 0;
+					if (!ClsUtil.esNulo(dbProduccion.getTaller())) {
+						estatus = 1;
+						if (dbProduccion.getMtsEnviados1() > 0) { // M enviados 1
+							estatus = 2;
+							if (dbProduccion.getHabilitacionEnviada() == true) { // Habilitación enviada
+								estatus = 3;
+								if (dbProduccion.getCantidadCorte() > 0) { // CCorte
+									estatus = 4;
+									if (dbProduccion.getCantidadEntrega() > 0) { // CEntrega
+										if (dbProduccion.getCantidadEntrega() < (dbProduccion.getCantidadCorte() * .9))
+											estatus = 5;
+										else
+											estatus = 6;
+									}
+								}
+							}
+						}
+					}
+					dbProduccion.setEstatus(estatus);
+					dbProduccion.guardar(datastore, tx);
+				}
+			}
 
+			dbAlmEntrada.guardar(datastore, tx);
 			tx.commit();
 
 			return dbAlmEntrada.toSerAlmEntrada();
@@ -214,6 +305,66 @@ public class PmAlmacen {
 			if (tx != null && tx.isActive())
 				tx.rollback();
 		}
+	}
+
+	public Respuesta almEntrada_actualizarCantidadTotal(String empresa, String cursor) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+		String pos = "Inicio;";
+		try {
+			if (cursor.equals("Inicio"))
+				cursor = null;
+
+			Respuesta resp = new Respuesta();
+			List<Filter> lstFiltros = new ArrayList<Filter>();
+			lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, empresa));
+			List<Entity> lstDetalle = ClsEntidad.ejecutarConsulta(datastore, "DbAlmEntrada", lstFiltros, 100, cursor);
+			if (lstDetalle != null && lstDetalle.size() > 0) {
+				if (lstDetalle.size() == 100)
+					resp.setCadena(ClsEntidad.getStrCursor());
+				pos = "for";
+				for (Entity entidad : lstDetalle) {
+					long cantidadTotal = 0;
+					pos = "blobR";
+					if (entidad.getProperty("detalle") != null) {
+						ClsBlobReader blobR = new ClsBlobReader("¬", ((Text) entidad.getProperty("detalle")).getValue(), true);
+
+						pos = "while";
+						while (blobR.siguienteFila()) {
+							pos = "cantidad";
+							cantidadTotal += blobR.getValorLong("cantidad");
+						}
+					}
+
+					pos = "if";
+					if (!entidad.hasProperty("cantidadTotal") || cantidadTotal != ((Long) entidad.getProperty("cantidadTotal")).longValue()) {
+						pos = "set";
+						entidad.setUnindexedProperty("cantidadTotal", cantidadTotal);
+						pos = "put";
+						datastore.put(entidad);
+						resp.setLargo(resp.getLargo() + 1);
+					}
+				}
+			}
+			pos = "return";
+			return resp;
+		} catch (Exception e) {
+			throw new Exception("Pos: " + pos + " - " + e.getMessage());
+		}
+	}
+
+	public void almEntrada_actualizarOk(SerAlmEntrada serAlmEntrada) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+		DbAlmEntrada dbAlmEntrada;
+		try {
+			dbAlmEntrada = new DbAlmEntrada(ClsEntidad.obtenerEntidad(datastore, "DbAlmEntrada", serAlmEntrada.getEmpresa() + "-" + serAlmEntrada.getFolioAlmEntrada()));
+		} catch (EntityNotFoundException e1) {
+			throw new ExcepcionControlada("La entrada '" + serAlmEntrada.getFolioAlmEntrada() + "' no existe.");
+		}
+
+		dbAlmEntrada.setOk(serAlmEntrada.getOk());
+		dbAlmEntrada.guardar(datastore);
 	}
 
 	public SerAlmEntrada almEntrada_eliminar(String empresa, long folioAlmEntrada) throws Exception {
@@ -522,6 +673,52 @@ public class PmAlmacen {
 		} finally {
 			if (tx != null && tx.isActive())
 				tx.rollback();
+		}
+	}
+
+	public Respuesta almSalida_actualizarCantidadTotal(String empresa, String cursor) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+		String pos = "Inicio;";
+		try {
+			if (cursor.equals("Inicio"))
+				cursor = null;
+
+			Respuesta resp = new Respuesta();
+			List<Filter> lstFiltros = new ArrayList<Filter>();
+			lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, empresa));
+			List<Entity> lstDetalle = ClsEntidad.ejecutarConsulta(datastore, "DbAlmSalida", lstFiltros, 100, cursor);
+			if (lstDetalle != null && lstDetalle.size() > 0) {
+				if (lstDetalle.size() == 100)
+					resp.setCadena(ClsEntidad.getStrCursor());
+				pos = "for";
+				for (Entity entidad : lstDetalle) {
+					long cantidadTotal = 0;
+					pos = "blobR";
+					if (entidad.getProperty("detalle") != null) {
+						ClsBlobReader blobR = new ClsBlobReader("¬", ((Text) entidad.getProperty("detalle")).getValue(), true);
+
+						pos = "while";
+						while (blobR.siguienteFila()) {
+							pos = "cantidad";
+							cantidadTotal += blobR.getValorLong("cantidad");
+						}
+					}
+
+					pos = "if";
+					if (!entidad.hasProperty("cantidadTotal") || cantidadTotal != ((Long) entidad.getProperty("cantidadTotal")).longValue()) {
+						pos = "set";
+						entidad.setUnindexedProperty("cantidadTotal", cantidadTotal);
+						pos = "put";
+						datastore.put(entidad);
+						resp.setLargo(resp.getLargo() + 1);
+					}
+				}
+			}
+			pos = "return";
+			return resp;
+		} catch (Exception e) {
+			throw new Exception("Pos: " + pos + " - " + e.getMessage());
 		}
 	}
 

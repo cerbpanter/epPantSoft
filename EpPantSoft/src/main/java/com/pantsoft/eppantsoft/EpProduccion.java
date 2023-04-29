@@ -9,8 +9,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.pantsoft.eppantsoft.pm.PmPedido;
 import com.pantsoft.eppantsoft.pm.PmProduccion;
 import com.pantsoft.eppantsoft.serializable.Respuesta;
+import com.pantsoft.eppantsoft.serializable.SerPedido;
 import com.pantsoft.eppantsoft.serializable.SerProduccion;
 import com.pantsoft.eppantsoft.util.ClsEpUtil;
 
@@ -36,6 +38,8 @@ public class EpProduccion extends HttpServlet {
 				ep.objectEnBody(lst);
 				return;
 			}
+
+			// PRODUCCION
 			if (ep.esMetodo("produccion_agregar") && ep.esVersion("v1")) {
 				SerProduccion serProduccion = ep.getObjetFromBody(SerProduccion.class);
 				serProduccion = new PmProduccion().agregar(serProduccion);
@@ -52,6 +56,12 @@ public class EpProduccion extends HttpServlet {
 				ep.addPar("empresa", "String").addPar("temporada", "Long").addPar("estatus", "Int");
 				Respuesta resp = ep.getObjetFromBody(Respuesta.class);
 				new PmProduccion().actualizarEstatus(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"), ep.dameParametroInt("estatus"), resp.lstLong);
+				ep.voidEnBody();
+				return;
+			}
+			if (ep.esMetodo("produccion_actualizarEntrega") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("temporada", "Long").addPar("numOrden", "Long").addPar("cantidadEntrega", "Long");
+				new PmProduccion().actualizarEntrega(ep.dameParametroString("empresa"), ep.dameParametroLong("temporada"), ep.dameParametroLong("numOrden"), ep.dameParametroLong("cantidadEntrega"));
 				ep.voidEnBody();
 				return;
 			}
@@ -81,6 +91,27 @@ public class EpProduccion extends HttpServlet {
 				ep.voidEnBody();
 				return;
 			}
+
+			// PEDIDOS
+			if (ep.esMetodo("pedido_agregar") && ep.esVersion("v1")) {
+				SerPedido serPedido = ep.getObjetFromBody(SerPedido.class);
+				serPedido = new PmPedido().agregar(serPedido);
+				ep.objectEnBody(serPedido);
+				return;
+			}
+			if (ep.esMetodo("pedido_actualizar") && ep.esVersion("v1")) {
+				SerPedido serPedido = ep.getObjetFromBody(SerPedido.class);
+				serPedido = new PmPedido().actualizar(serPedido);
+				ep.objectEnBody(serPedido);
+				return;
+			}
+			if (ep.esMetodo("pedido_eliminar") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("folioPedido", "Long");
+				new PmPedido().eliminar(ep.dameParametroString("empresa"), ep.dameParametroLong("folioPedido"));
+				ep.voidEnBody();
+				return;
+			}
+
 			ep.notFoundEnBody();
 		} catch (Exception e) {
 			ep.exceptionEnBody(e);

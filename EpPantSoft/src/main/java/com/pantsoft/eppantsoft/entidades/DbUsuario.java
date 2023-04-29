@@ -19,6 +19,7 @@ public class DbUsuario extends ClsEntidad {
 	private final ClsCampo password = new ClsCampo("password", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo permisos = new ClsCampo("permisos", Tipo.ArrayLong, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo talleres = new ClsCampo("talleres", Tipo.ArrayString, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo clientes = new ClsCampo("clientes", Tipo.ArrayString, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo sesion = new ClsCampo("sesion", Tipo.String, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo vigencia = new ClsCampo("vigencia", Tipo.Long, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo almacenes = new ClsCampo("almacenes", Tipo.ArrayString, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
@@ -47,11 +48,11 @@ public class DbUsuario extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, usuario, password, permisos, talleres, sesion, vigencia, almacenes, tiposEntrada, tiposSalida);
+		return Arrays.asList(empresa, usuario, password, permisos, talleres, clientes, sesion, vigencia, almacenes, tiposEntrada, tiposSalida);
 	}
 
 	public SerUsuario toSerUsuario() throws ExcepcionControlada {
-		SerUsuario serUsuario = new SerUsuario(getEmpresa(), getUsuario(), getPassword(), getPermisos(), getTalleres(), getSesion(), getVigencia());
+		SerUsuario serUsuario = new SerUsuario(getEmpresa(), getUsuario(), getPassword(), getPermisos(), getTalleres(), getClientes(), getSesion(), getVigencia());
 		serUsuario.setAlmacenes(getAlmacenes());
 		serUsuario.setTiposEntrada(getTiposEntrada());
 		serUsuario.setTiposSalida(getTiposSalida());
@@ -119,6 +120,30 @@ public class DbUsuario extends ClsEntidad {
 				lstTalleres.add(taller);
 			}
 			setArrayString(this.talleres, lstTalleres);
+		}
+	}
+
+	public String[] getClientes() throws ExcepcionControlada {
+		ArrayList<String> lstClientes = getArrayString(this.clientes);
+		if (lstClientes == null) {
+			return null;
+		} else {
+			String[] arr = new String[lstClientes.size()];
+			for (int i = 0; i < lstClientes.size(); i++)
+				arr[i] = lstClientes.get(i);
+			return arr;
+		}
+	}
+
+	public void setClientes(String[] clientes) throws ExcepcionControlada {
+		if (clientes == null || clientes.length == 0) {
+			setArrayString(this.clientes, null);
+		} else {
+			ArrayList<String> lstClientes = new ArrayList<String>();
+			for (String cliente : clientes) {
+				lstClientes.add(cliente);
+			}
+			setArrayString(this.clientes, lstClientes);
 		}
 	}
 

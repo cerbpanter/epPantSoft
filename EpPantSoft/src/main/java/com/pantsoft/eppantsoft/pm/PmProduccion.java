@@ -33,6 +33,7 @@ public class PmProduccion {
 			tx = ClsEntidad.iniciarTransaccion(datastore);
 
 			serProduccion.setEstatus(0);
+			serProduccion.setCantidadEntrega(0); // La cantidad entrega ya es por entradas de almacén
 			DbProduccion dbProduccion = new DbProduccion(serProduccion);
 
 			if (ClsEntidad.existeEntidad(datastore, "DbProduccion", dbProduccion.getKey().getName()))
@@ -103,24 +104,23 @@ public class PmProduccion {
 			dbProduccion.setEstatus(serProduccion.getEstatus());
 			dbProduccion.setFechaProgramada(serProduccion.getFechaProgramada());
 			dbProduccion.setModelo(serProduccion.getModelo());
-			if (!ClsUtil.esIgualConNulo(dbProduccion.getReferencia(), serProduccion.getReferencia())) {
-				dbProduccion.setReferencia(serProduccion.getReferencia());
-				if (!ClsUtil.esNulo(dbProduccion.getReferencia())) {
-					try {
-						key = KeyFactory.createKey("DbModeloProducido", dbProduccion.getEmpresa() + "-" + dbProduccion.getTemporada() + "-" + dbProduccion.getModelo());
-						DbModeloProducido dbModPro = new DbModeloProducido(datastore.get(key));
-						if (!dbModPro.getReferencia().equals(dbProduccion.getReferencia()))
-							throw new Exception("La referencia no coincide con la que se marcó en el modelo para producción: " + dbModPro.getReferencia());
-					} catch (EntityNotFoundException e) {
-						DbModeloProducido dbModPro = new DbModeloProducido(dbProduccion.getEmpresa(), dbProduccion.getTemporada(), dbProduccion.getModelo(), dbProduccion.getReferencia());
-						dbModPro.guardar(datastore, tx);
-					}
+			dbProduccion.setReferencia(serProduccion.getReferencia());
+			if (!ClsUtil.esNulo(dbProduccion.getReferencia())) {
+				try {
+					key = KeyFactory.createKey("DbModeloProducido", dbProduccion.getEmpresa() + "-" + dbProduccion.getTemporada() + "-" + dbProduccion.getModelo());
+					DbModeloProducido dbModPro = new DbModeloProducido(datastore.get(key));
+					if (!dbModPro.getReferencia().equals(dbProduccion.getReferencia()))
+						throw new Exception("La referencia no coincide con la que se marcó en el modelo para producción: " + dbModPro.getReferencia());
+				} catch (EntityNotFoundException e) {
+					DbModeloProducido dbModPro = new DbModeloProducido(dbProduccion.getEmpresa(), dbProduccion.getTemporada(), dbProduccion.getModelo(), dbProduccion.getReferencia());
+					dbModPro.guardar(datastore, tx);
 				}
 			}
 			dbProduccion.setCantidad(serProduccion.getCantidad());
 			dbProduccion.setCorteSobreTela(serProduccion.getCorteSobreTela());
 			dbProduccion.setCantidadCorte(serProduccion.getCantidadCorte());
-			dbProduccion.setCantidadEntrega(serProduccion.getCantidadEntrega());
+			// Cantidad Entrega ya es por entrada de almacén
+			// dbProduccion.setCantidadEntrega(serProduccion.getCantidadEntrega());
 			dbProduccion.setFaltanteMaquilero(serProduccion.getFaltanteMaquilero());
 			dbProduccion.setFaltanteCorte(serProduccion.getFaltanteCorte());
 			dbProduccion.setTaller(serProduccion.getTaller());
@@ -222,6 +222,41 @@ public class PmProduccion {
 			} catch (EntityNotFoundException e) {
 				throw new Exception("La orden '" + orden + "' no existe.");
 			}
+		}
+	}
+
+	public void actualizarEntrega(String empresa, long temporada, long numOrden, long cantidadEntrega) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		try {
+			Key key = KeyFactory.createKey("DbProduccion", empresa + "-" + temporada + "-" + numOrden);
+			DbProduccion dbProduccion = new DbProduccion(datastore.get(key));
+
+			if (dbProduccion.getCantidadEntrega() != cantidadEntrega) {
+				dbProduccion.setCantidadEntrega(cantidadEntrega);
+				int estatus = 0;
+				if (!ClsUtil.esNulo(dbProduccion.getTaller())) {
+					estatus = 1;
+					if (dbProduccion.getMtsEnviados1() > 0) { // M enviados 1
+						estatus = 2;
+						if (dbProduccion.getHabilitacionEnviada() == true) { // Habilitación enviada
+							estatus = 3;
+							if (dbProduccion.getCantidadCorte() > 0) { // CCorte
+								estatus = 4;
+								if (dbProduccion.getCantidadEntrega() > 0) { // CEntrega
+									if (dbProduccion.getCantidadEntrega() < (dbProduccion.getCantidadCorte() * .9))
+										estatus = 5;
+									else
+										estatus = 6;
+								}
+							}
+						}
+					}
+				}
+				dbProduccion.setEstatus(estatus);
+				dbProduccion.guardar(datastore);
+			}
+		} catch (EntityNotFoundException e) {
+			throw new Exception("La orden '" + numOrden + "' no existe.");
 		}
 	}
 
