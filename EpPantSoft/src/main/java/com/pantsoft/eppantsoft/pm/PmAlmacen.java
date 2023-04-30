@@ -407,6 +407,45 @@ public class PmAlmacen {
 
 			dbAlmEntrada.eliminar(datastore, tx);
 
+			if (dbAlmEntrada.getTipo() == 2) {
+				// Actualizo la cantidad entrega y el estatus de la orden de producción
+				List<Filter> lstFiltros = new ArrayList<Filter>();
+				lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, dbAlmEntrada.getEmpresa()));
+				lstFiltros.add(new FilterPredicate("numOrden", FilterOperator.EQUAL, dbAlmEntrada.getFolioOrdenProduccion()));
+				List<Entity> lstOP = ClsEntidad.ejecutarConsulta(datastore, "DbProduccion", lstFiltros);
+				if (lstOP.size() > 0) {
+					DbProduccion dbProduccion = null;
+					try {
+						Key key = KeyFactory.createKey("DbProduccion", dbAlmEntrada.getEmpresa() + "-" + (Long) lstOP.get(0).getProperty("temporada") + "-" + dbAlmEntrada.getFolioOrdenProduccion());
+						dbProduccion = new DbProduccion(datastore.get(tx, key));
+					} catch (EntityNotFoundException e) {
+						throw new Exception("No existe la orde de producción " + dbAlmEntrada.getFolioOrdenProduccion());
+					}
+					dbProduccion.setCantidadEntrega(dbProduccion.getCantidadEntrega() - dbAlmEntrada.getCantidadTotal());
+					int estatus = 0;
+					if (!ClsUtil.esNulo(dbProduccion.getTaller())) {
+						estatus = 1;
+						if (dbProduccion.getMtsEnviados1() > 0) { // M enviados 1
+							estatus = 2;
+							if (dbProduccion.getHabilitacionEnviada() == true) { // Habilitación enviada
+								estatus = 3;
+								if (dbProduccion.getCantidadCorte() > 0) { // CCorte
+									estatus = 4;
+									if (dbProduccion.getCantidadEntrega() > 0) { // CEntrega
+										if (dbProduccion.getCantidadEntrega() < (dbProduccion.getCantidadCorte() * .9))
+											estatus = 5;
+										else
+											estatus = 6;
+									}
+								}
+							}
+						}
+					}
+					dbProduccion.setEstatus(estatus);
+					dbProduccion.guardar(datastore, tx);
+				}
+			}
+
 			tx.commit();
 
 			return dbAlmEntrada.toSerAlmEntrada();
