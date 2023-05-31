@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.pantsoft.eppantsoft.pm.PmAlmacen;
 import com.pantsoft.eppantsoft.pm.PmCodigoDeBarras;
 import com.pantsoft.eppantsoft.pm.PmColor;
+import com.pantsoft.eppantsoft.pm.PmDepartamento;
 import com.pantsoft.eppantsoft.pm.PmParametro;
 import com.pantsoft.eppantsoft.pm.PmProceso;
 import com.pantsoft.eppantsoft.pm.PmTalla;
@@ -22,6 +23,7 @@ import com.pantsoft.eppantsoft.serializable.Respuesta;
 import com.pantsoft.eppantsoft.serializable.SerAlmacen;
 import com.pantsoft.eppantsoft.serializable.SerCodigoDeBarras;
 import com.pantsoft.eppantsoft.serializable.SerColor;
+import com.pantsoft.eppantsoft.serializable.SerDepartamento;
 import com.pantsoft.eppantsoft.serializable.SerParametro;
 import com.pantsoft.eppantsoft.serializable.SerProceso;
 import com.pantsoft.eppantsoft.serializable.SerTalla;
@@ -329,6 +331,20 @@ public class EpCatalogos extends HttpServlet {
 			if (ep.esMetodo("parametro_eliminar") && ep.esVersion("v1")) {
 				ep.addPar("empresa", "String").addPar("parametro", "String");
 				new PmParametro().eliminar(ep.dameParametroString("empresa"), ep.dameParametroString("parametro"));
+				ep.voidEnBody();
+				return;
+			}
+
+			// Departamento ///////////////////////////////////////////////////////////
+			if (ep.esMetodo("departamento_agregar") && ep.esVersion("v1")) {
+				SerDepartamento serDepartamento = ep.getObjetFromBody(SerDepartamento.class);
+				new PmDepartamento().agregar(serDepartamento);
+				ep.voidEnBody();
+				return;
+			}
+			if (ep.esMetodo("departamento_eliminar") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("departamento", "String");
+				new PmDepartamento().eliminar(ep.dameParametroString("empresa"), ep.dameParametroString("departamento"));
 				ep.voidEnBody();
 				return;
 			}

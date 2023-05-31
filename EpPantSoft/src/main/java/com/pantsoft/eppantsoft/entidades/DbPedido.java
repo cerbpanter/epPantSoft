@@ -34,6 +34,7 @@ public class DbPedido extends ClsEntidad {
 	private final ClsCampo fechaCancelacion = new ClsCampo("fechaCancelacion", Tipo.Date, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo departamento = new ClsCampo("departamento", Tipo.String, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo confirmado = new ClsCampo("confirmado", Tipo.Boolean, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_FALSE, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo modelos = new ClsCampo("modelos", Tipo.ArrayString, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 
 	// Dependencias
 	private List<DbPedidoDet> detalles = null;
@@ -62,7 +63,7 @@ public class DbPedido extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, folioPedido, temporada, zonaHoraria, fechaPedido, dia, semana, mes, anio, folioCliente, cliente, fechaCancelacion, departamento, confirmado);
+		return Arrays.asList(empresa, folioPedido, temporada, zonaHoraria, fechaPedido, dia, semana, mes, anio, folioCliente, cliente, fechaCancelacion, departamento, confirmado, modelos);
 	}
 
 	public SerPedido toSerPedido(DatastoreService datastore, Transaction tx) throws ExcepcionControlada {
@@ -193,6 +194,14 @@ public class DbPedido extends ClsEntidad {
 				detalles.add(new DbPedidoDet(detalle));
 		}
 		return detalles;
+	}
+
+	public ArrayList<String> getModelos() throws ExcepcionControlada {
+		return getArrayString(modelos);
+	}
+
+	public void setModelos(ArrayList<String> modelos) throws ExcepcionControlada {
+		setArrayString(this.modelos, modelos);
 	}
 
 }

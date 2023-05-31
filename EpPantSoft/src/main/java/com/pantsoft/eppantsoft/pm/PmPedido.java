@@ -1,5 +1,6 @@
 package com.pantsoft.eppantsoft.pm;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,8 +36,7 @@ public class PmPedido {
 			if (ClsEntidad.existeEntidad(datastore, "DbPedido", dbPedido.getKey().getName()))
 				throw new ExcepcionControlada("El pedido '" + serPedido.getFolioPedido() + "' ya existe.");
 
-			dbPedido.guardar(datastore);
-
+			ArrayList<String> lstModelos = new ArrayList<String>();
 			// Guardo los detalles
 			if (serPedido.getDetalles() != null && serPedido.getDetalles().length > 0) {
 				for (SerPedidoDet serDet : serPedido.getDetalles()) {
@@ -45,9 +45,12 @@ public class PmPedido {
 					serDet.setTemporada(serPedido.getTemporada());
 					DbPedidoDet dbDet = new DbPedidoDet(serDet);
 					dbDet.guardar(datastore, tx);
+					lstModelos.add(serDet.getModelo());
 				}
 			}
 
+			dbPedido.setModelos(lstModelos);
+			dbPedido.guardar(datastore);
 			tx.commit();
 
 			return dbPedido.toSerPedido(datastore, null);
@@ -72,9 +75,9 @@ public class PmPedido {
 			dbPedido.setFechaCancelacion(serPedido.getFechaCancelacion());
 			dbPedido.setDepartamento(serPedido.getDepartamento());
 			dbPedido.setConfirmado(serPedido.getConfirmado());
-			dbPedido.guardar(datastore, tx);
 
 			// Guardo los detalles
+			ArrayList<String> lstModelos = new ArrayList<String>();
 			Map<Long, Boolean> mapDetalles = new HashMap<Long, Boolean>();
 			if (serPedido.getDetalles() != null && serPedido.getDetalles().length > 0) {
 				for (SerPedidoDet serDet : serPedido.getDetalles()) {
@@ -82,6 +85,7 @@ public class PmPedido {
 					serDet.setFolioPedido(serPedido.getFolioPedido());
 					serDet.setTemporada(serPedido.getTemporada());
 					mapDetalles.put(serDet.getRenglon(), true);
+					lstModelos.add(serDet.getModelo());
 					// Busco el detalle
 					boolean esNuevo = true;
 					for (DbPedidoDet dbDet : dbPedido.getDetalles(datastore, tx)) {
@@ -111,6 +115,8 @@ public class PmPedido {
 				}
 			}
 
+			dbPedido.setModelos(lstModelos);
+			dbPedido.guardar(datastore, tx);
 			tx.commit();
 
 			dbPedido = new DbPedido(datastore.get(key));
