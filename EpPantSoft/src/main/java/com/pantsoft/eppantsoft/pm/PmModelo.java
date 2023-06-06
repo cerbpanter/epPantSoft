@@ -205,6 +205,22 @@ public class PmModelo {
 		}
 	}
 
+	public SerModelo modelo_actualizarDepartamento(SerModelo serModelo) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		try {
+
+			Key key = KeyFactory.createKey("DbModelo", serModelo.getEmpresa() + "-" + serModelo.getTemporada() + "-" + serModelo.getModelo() + "-" + serModelo.getReferencia());
+			DbModelo dbModelo = new DbModelo(datastore.get(key));
+
+			dbModelo.setTalla(serModelo.getDepartamento());
+			dbModelo.guardar(datastore);
+
+			return dbModelo.toSerModelo();
+		} catch (EntityNotFoundException e) {
+			throw new Exception("El modelo '" + serModelo.getModelo() + "' no existe.");
+		}
+	}
+
 	public SerModelo modelo_dameModelo(SerModelo serModelo) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		try {

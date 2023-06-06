@@ -80,6 +80,12 @@ public class EpModelos extends HttpServlet {
 				ep.objectEnBody(serModelo);
 				return;
 			}
+			if (ep.esMetodo("modelo_actualizarDepartamento") && ep.esVersion("v1")) {
+				SerModelo serModelo = ep.getObjetFromBody(SerModelo.class);
+				serModelo = new PmModelo().modelo_actualizarDepartamento(serModelo);
+				ep.objectEnBody(serModelo);
+				return;
+			}
 			if (ep.esMetodo("modelo_dameModelo") && ep.esVersion("v1")) {
 				SerModelo serModelo = ep.getObjetFromBody(SerModelo.class);
 				serModelo = new PmModelo().modelo_dameModelo(serModelo);

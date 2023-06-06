@@ -278,6 +278,21 @@ public class PmProduccion {
 		}
 	}
 
+	public SerProduccion actualizarDepartamento(SerProduccion serProduccion) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		try {
+			Key key = KeyFactory.createKey("DbProduccion", serProduccion.getEmpresa() + "-" + serProduccion.getTemporada() + "-" + serProduccion.getNumOrden());
+			DbProduccion dbProduccion = new DbProduccion(datastore.get(key));
+
+			dbProduccion.setDepartamento(serProduccion.getDepartamento());
+			dbProduccion.guardar(datastore);
+
+			return dbProduccion.toSerProduccion();
+		} catch (EntityNotFoundException e) {
+			throw new Exception("La orden '" + serProduccion.getNumOrden() + "' no existe.");
+		}
+	}
+
 	public void cambiarTemporada(String empresa, long temporada, long nuevaTemporada, List<Long> lstOrdenes) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		Transaction tx = null;

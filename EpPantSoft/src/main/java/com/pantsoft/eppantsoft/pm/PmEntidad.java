@@ -29,6 +29,7 @@ import com.pantsoft.eppantsoft.entidades.DbCodigoDeBarras;
 import com.pantsoft.eppantsoft.entidades.DbCodigoDeBarras_A;
 import com.pantsoft.eppantsoft.entidades.DbColor;
 import com.pantsoft.eppantsoft.entidades.DbConsecutivo;
+import com.pantsoft.eppantsoft.entidades.DbDepartamento;
 import com.pantsoft.eppantsoft.entidades.DbEmpresa;
 import com.pantsoft.eppantsoft.entidades.DbEntidad;
 import com.pantsoft.eppantsoft.entidades.DbEntidadCampo;
@@ -1580,6 +1581,9 @@ public class PmEntidad {
 			lstCampos = db.getCampos();
 		} else if (entidad.equals("DbConsecutivo")) {
 			DbConsecutivo db = new DbConsecutivo(entity);
+			lstCampos = db.getCampos();
+		} else if (entidad.equals("DbDepartamento")) {
+			DbDepartamento db = new DbDepartamento(entity);
 			lstCampos = db.getCampos();
 		} else if (entidad.equals("DbEmpresa")) {
 			DbEmpresa db = new DbEmpresa(entity);
