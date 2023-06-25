@@ -69,10 +69,10 @@ public class PmPedido {
 			Key key = KeyFactory.createKey("DbPedido", serPedido.getEmpresa() + "-" + serPedido.getFolioPedido());
 			DbPedido dbPedido = new DbPedido(datastore.get(key));
 
-			dbPedido.setFechaPedido(serPedido.getFechaPedido(), serPedido.getZonaHoraria());
+			dbPedido.setFechaPedido(serPedido.getFechaPedido());
 			dbPedido.setFolioCliente(serPedido.getFolioCliente());
 			dbPedido.setCliente(serPedido.getCliente());
-			dbPedido.setFechaCancelacion(serPedido.getFechaCancelacion());
+			dbPedido.setFechaCancelacion(serPedido.getFechaCancelacion(), serPedido.getZonaHoraria());
 			dbPedido.setDepartamento(serPedido.getDepartamento());
 			dbPedido.setConfirmado(serPedido.getConfirmado());
 

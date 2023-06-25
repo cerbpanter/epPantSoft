@@ -25,13 +25,13 @@ public class DbPedido extends ClsEntidad {
 	private final ClsCampo temporada = new ClsCampo("temporada", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo zonaHoraria = new ClsCampo("zonaHoraria", Tipo.String, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo fechaPedido = new ClsCampo("fechaPedido", Tipo.Date, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
-	private final ClsCampo dia = new ClsCampo("dia", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
-	private final ClsCampo semana = new ClsCampo("semana", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
-	private final ClsCampo mes = new ClsCampo("mes", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo fechaCancelacion = new ClsCampo("fechaCancelacion", Tipo.Date, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo diaCancelacion = new ClsCampo("diaCancelacion", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo semanaCancelacion = new ClsCampo("semanaCancelacion", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo mesCancelacion = new ClsCampo("mesCancelacion", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo anio = new ClsCampo("anio", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo folioCliente = new ClsCampo("folioCliente", Tipo.Long, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo cliente = new ClsCampo("cliente", Tipo.String, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
-	private final ClsCampo fechaCancelacion = new ClsCampo("fechaCancelacion", Tipo.Date, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo departamento = new ClsCampo("departamento", Tipo.String, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo confirmado = new ClsCampo("confirmado", Tipo.Boolean, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_FALSE, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo modelos = new ClsCampo("modelos", Tipo.ArrayString, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
@@ -46,10 +46,10 @@ public class DbPedido extends ClsEntidad {
 		setString(empresa, serPedido.getEmpresa());
 		setLong(folioPedido, serPedido.getFolioPedido());
 		setTemporada(serPedido.getTemporada());
-		setFechaPedido(serPedido.getFechaPedido(), serPedido.getZonaHoraria());
+		setFechaPedido(serPedido.getFechaPedido());
 		setFolioCliente(serPedido.getFolioCliente());
 		setCliente(serPedido.getCliente());
-		setFechaCancelacion(serPedido.getFechaCancelacion());
+		setFechaCancelacion(serPedido.getFechaCancelacion(), serPedido.getZonaHoraria());
 		setDepartamento(serPedido.getDepartamento());
 		setConfirmado(serPedido.getConfirmado());
 	}
@@ -63,7 +63,7 @@ public class DbPedido extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, folioPedido, temporada, zonaHoraria, fechaPedido, dia, semana, mes, anio, folioCliente, cliente, fechaCancelacion, departamento, confirmado, modelos);
+		return Arrays.asList(empresa, folioPedido, temporada, zonaHoraria, fechaCancelacion, fechaPedido, diaCancelacion, semanaCancelacion, mesCancelacion, anio, folioCliente, cliente, departamento, confirmado, modelos);
 	}
 
 	public SerPedido toSerPedido(DatastoreService datastore, Transaction tx) throws ExcepcionControlada {
@@ -103,39 +103,47 @@ public class DbPedido extends ClsEntidad {
 		return getDate(fechaPedido);
 	}
 
-	public void setFechaPedido(Date fechaPedido, String zonaHoraria) throws ExcepcionControlada {
-		setDate(this.fechaPedido, fechaPedido);
-
+	public void setFechaPedido(Date fechaPedido) throws ExcepcionControlada {
 		if (fechaPedido == null) {
 			throw new ExcepcionControlada("El campo Fecha no puede quedar vacío.");
 		}
 		setDate(this.fechaPedido, fechaPedido);
+	}
+
+	public Date getFechaCancelacion() throws ExcepcionControlada {
+		return getDate(fechaCancelacion);
+	}
+
+	public void setFechaCancelacion(Date fechaCancelacion, String zonaHoraria) throws ExcepcionControlada {
+		if (fechaCancelacion == null) {
+			throw new ExcepcionControlada("El campo Fecha Cancelación no puede quedar vacío.");
+		}
+
+		setDate(this.fechaCancelacion, fechaCancelacion);
+
+		setDate(this.fechaCancelacion, fechaCancelacion);
 		setString(this.zonaHoraria, zonaHoraria);
 		TimeZone tzGMT = TimeZone.getTimeZone(zonaHoraria);
 		Calendar cal = Calendar.getInstance();
-		cal.setTime(fechaPedido);
+		cal.setTime(fechaCancelacion);
 		cal.setTimeZone(tzGMT);
 
 		setLong(this.anio, (long) cal.get(Calendar.YEAR));
-		setLong(this.mes, (long) ((cal.get(Calendar.YEAR) * 100) + cal.get(Calendar.MONTH) + 1));
-		setLong(this.semana, (long) ((cal.get(Calendar.YEAR) * 100) + cal.get(Calendar.WEEK_OF_YEAR)));
-		setLong(this.dia, (long) ((cal.get(Calendar.YEAR) * 10000) + ((cal.get(Calendar.MONTH) + 1) * 100) + cal.get(Calendar.DAY_OF_MONTH)));
+		setLong(this.mesCancelacion, (long) ((cal.get(Calendar.YEAR) * 100) + cal.get(Calendar.MONTH) + 1));
+		setLong(this.semanaCancelacion, (long) ((cal.get(Calendar.YEAR) * 100) + cal.get(Calendar.WEEK_OF_YEAR)));
+		setLong(this.diaCancelacion, (long) ((cal.get(Calendar.YEAR) * 10000) + ((cal.get(Calendar.MONTH) + 1) * 100) + cal.get(Calendar.DAY_OF_MONTH)));
 	}
 
-	public long getDia() throws ExcepcionControlada {
-		return getLong(dia);
+	public long getDiaCancelacion() throws ExcepcionControlada {
+		return getLong(diaCancelacion);
 	}
 
-	public void setDia(long dia) throws ExcepcionControlada {
-		setLong(this.dia, dia);
+	public long getSemanaCancelacion() throws ExcepcionControlada {
+		return getLong(semanaCancelacion);
 	}
 
-	public long getMes() throws ExcepcionControlada {
-		return getLong(mes);
-	}
-
-	public void setMes(long mes) throws ExcepcionControlada {
-		setLong(this.mes, mes);
+	public long getMesCancelacion() throws ExcepcionControlada {
+		return getLong(mesCancelacion);
 	}
 
 	public Long getAnio() throws ExcepcionControlada {
@@ -160,14 +168,6 @@ public class DbPedido extends ClsEntidad {
 
 	public void setCliente(String cliente) throws ExcepcionControlada {
 		setString(this.cliente, cliente);
-	}
-
-	public Date getFechaCancelacion() throws ExcepcionControlada {
-		return getDate(fechaCancelacion);
-	}
-
-	public void setFechaCancelacion(Date fechaCancelacion) throws ExcepcionControlada {
-		setDate(this.fechaCancelacion, fechaCancelacion);
 	}
 
 	public String getDepartamento() throws ExcepcionControlada {

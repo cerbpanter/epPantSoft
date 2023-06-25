@@ -212,7 +212,7 @@ public class PmModelo {
 			Key key = KeyFactory.createKey("DbModelo", serModelo.getEmpresa() + "-" + serModelo.getTemporada() + "-" + serModelo.getModelo() + "-" + serModelo.getReferencia());
 			DbModelo dbModelo = new DbModelo(datastore.get(key));
 
-			dbModelo.setTalla(serModelo.getDepartamento());
+			dbModelo.setDepartamento(serModelo.getDepartamento());
 			dbModelo.guardar(datastore);
 
 			return dbModelo.toSerModelo();
