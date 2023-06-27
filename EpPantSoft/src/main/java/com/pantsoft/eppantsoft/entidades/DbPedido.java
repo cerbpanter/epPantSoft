@@ -29,7 +29,7 @@ public class DbPedido extends ClsEntidad {
 	private final ClsCampo diaCancelacion = new ClsCampo("diaCancelacion", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo semanaCancelacion = new ClsCampo("semanaCancelacion", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo mesCancelacion = new ClsCampo("mesCancelacion", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
-	private final ClsCampo anio = new ClsCampo("anio", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo anioCancelacion = new ClsCampo("anioCancelacion", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo folioCliente = new ClsCampo("folioCliente", Tipo.Long, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo cliente = new ClsCampo("cliente", Tipo.String, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo departamento = new ClsCampo("departamento", Tipo.String, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
@@ -63,7 +63,7 @@ public class DbPedido extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, folioPedido, temporada, zonaHoraria, fechaCancelacion, fechaPedido, diaCancelacion, semanaCancelacion, mesCancelacion, anio, folioCliente, cliente, departamento, confirmado, modelos);
+		return Arrays.asList(empresa, folioPedido, temporada, zonaHoraria, fechaCancelacion, fechaPedido, diaCancelacion, semanaCancelacion, mesCancelacion, anioCancelacion, folioCliente, cliente, departamento, confirmado, modelos);
 	}
 
 	public SerPedido toSerPedido(DatastoreService datastore, Transaction tx) throws ExcepcionControlada {
@@ -128,7 +128,7 @@ public class DbPedido extends ClsEntidad {
 		cal.setTime(fechaCancelacion);
 		cal.setTimeZone(tzGMT);
 
-		setLong(this.anio, (long) cal.get(Calendar.YEAR));
+		setLong(this.anioCancelacion, (long) cal.get(Calendar.YEAR));
 		setLong(this.mesCancelacion, (long) ((cal.get(Calendar.YEAR) * 100) + cal.get(Calendar.MONTH) + 1));
 		setLong(this.semanaCancelacion, (long) ((cal.get(Calendar.YEAR) * 100) + cal.get(Calendar.WEEK_OF_YEAR)));
 		setLong(this.diaCancelacion, (long) ((cal.get(Calendar.YEAR) * 10000) + ((cal.get(Calendar.MONTH) + 1) * 100) + cal.get(Calendar.DAY_OF_MONTH)));
@@ -146,12 +146,8 @@ public class DbPedido extends ClsEntidad {
 		return getLong(mesCancelacion);
 	}
 
-	public Long getAnio() throws ExcepcionControlada {
-		return getLong(anio);
-	}
-
-	public void setAnio(Long anio) throws ExcepcionControlada {
-		setLong(this.anio, anio);
+	public Long getAnioCancelacion() throws ExcepcionControlada {
+		return getLong(anioCancelacion);
 	}
 
 	public Long getFolioCliente() throws ExcepcionControlada {

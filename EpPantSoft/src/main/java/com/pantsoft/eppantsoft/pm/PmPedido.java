@@ -1,6 +1,7 @@
 package com.pantsoft.eppantsoft.pm;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -69,7 +70,7 @@ public class PmPedido {
 			Key key = KeyFactory.createKey("DbPedido", serPedido.getEmpresa() + "-" + serPedido.getFolioPedido());
 			DbPedido dbPedido = new DbPedido(datastore.get(key));
 
-			dbPedido.setFechaPedido(serPedido.getFechaPedido());
+			dbPedido.setFechaPedido(new Date());
 			dbPedido.setFolioCliente(serPedido.getFolioCliente());
 			dbPedido.setCliente(serPedido.getCliente());
 			dbPedido.setFechaCancelacion(serPedido.getFechaCancelacion(), serPedido.getZonaHoraria());
