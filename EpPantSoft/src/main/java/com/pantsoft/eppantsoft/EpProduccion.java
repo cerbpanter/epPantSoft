@@ -10,9 +10,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.pantsoft.eppantsoft.pm.PmPedido;
+import com.pantsoft.eppantsoft.pm.PmProcesoProduccion;
 import com.pantsoft.eppantsoft.pm.PmProduccion;
 import com.pantsoft.eppantsoft.serializable.Respuesta;
 import com.pantsoft.eppantsoft.serializable.SerPedido;
+import com.pantsoft.eppantsoft.serializable.SerProcesoProduccion;
+import com.pantsoft.eppantsoft.serializable.SerProcesoProduccionLst;
 import com.pantsoft.eppantsoft.serializable.SerProduccion;
 import com.pantsoft.eppantsoft.util.ClsEpUtil;
 
@@ -114,6 +117,32 @@ public class EpProduccion extends HttpServlet {
 			if (ep.esMetodo("pedido_eliminar") && ep.esVersion("v1")) {
 				ep.addPar("empresa", "String").addPar("folioPedido", "Long");
 				new PmPedido().eliminar(ep.dameParametroString("empresa"), ep.dameParametroLong("folioPedido"));
+				ep.voidEnBody();
+				return;
+			}
+
+			// PROCESO PRODUCCION
+			if (ep.esMetodo("procesoProduccion_agregar") && ep.esVersion("v1")) {
+				SerProcesoProduccion serProcesoProduccion = ep.getObjetFromBody(SerProcesoProduccion.class);
+				serProcesoProduccion = new PmProcesoProduccion().agregar(serProcesoProduccion);
+				ep.objectEnBody(serProcesoProduccion);
+				return;
+			}
+			if (ep.esMetodo("procesoProduccion_actualizar") && ep.esVersion("v1")) {
+				SerProcesoProduccion serProcesoProduccion = ep.getObjetFromBody(SerProcesoProduccion.class);
+				serProcesoProduccion = new PmProcesoProduccion().actualizar(serProcesoProduccion);
+				ep.objectEnBody(serProcesoProduccion);
+				return;
+			}
+			if (ep.esMetodo("procesoProduccion_actualizarLst") && ep.esVersion("v1")) {
+				SerProcesoProduccionLst serProcesoProduccionLst = ep.getObjetFromBody(SerProcesoProduccionLst.class);
+				serProcesoProduccionLst = new PmProcesoProduccion().actualizarLst(serProcesoProduccionLst);
+				ep.objectEnBody(serProcesoProduccionLst);
+				return;
+			}
+			if (ep.esMetodo("procesoProduccion_eliminar") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("numOrden", "Long");
+				new PmProcesoProduccion().eliminar(ep.dameParametroString("empresa"), ep.dameParametroLong("folioProcesoProduccion"));
 				ep.voidEnBody();
 				return;
 			}

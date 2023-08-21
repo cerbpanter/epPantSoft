@@ -31,6 +31,7 @@ public class PmPedido {
 			long folio = ClsUtil.dameSiguienteId(serPedido.getEmpresa(), 0L, "Pedido", datastore, tx);
 			serPedido.setFolioPedido(folio);
 
+			serPedido.setFechaPedido(new Date());
 			DbPedido dbPedido = new DbPedido(serPedido);
 			// dbPedido.setFecha(new Date());
 
@@ -70,7 +71,6 @@ public class PmPedido {
 			Key key = KeyFactory.createKey("DbPedido", serPedido.getEmpresa() + "-" + serPedido.getFolioPedido());
 			DbPedido dbPedido = new DbPedido(datastore.get(key));
 
-			dbPedido.setFechaPedido(new Date());
 			dbPedido.setFolioCliente(serPedido.getFolioCliente());
 			dbPedido.setCliente(serPedido.getCliente());
 			dbPedido.setFechaCancelacion(serPedido.getFechaCancelacion(), serPedido.getZonaHoraria());
