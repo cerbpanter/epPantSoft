@@ -24,9 +24,11 @@ public class DbPedidoDet extends ClsEntidad {
 	private final ClsCampo tallas = new ClsCampo("tallas", Tipo.String, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo observaciones = new ClsCampo("observaciones", Tipo.String, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo detalle = new ClsCampo("detalle", Tipo.Text, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo revisado = new ClsCampo("revisado", Tipo.Boolean, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_FALSE, 0, NO_SUSTITUIR_NULL);
 
 	public DbPedidoDet(SerPedidoDet serPedidoDet) throws ExcepcionControlada {
-		Key key = KeyFactory.createKey("DbPedidoDet", serPedidoDet.getEmpresa() + "-" + serPedidoDet.getFolioPedido() + "-" + serPedidoDet.getRenglon());
+		Key keyP = KeyFactory.createKey("DbPedido", serPedidoDet.getEmpresa() + "-" + serPedidoDet.getFolioPedido());
+		Key key = KeyFactory.createKey(keyP, "DbPedidoDet", serPedidoDet.getEmpresa() + "-" + serPedidoDet.getFolioPedido() + "-" + serPedidoDet.getRenglon());
 		entidad = new Entity(key);
 		asignarValoresDefault();
 		setString(empresa, serPedidoDet.getEmpresa());
@@ -40,6 +42,7 @@ public class DbPedidoDet extends ClsEntidad {
 		setTallas(serPedidoDet.getTallas());
 		setObservaciones(serPedidoDet.getObservaciones());
 		setDetalle(serPedidoDet.getDetalle());
+		setRevisado(serPedidoDet.getRevisado());
 	}
 
 	public DbPedidoDet(Entity entidad) {
@@ -51,11 +54,11 @@ public class DbPedidoDet extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, folioPedido, renglon, temporada, modelo, referencia, precio, cantidad, tallas, observaciones, detalle);
+		return Arrays.asList(empresa, folioPedido, renglon, temporada, modelo, referencia, precio, cantidad, tallas, observaciones, detalle, revisado);
 	}
 
 	public SerPedidoDet toSerPedidoDet() throws ExcepcionControlada {
-		return new SerPedidoDet(getEmpresa(), getFolioPedido(), getRenglon(), getTemporada(), getModelo(), getReferencia(), getPrecio(), getCantidad(), getTallas(), getObservaciones(), getDetalle());
+		return new SerPedidoDet(getEmpresa(), getFolioPedido(), getRenglon(), getTemporada(), getModelo(), getReferencia(), getPrecio(), getCantidad(), getTallas(), getObservaciones(), getDetalle(), getRevisado());
 	}
 
 	public String getEmpresa() throws ExcepcionControlada {
@@ -132,5 +135,13 @@ public class DbPedidoDet extends ClsEntidad {
 
 	public void setDetalle(String detalle) throws ExcepcionControlada {
 		setText(this.detalle, detalle);
+	}
+
+	public Boolean getRevisado() throws ExcepcionControlada {
+		return getBoolean(revisado);
+	}
+
+	public void setRevisado(boolean revisado) throws ExcepcionControlada {
+		setBoolean(this.revisado, revisado);
 	}
 }

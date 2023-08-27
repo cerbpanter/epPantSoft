@@ -35,6 +35,7 @@ public class DbPedido extends ClsEntidad {
 	private final ClsCampo departamento = new ClsCampo("departamento", Tipo.String, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo confirmado = new ClsCampo("confirmado", Tipo.Boolean, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_FALSE, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo modelos = new ClsCampo("modelos", Tipo.ArrayString, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo marca = new ClsCampo("marca", Tipo.String, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 
 	// Dependencias
 	private List<DbPedidoDet> detalles = null;
@@ -63,11 +64,11 @@ public class DbPedido extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, folioPedido, temporada, zonaHoraria, fechaCancelacion, fechaPedido, diaCancelacion, semanaCancelacion, mesCancelacion, anioCancelacion, folioCliente, cliente, departamento, confirmado, modelos);
+		return Arrays.asList(empresa, folioPedido, temporada, zonaHoraria, fechaCancelacion, fechaPedido, diaCancelacion, semanaCancelacion, mesCancelacion, anioCancelacion, folioCliente, cliente, departamento, confirmado, modelos, marca);
 	}
 
 	public SerPedido toSerPedido(DatastoreService datastore, Transaction tx) throws ExcepcionControlada {
-		SerPedido serPedido = new SerPedido(getEmpresa(), getFolioPedido(), getTemporada(), getZonaHoraria(), getFechaPedido(), getFolioCliente(), getCliente(), getFechaCancelacion(), getDepartamento(), getConfirmado());
+		SerPedido serPedido = new SerPedido(getEmpresa(), getFolioPedido(), getTemporada(), getZonaHoraria(), getFechaPedido(), getFolioCliente(), getCliente(), getFechaCancelacion(), getDepartamento(), getConfirmado(), getMarca());
 
 		// Agrego los Detalles
 		getDetalles(datastore, tx);
@@ -180,6 +181,14 @@ public class DbPedido extends ClsEntidad {
 
 	public void setConfirmado(boolean confirmado) throws ExcepcionControlada {
 		setBoolean(this.confirmado, confirmado);
+	}
+
+	public String getMarca() throws ExcepcionControlada {
+		return getString(marca);
+	}
+
+	public void setMarca(String marca) throws ExcepcionControlada {
+		setString(this.marca, marca);
 	}
 
 	public List<DbPedidoDet> getDetalles(DatastoreService datastore, Transaction tx) throws ExcepcionControlada {

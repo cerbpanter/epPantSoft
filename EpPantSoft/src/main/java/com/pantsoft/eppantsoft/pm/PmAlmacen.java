@@ -69,8 +69,8 @@ public class PmAlmacen {
 			if (serAlmEntrada.getTieneError() && !ClsUtil.esNulo(dbAlmEntrada.getDetalle()))
 				throw new Exception("El detalle debe estar vacío si tieneError");
 			if (serAlmEntrada.getTipo() == 4) {
-				if (serAlmEntrada.getSerieFactura() == null || serAlmEntrada.getFolioFactura() == 0)
-					throw new Exception("Las entradas tipo factura deben tener serie y folio");
+				// if (serAlmEntrada.getSerieFactura() == null || serAlmEntrada.getFolioFactura() == 0)
+				// throw new Exception("Las entradas tipo factura deben tener serie y folio");
 			} else {
 				if (serAlmEntrada.getSerieFactura() != null || serAlmEntrada.getFolioFactura() != 0)
 					throw new Exception("Solo las entradas tipo factura deben tener serie y folio");
@@ -371,6 +371,38 @@ public class PmAlmacen {
 		dbAlmEntrada.guardar(datastore);
 	}
 
+	public void almEntrada_actualizarNotaCredito(SerAlmEntrada serAlmEntrada) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Transaction tx = null;
+
+		try {
+			tx = ClsEntidad.iniciarTransaccion(datastore);
+
+			DbAlmEntrada dbAlmEntrada;
+			try {
+				dbAlmEntrada = new DbAlmEntrada(ClsEntidad.obtenerEntidad(datastore, tx, "DbAlmEntrada", serAlmEntrada.getEmpresa() + "-" + serAlmEntrada.getFolioAlmEntrada()));
+			} catch (EntityNotFoundException e1) {
+				throw new ExcepcionControlada("La entrada '" + serAlmEntrada.getFolioAlmEntrada() + "' no existe.");
+			}
+
+			if (dbAlmEntrada.getTipo() != 4)
+				throw new Exception("La entrada no es de tipo nota de crédito");
+			if (serAlmEntrada.getSerieFactura() == null || serAlmEntrada.getFolioFactura() == 0)
+				throw new Exception("La serie y folio no pueden estar vacíos");
+
+			dbAlmEntrada.setSerieFactura(serAlmEntrada.getSerieFactura());
+			dbAlmEntrada.setFolioFactura(serAlmEntrada.getFolioFactura());
+
+			dbAlmEntrada.guardar(datastore, tx);
+			tx.commit();
+
+		} finally {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+		}
+
+	}
+
 	public SerAlmEntrada almEntrada_eliminar(String empresa, long folioAlmEntrada) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		Transaction tx = null;
@@ -399,10 +431,12 @@ public class PmAlmacen {
 					SerInvModeloDet serInv = new SerInvModeloDet(dbDet.getEmpresa(), dbDet.getAlmacen(), dbDet.getModelo(), dbDet.getColor(), dbDet.getTalla(), dbDet.getCodigoDeBarras(), dbDet.getCantidad() * -1);
 					dbInv = new DbInvModeloDet(serInv);
 				}
-				if (dbInv.getCantidad() == 0)
+				if (dbInv.getCantidad() == 0) {
 					dbInv.eliminar(datastore, tx);
-				else
+				} else {
 					dbInv.guardar(datastore, tx);
+				}
+				dbDet.eliminar(datastore, tx);
 			}
 
 			dbAlmEntrada.eliminar(datastore, tx);
@@ -799,6 +833,7 @@ public class PmAlmacen {
 					dbInv = new DbInvModeloDet(serInv);
 				}
 				dbInv.guardar(datastore, tx);
+				dbDet.eliminar(datastore, tx);
 			}
 
 			dbAlmSalida.eliminar(datastore, tx);

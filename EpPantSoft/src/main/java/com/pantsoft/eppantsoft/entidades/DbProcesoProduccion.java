@@ -15,22 +15,23 @@ import com.pantsoft.eppantsoft.util.ExcepcionControlada;
 public class DbProcesoProduccion extends ClsEntidad {
 	private final ClsCampo empresa = new ClsCampo("empresa", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 1, NO_SUSTITUIR_NULL);
 	private final ClsCampo folioProcesoProduccion = new ClsCampo("folioProcesoProduccion", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 2, NO_SUSTITUIR_NULL);
+	private final ClsCampo orden = new ClsCampo("orden", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo temporada = new ClsCampo("temporada", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo estatus = new ClsCampo("estatus", Tipo.Rating, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL, "0-Pendiente, 1-En Proceso, 2-Terminado");
 	private final ClsCampo folioPedido = new ClsCampo("folioPedido", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
-	private final ClsCampo renglon = new ClsCampo("renglon", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo renglonPedido = new ClsCampo("renglonPedido", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo folioProcesoOrigen = new ClsCampo("folioProcesoOrigen", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo folioProcesoDestino = new ClsCampo("folioProcesoDestino", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo modelo = new ClsCampo("modelo", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
-	private final ClsCampo referencia = new ClsCampo("referencia", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
-	private final ClsCampo tallas = new ClsCampo("tallas", Tipo.String, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
-	private final ClsCampo proceso = new ClsCampo("proceso", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo referencia = new ClsCampo("referencia", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo tallas = new ClsCampo("tallas", Tipo.String, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo proceso = new ClsCampo("proceso", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo maquilero = new ClsCampo("maquilero", Tipo.String, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo observaciones = new ClsCampo("observaciones", Tipo.String, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo cantidadEntrada = new ClsCampo("cantidadEntrada", Tipo.Long, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo cantidadSalida = new ClsCampo("cantidadSalida", Tipo.Long, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo detalleEntrada = new ClsCampo("detalleEntrada", Tipo.Text, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
-	private final ClsCampo detalleSalida = new ClsCampo("detalleSalida", Tipo.Text, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo detalleSalida = new ClsCampo("detalleSalida", Tipo.Text, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 
 	public DbProcesoProduccion(SerProcesoProduccion serProcesoProduccion) throws ExcepcionControlada {
 		Key key = KeyFactory.createKey("DbProcesoProduccion", serProcesoProduccion.getEmpresa() + "-" + serProcesoProduccion.getFolioProcesoProduccion());
@@ -38,10 +39,11 @@ public class DbProcesoProduccion extends ClsEntidad {
 		asignarValoresDefault();
 		setString(empresa, serProcesoProduccion.getEmpresa());
 		setLong(folioProcesoProduccion, serProcesoProduccion.getFolioProcesoProduccion());
-		setLong(temporada, serProcesoProduccion.getTemporada());
+		setOrden(serProcesoProduccion.getOrden());
+		setTemporada(serProcesoProduccion.getTemporada());
 		setEstatus(serProcesoProduccion.getEstatus());
 		setFolioPedido(serProcesoProduccion.getFolioPedido());
-		setRenglon(serProcesoProduccion.getRenglon());
+		setRenglonPedido(serProcesoProduccion.getRenglonPedido());
 		setFolioProcesoOrigen(serProcesoProduccion.getFolioProcesoOrigen());
 		setFolioProcesoDestino(serProcesoProduccion.getFolioProcesoDestino());
 		setModelo(serProcesoProduccion.getModelo());
@@ -65,11 +67,11 @@ public class DbProcesoProduccion extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, folioProcesoProduccion, temporada, estatus, folioPedido, renglon, folioProcesoOrigen, folioProcesoDestino, modelo, referencia, tallas, proceso, maquilero, cantidadEntrada, cantidadSalida, observaciones, detalleEntrada, detalleSalida);
+		return Arrays.asList(empresa, folioProcesoProduccion, orden, temporada, estatus, folioPedido, renglonPedido, folioProcesoOrigen, folioProcesoDestino, modelo, referencia, tallas, proceso, maquilero, cantidadEntrada, cantidadSalida, observaciones, detalleEntrada, detalleSalida);
 	}
 
 	public SerProcesoProduccion toSerProcesoProduccion() throws ExcepcionControlada {
-		return new SerProcesoProduccion(getEmpresa(), getFolioProcesoProduccion(), getTemporada(), getEstatus(), getFolioPedido(), getRenglon(), getFolioProcesoOrigen(), getFolioProcesoDestino(), getModelo(), getReferencia(), getTallas(), getProceso(), getMaquilero(), getCantidadEntrada(), getCantidadSalida(), getObservaciones(), getDetalleEntrada(), getDetalleSalida());
+		return new SerProcesoProduccion(getEmpresa(), getFolioProcesoProduccion(), getOrden(), getTemporada(), getEstatus(), getFolioPedido(), getRenglonPedido(), getFolioProcesoOrigen(), getFolioProcesoDestino(), getModelo(), getReferencia(), getTallas(), getProceso(), getMaquilero(), getCantidadEntrada(), getCantidadSalida(), getObservaciones(), getDetalleEntrada(), getDetalleSalida());
 	}
 
 	public String getEmpresa() throws ExcepcionControlada {
@@ -80,8 +82,20 @@ public class DbProcesoProduccion extends ClsEntidad {
 		return getLong(folioProcesoProduccion);
 	}
 
+	public Long getOrden() throws ExcepcionControlada {
+		return getLong(orden);
+	}
+
+	public void setOrden(Long orden) throws ExcepcionControlada {
+		setLong(this.orden, orden);
+	}
+
 	public Long getTemporada() throws ExcepcionControlada {
 		return getLong(temporada);
+	}
+
+	public void setTemporada(Long temporada) throws ExcepcionControlada {
+		setLong(this.temporada, temporada);
 	}
 
 	public int getEstatus() throws ExcepcionControlada {
@@ -100,12 +114,12 @@ public class DbProcesoProduccion extends ClsEntidad {
 		setLong(this.folioPedido, folioPedido);
 	}
 
-	public Long getRenglon() throws ExcepcionControlada {
-		return getLong(renglon);
+	public Long getRenglonPedido() throws ExcepcionControlada {
+		return getLong(renglonPedido);
 	}
 
-	public void setRenglon(Long renglon) throws ExcepcionControlada {
-		setLong(this.renglon, renglon);
+	public void setRenglonPedido(Long renglonPedido) throws ExcepcionControlada {
+		setLong(this.renglonPedido, renglonPedido);
 	}
 
 	public Long getFolioProcesoOrigen() throws ExcepcionControlada {

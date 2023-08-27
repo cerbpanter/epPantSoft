@@ -3,10 +3,11 @@ package com.pantsoft.eppantsoft.serializable;
 public class SerProcesoProduccion {
 	private String empresa;
 	private long folioProcesoProduccion;
+	private long orden;
 	private long temporada;
 	private int estatus;
 	private long folioPedido;
-	private long renglon;
+	private long renglonPedido;
 	private long folioProcesoOrigen;
 	private long folioProcesoDestino;
 	private String modelo;
@@ -20,13 +21,14 @@ public class SerProcesoProduccion {
 	private String detalleEntrada;
 	private String detalleSalida;
 
-	public SerProcesoProduccion(String empresa, long folioProcesoProduccion, long temporada, int estatus, long folioPedido, long renglon, long folioProcesoOrigen, long folioProcesoDestino, String modelo, String referencia, String tallas, String proceso, String maquilero, long cantidadEntrada, long cantidadSalida, String observaciones, String detalleEntrada, String detalleSalida) {
+	public SerProcesoProduccion(String empresa, long folioProcesoProduccion, long orden, long temporada, int estatus, long folioPedido, long renglonPedido, long folioProcesoOrigen, long folioProcesoDestino, String modelo, String referencia, String tallas, String proceso, String maquilero, long cantidadEntrada, long cantidadSalida, String observaciones, String detalleEntrada, String detalleSalida) {
 		this.empresa = empresa;
 		this.folioProcesoProduccion = folioProcesoProduccion;
+		this.orden = orden;
 		this.temporada = temporada;
 		this.estatus = estatus;
 		this.folioPedido = folioPedido;
-		this.renglon = renglon;
+		this.renglonPedido = renglonPedido;
 		this.folioProcesoOrigen = folioProcesoOrigen;
 		this.folioProcesoDestino = folioProcesoDestino;
 		this.modelo = modelo;
@@ -60,6 +62,14 @@ public class SerProcesoProduccion {
 		this.folioProcesoProduccion = folioProcesoProduccion;
 	}
 
+	public long getOrden() {
+		return orden;
+	}
+
+	public void setOrden(long orden) {
+		this.orden = orden;
+	}
+
 	public long getTemporada() {
 		return temporada;
 	}
@@ -84,12 +94,12 @@ public class SerProcesoProduccion {
 		this.folioPedido = folioPedido;
 	}
 
-	public long getRenglon() {
-		return renglon;
+	public long getRenglonPedido() {
+		return renglonPedido;
 	}
 
-	public void setRenglon(long renglon) {
-		this.renglon = renglon;
+	public void setRenglonPedido(long renglonPedido) {
+		this.renglonPedido = renglonPedido;
 	}
 
 	public long getFolioProcesoOrigen() {

@@ -85,6 +85,12 @@ public class EpAlmacen extends HttpServlet {
 				ep.voidEnBody();
 				return;
 			}
+			if (ep.esMetodo("almEntrada_actualizarNotaCredito") && ep.esVersion("v1")) {
+				SerAlmEntrada serAlmEntrada = ep.getObjetFromBody(SerAlmEntrada.class);
+				new PmAlmacen().almEntrada_actualizarNotaCredito(serAlmEntrada);
+				ep.voidEnBody();
+				return;
+			}
 			if (ep.esMetodo("almEntrada_cambiarCodigoDeBarras") && ep.esVersion("v1")) {
 				ep.addPar("empresa", "String").addPar("codigoDeBarras", "String").addPar("codigoDeBarrasNuevo", "String").addPar("cursor", "String");
 				Respuesta respuesta = new PmAlmacen().almEntrada_cambiarCodigoDeBarras(ep.dameParametroString("empresa"), ep.dameParametroString("codigoDeBarras"), ep.dameParametroString("codigoDeBarrasNuevo"), ep.dameParametroString("cursor"));

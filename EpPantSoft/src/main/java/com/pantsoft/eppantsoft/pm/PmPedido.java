@@ -76,6 +76,7 @@ public class PmPedido {
 			dbPedido.setFechaCancelacion(serPedido.getFechaCancelacion(), serPedido.getZonaHoraria());
 			dbPedido.setDepartamento(serPedido.getDepartamento());
 			dbPedido.setConfirmado(serPedido.getConfirmado());
+			dbPedido.setMarca(serPedido.getMarca());
 
 			// Guardo los detalles
 			ArrayList<String> lstModelos = new ArrayList<String>();
@@ -98,6 +99,7 @@ public class PmPedido {
 							dbDet.setTallas(serDet.getTallas());
 							dbDet.setObservaciones(serDet.getObservaciones());
 							dbDet.setDetalle(serDet.getDetalle());
+							dbDet.setRevisado(serDet.getRevisado());
 							dbDet.guardar(datastore, tx);
 							esNuevo = false;
 							break;
@@ -129,17 +131,6 @@ public class PmPedido {
 				tx.rollback();
 		}
 	}
-
-	// public SerPedido damePedido(SerPedido serPedido) throws Exception {
-	// DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-	// try {
-	// Key key = KeyFactory.createKey("DbPedido", serPedido.getEmpresa() + "-" + serPedido.getTemporada() + "-" + serPedido.getPedido() + "-" + serPedido.getReferencia());
-	// DbPedido dbPedido = new DbPedido(datastore.get(key));
-	// return dbPedido.toSerPedidoCompleto(datastore, null);
-	// } catch (EntityNotFoundException e) {
-	// throw new Exception("El pedido '" + serPedido.getPedido() + "' no existe.");
-	// }
-	// }
 
 	public void eliminar(String empresa, long folioPedido) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();

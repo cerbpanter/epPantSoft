@@ -5,9 +5,13 @@ import java.util.List;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Transaction;
 import com.pantsoft.eppantsoft.entidades.DbConsecutivo;
 import com.pantsoft.eppantsoft.entidades.DbPedido;
@@ -63,6 +67,20 @@ public class PmProcesoProduccion {
 			dbProcesoProduccion.setDetalleEntrada(serProcesoProduccion.getDetalleEntrada());
 			dbProcesoProduccion.setDetalleSalida(serProcesoProduccion.getDetalleSalida());
 
+			// Validaciones de estatus
+			if (dbProcesoProduccion.getEstatus() == 1) { // En proceso
+				if (ClsUtil.esNulo(dbProcesoProduccion.getMaquilero()))
+					throw new Exception("Un proceso en producción debe tener maquilero");
+			}
+			if (dbProcesoProduccion.getEstatus() == 2) { // Terminado
+				if (ClsUtil.esNulo(dbProcesoProduccion.getMaquilero()))
+					throw new Exception("Un proceso terminado debe tener maquilero");
+				if (dbProcesoProduccion.getCantidadSalida() == 0)
+					throw new Exception("Un proceso terminado debe tener cantidad salida");
+				if (ClsUtil.esNulo(dbProcesoProduccion.getDetalleSalida()))
+					throw new Exception("Un proceso terminado debe tener detalle salida");
+			}
+
 			dbProcesoProduccion.guardar(datastore, tx);
 			tx.commit();
 
@@ -81,13 +99,41 @@ public class PmProcesoProduccion {
 		Transaction tx = null;
 		DbConsecutivo dbConsecutivo = null;
 		List<SerProcesoProduccion> lstResp = new ArrayList<SerProcesoProduccion>();
+		String pos = "ini";
 		try {
 			if (lst == null || lst.getProcesos() == null || lst.getProcesos().length == 0)
 				throw new Exception("Debe mandar al menos un procesoProduccion");
 
+			// Revisar que el orden sea consecutivo sin saltar números
+			for (long i = 1; i <= lst.getProcesos().length; i++) {
+				boolean noExiste = true;
+				for (SerProcesoProduccion serProc : lst.getProcesos()) {
+					if (serProc.getOrden() == i) {
+						noExiste = false;
+						break;
+					}
+				}
+				if (noExiste) {
+					throw new Exception("Falta el proceso con Orden = " + i);
+				}
+			}
+
+			tx = ClsEntidad.iniciarTransaccion(datastore);
+
+			SerProcesoProduccion serPrimerProceso = lst.getProcesos()[0];
+
+			List<Filter> lstFiltros = new ArrayList<Filter>();
+			lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, serPrimerProceso.getEmpresa()));
+			lstFiltros.add(new FilterPredicate("folioPedido", FilterOperator.EQUAL, serPrimerProceso.getFolioPedido()));
+			lstFiltros.add(new FilterPredicate("renglonPedido", FilterOperator.EQUAL, serPrimerProceso.getRenglonPedido()));
+			List<Entity> lstProcesos = ClsEntidad.ejecutarConsulta(datastore, "DbProcesoProduccion", lstFiltros);
+
+			tx.rollback();
+
 			// Campos que deben venir forzosamente
 			// private String empresa;
 			// private long folioProcesoProduccion;
+			// private long orden;
 			// private long folioPedido;
 			// private long renglon;
 			// private long folioProcesoOrigen;
@@ -96,24 +142,24 @@ public class PmProcesoProduccion {
 
 			tx = ClsEntidad.iniciarTransaccion(datastore);
 
-			SerProcesoProduccion serPrimerProceso = lst.getProcesos()[0];
-
+			pos = "ped";
 			// Obtengo el Pedido
-			Key key = KeyFactory.createKey("DbPedido", serPrimerProceso.getEmpresa() + "-" + serPrimerProceso.getFolioPedido());
+			Key keyP = KeyFactory.createKey("DbPedido", serPrimerProceso.getEmpresa() + "-" + serPrimerProceso.getFolioPedido());
 			DbPedido dbPedido = null;
 			try {
-				dbPedido = new DbPedido(datastore.get(tx, key));
+				dbPedido = new DbPedido(datastore.get(tx, keyP));
 			} catch (EntityNotFoundException e) {
 				throw new Exception("No existe el pedido " + serPrimerProceso.getFolioPedido());
 			}
 
+			pos = "peddet";
 			// Obtengo el PedidoDet
-			key = KeyFactory.createKey(key, "DbPedidoDet", serPrimerProceso.getEmpresa() + "-" + serPrimerProceso.getFolioPedido() + "-" + serPrimerProceso.getRenglon());
+			Key key = KeyFactory.createKey(keyP, "DbPedidoDet", serPrimerProceso.getEmpresa() + "-" + serPrimerProceso.getFolioPedido() + "-" + serPrimerProceso.getRenglonPedido());
 			DbPedidoDet dbPedidoDet;
 			try {
 				dbPedidoDet = new DbPedidoDet(datastore.get(tx, key));
 			} catch (EntityNotFoundException e) {
-				throw new Exception("No existe el renglón del pedido pedido " + serPrimerProceso.getFolioPedido() + "-" + serPrimerProceso.getRenglon());
+				throw new Exception("No existe el renglón del pedido pedido " + serPrimerProceso.getFolioPedido() + "-" + serPrimerProceso.getRenglonPedido());
 			}
 
 			for (SerProcesoProduccion serProcesoProduccion : lst.getProcesos()) {
@@ -123,19 +169,13 @@ public class PmProcesoProduccion {
 					throw new Exception("La empresa no puede ser diferente");
 				if (serPrimerProceso.getFolioPedido() != serProcesoProduccion.getFolioPedido())
 					throw new Exception("El folioPedido no puede ser diferente");
-				if (serPrimerProceso.getRenglon() != serProcesoProduccion.getRenglon())
-					throw new Exception("El renglón no puede ser diferente");
+				if (serPrimerProceso.getRenglonPedido() != serProcesoProduccion.getRenglonPedido())
+					throw new Exception("El renglonPedido no puede ser diferente");
 				if (serProcesoProduccion.getFolioProcesoProduccion() > 0) {
+					pos = "existe:" + serProcesoProduccion.getProceso();
 					// Ya existe se actualiza
-					if (dbPedido.getTemporada() != serProcesoProduccion.getTemporada())
-						throw new Exception("La temporada del proceso '" + serProcesoProduccion.getProceso() + "' no coincide con la del pedido. (PED:" + dbPedido.getFolioPedido() + ",PROC:" + serProcesoProduccion.getFolioProcesoProduccion() + ")");
-					if (!dbPedidoDet.getModelo().equals(serProcesoProduccion.getModelo()))
-						throw new Exception("El modelo del proceso '" + serProcesoProduccion.getProceso() + "' no coincide con el del pedido. (PED:" + dbPedidoDet.getFolioPedido() + "-" + dbPedidoDet.getRenglon() + ",PROC:" + serProcesoProduccion.getFolioProcesoProduccion() + ")");
-					if (!dbPedidoDet.getReferencia().equals(serProcesoProduccion.getReferencia()))
-						throw new Exception("La referencia del proceso '" + serProcesoProduccion.getProceso() + "' no coincide con el del pedido. (PED:" + dbPedidoDet.getFolioPedido() + "-" + dbPedidoDet.getRenglon() + ",PROC:" + serProcesoProduccion.getFolioProcesoProduccion() + ")");
-					if (!dbPedidoDet.getTallas().equals(serProcesoProduccion.getTallas()))
-						throw new Exception("Las tallas del proceso '" + serProcesoProduccion.getProceso() + "' no coincide con el del pedido. (PED:" + dbPedidoDet.getFolioPedido() + "-" + dbPedidoDet.getRenglon() + ",PROC:" + serProcesoProduccion.getFolioProcesoProduccion() + ")");
 
+					pos = "existe obtener:" + serProcesoProduccion.getProceso();
 					// Obtengo el ProcesoProduccion
 					key = KeyFactory.createKey("DbProcesoProduccion", serProcesoProduccion.getEmpresa() + "-" + serProcesoProduccion.getFolioProcesoProduccion());
 					try {
@@ -144,19 +184,35 @@ public class PmProcesoProduccion {
 						throw new Exception("No existe el ProcesoProduccion " + serProcesoProduccion.getFolioProcesoProduccion());
 					}
 
+					if (dbPedido.getTemporada() != dbProcesoProduccion.getTemporada())
+						throw new Exception("La temporada del proceso '" + dbProcesoProduccion.getProceso() + "' no coincide con la del pedido. (PED:" + dbPedido.getFolioPedido() + ",PROC:" + dbProcesoProduccion.getFolioProcesoProduccion() + ")");
+					if (!dbPedidoDet.getModelo().equals(dbProcesoProduccion.getModelo()))
+						throw new Exception("El modelo del proceso '" + dbProcesoProduccion.getProceso() + "' no coincide con el del pedido. (PED:" + dbPedidoDet.getFolioPedido() + "-" + dbPedidoDet.getRenglon() + ",PROC:" + dbProcesoProduccion.getFolioProcesoProduccion() + ")");
+					if (!dbPedidoDet.getReferencia().equals(dbProcesoProduccion.getReferencia()))
+						throw new Exception("La referencia del proceso '" + dbProcesoProduccion.getProceso() + "' no coincide con el del pedido. (PED:" + dbPedidoDet.getFolioPedido() + "-" + dbPedidoDet.getRenglon() + ",PROC:" + dbProcesoProduccion.getFolioProcesoProduccion() + ")");
+					if (!dbPedidoDet.getTallas().equals(dbProcesoProduccion.getTallas()))
+						throw new Exception("Las tallas del proceso '" + dbProcesoProduccion.getProceso() + "' no coincide con el del pedido. (PED:" + dbPedidoDet.getFolioPedido() + "-" + dbPedidoDet.getRenglon() + ",PROC:" + dbProcesoProduccion.getFolioProcesoProduccion() + ")");
+
 					if (dbProcesoProduccion.getEstatus() == 0) {
-						if (serProcesoProduccion.getFolioProcesoOrigen() != dbProcesoProduccion.getFolioProcesoOrigen())
-							dbProcesoProduccion.setFolioProcesoOrigen(serProcesoProduccion.getFolioProcesoOrigen());
-						if (serProcesoProduccion.getFolioProcesoDestino() != dbProcesoProduccion.getFolioProcesoDestino())
-							dbProcesoProduccion.setFolioProcesoDestino(serProcesoProduccion.getFolioProcesoDestino());
+						pos = "existe estatus 0:" + serProcesoProduccion.getProceso();
+						if (serProcesoProduccion.getOrden() != dbProcesoProduccion.getOrden().longValue())
+							dbProcesoProduccion.setOrden(serProcesoProduccion.getOrden());
+						// if (serProcesoProduccion.getFolioProcesoOrigen() != dbProcesoProduccion.getFolioProcesoOrigen())
+						// dbProcesoProduccion.setFolioProcesoOrigen(serProcesoProduccion.getFolioProcesoOrigen());
+						// if (serProcesoProduccion.getFolioProcesoDestino() != dbProcesoProduccion.getFolioProcesoDestino())
+						// dbProcesoProduccion.setFolioProcesoDestino(serProcesoProduccion.getFolioProcesoDestino());
 						dbProcesoProduccion.guardar(datastore, tx);
 					} else {
-						if (serProcesoProduccion.getFolioProcesoOrigen() != dbProcesoProduccion.getFolioProcesoOrigen())
+						pos = "existe no guardar:" + serProcesoProduccion.getProceso();
+						if (serProcesoProduccion.getOrden() != dbProcesoProduccion.getOrden().longValue())
 							throw new Exception("No se puede modificar el orden del procesoProduccion " + dbProcesoProduccion.getFolioProcesoProduccion() + " pues ya no se encuentra pendiente");
-						if (serProcesoProduccion.getFolioProcesoDestino() != dbProcesoProduccion.getFolioProcesoDestino())
-							throw new Exception("No se puede modificar el orden del procesoProduccion " + dbProcesoProduccion.getFolioProcesoProduccion() + " pues ya no se encuentra pendiente");
+						// if (serProcesoProduccion.getFolioProcesoOrigen() != dbProcesoProduccion.getFolioProcesoOrigen())
+						// throw new Exception("No se puede modificar el orden del procesoProduccion " + dbProcesoProduccion.getFolioProcesoProduccion() + " pues ya no se encuentra pendiente");
+						// if (serProcesoProduccion.getFolioProcesoDestino() != dbProcesoProduccion.getFolioProcesoDestino())
+						// throw new Exception("No se puede modificar el orden del procesoProduccion " + dbProcesoProduccion.getFolioProcesoProduccion() + " pues ya no se encuentra pendiente");
 					}
 				} else {
+					pos = "no existe:" + serProcesoProduccion.getProceso();
 					// No existe se agrega
 					if (dbConsecutivo == null) {
 						try {
@@ -169,6 +225,7 @@ public class PmProcesoProduccion {
 					long id = dbConsecutivo.getId() + 1;
 					dbConsecutivo.setId(id);
 
+					pos = "ser:" + serProcesoProduccion.getProceso();
 					serProcesoProduccion.setFolioProcesoProduccion(id);
 					serProcesoProduccion.setTemporada(dbPedido.getTemporada());
 					serProcesoProduccion.setEstatus(0);
@@ -181,10 +238,30 @@ public class PmProcesoProduccion {
 					serProcesoProduccion.setDetalleEntrada(null);
 					serProcesoProduccion.setDetalleSalida(null);
 
+					pos = "no existe db:" + dbPedidoDet.getReferencia() + "-" + serProcesoProduccion.getReferencia() + "-" + serProcesoProduccion.getProceso();
 					dbProcesoProduccion = new DbProcesoProduccion(serProcesoProduccion);
+					pos = "no existe guardar:" + dbPedidoDet.getReferencia() + "-" + serProcesoProduccion.getReferencia() + "-" + dbProcesoProduccion.getReferencia() + "-" + serProcesoProduccion.getProceso();
 					dbProcesoProduccion.guardar(datastore, tx);
+					pos = "no existe siguiente:" + serProcesoProduccion.getProceso();
 				}
 				lstResp.add(dbProcesoProduccion.toSerProcesoProduccion());
+			}
+
+			// Falta eliminar los que ya no existe pero estan en BD
+			if (lstProcesos != null && lstProcesos.size() > 0) {
+				for (Entity entidad : lstProcesos) {
+					DbProcesoProduccion dbProc = new DbProcesoProduccion(entidad);
+					boolean noExiste = true;
+					for (SerProcesoProduccion serProc : lstResp) {
+						if (serProc.getFolioProcesoProduccion() == dbProc.getFolioProcesoProduccion().longValue()) {
+							noExiste = false;
+							break;
+						}
+					}
+					if (noExiste) { // Existe en BD pero no exisre en el serializable, se elimina
+						dbProc.eliminar(datastore, tx);
+					}
+				}
 			}
 
 			if (dbConsecutivo != null)
@@ -194,6 +271,8 @@ public class PmProcesoProduccion {
 
 			lst.setProcesos(lstResp.toArray(new SerProcesoProduccion[0]));
 			return lst;
+		} catch (Exception e) {
+			throw new Exception("Pos:" + pos + "--" + e.getMessage());
 		} finally {
 			if (tx != null && tx.isActive())
 				tx.rollback();
