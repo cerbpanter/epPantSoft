@@ -10,6 +10,7 @@ public class SerPedido {
 	private Date fechaPedido;
 	private Long folioCliente;
 	private String cliente;
+	private String subCliente;
 	private Date fechaCancelacion;
 	private String departamento;
 	private boolean confirmado;
@@ -17,7 +18,7 @@ public class SerPedido {
 
 	private SerPedidoDet[] detalles;
 
-	public SerPedido(String empresa, long folioPedido, long temporada, String zonaHoraria, Date fechaPedido, Long folioCliente, String cliente, Date fechaCancelacion, String departamento, boolean confirmado, String marca) {
+	public SerPedido(String empresa, long folioPedido, long temporada, String zonaHoraria, Date fechaPedido, Long folioCliente, String cliente, String subCliente, Date fechaCancelacion, String departamento, boolean confirmado, String marca) {
 		setEmpresa(empresa);
 		setFolioPedido(folioPedido);
 		setTemporada(temporada);
@@ -25,6 +26,7 @@ public class SerPedido {
 		setFechaPedido(fechaPedido);
 		setFolioPedido(folioPedido);
 		setCliente(cliente);
+		setSubCliente(subCliente);
 		setFechaCancelacion(fechaCancelacion);
 		setDepartamento(departamento);
 		setConfirmado(confirmado);
@@ -85,6 +87,14 @@ public class SerPedido {
 
 	public void setCliente(String cliente) {
 		this.cliente = cliente;
+	}
+
+	public String getSubCliente() {
+		return subCliente;
+	}
+
+	public void setSubCliente(String subCliente) {
+		this.subCliente = subCliente;
 	}
 
 	public Date getFechaCancelacion() {

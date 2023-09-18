@@ -73,6 +73,7 @@ public class PmPedido {
 
 			dbPedido.setFolioCliente(serPedido.getFolioCliente());
 			dbPedido.setCliente(serPedido.getCliente());
+			dbPedido.setSubCliente(serPedido.getSubCliente());
 			dbPedido.setFechaCancelacion(serPedido.getFechaCancelacion(), serPedido.getZonaHoraria());
 			dbPedido.setDepartamento(serPedido.getDepartamento());
 			dbPedido.setConfirmado(serPedido.getConfirmado());

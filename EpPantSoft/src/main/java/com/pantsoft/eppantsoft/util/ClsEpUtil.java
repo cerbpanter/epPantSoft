@@ -121,6 +121,19 @@ public class ClsEpUtil {
 		out.close();
 	}
 
+	public void imagenEnBody(byte[] imagen) throws Exception {
+
+		OutputStream out = res.getOutputStream();
+
+		res.setContentLength(imagen.length);
+		res.setHeader("content-type", "image/png");
+
+		agregarEncabezadosCORS();
+
+		out.write(imagen);
+		out.close();
+	}
+
 	public void stringEnBody(String cadena) throws Exception {
 		OutputStream out = res.getOutputStream();
 		byte[] arr = cadena.getBytes("UTF-8");

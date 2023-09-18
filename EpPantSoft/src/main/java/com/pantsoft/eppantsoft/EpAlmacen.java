@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.pantsoft.eppantsoft.pm.PmAlmacen;
-import com.pantsoft.eppantsoft.pm.PmModelo;
 import com.pantsoft.eppantsoft.serializable.Respuesta;
 import com.pantsoft.eppantsoft.serializable.SerAlmEntrada;
 import com.pantsoft.eppantsoft.serializable.SerAlmEntradaDet;
@@ -28,16 +27,16 @@ public class EpAlmacen extends HttpServlet {
 			ep.setParametros(request, response);
 
 			// Modelo Imagen ///////////////////////////////////////////////////////////////////////////
-			if (ep.esMetodo("modeloImagen") && ep.esVersion("v1")) {
-				// Se agregar los parámetros en el orden en que deben venir en la url
-				ep.addPar("empresa", "String").addPar("temporada", "Long").addPar("modelo", "String").addPar("referencia", "String").addPar("renglon", "Long").addPar("mini", "Int");
-
-				// ClsParametrosUrl parametros = new ClsParametrosUrl(ep.dameParametroString("parametrosUrl"));
-				// int tipo = Integer.parseInt(parametros.dameParametro("tipo"));
-
-				new PmModelo().modeloImagen_dameImagen(request, response, ep);
-				return;
-			}
+			// if (ep.esMetodo("modeloImagen") && ep.esVersion("v1")) {
+			// // Se agregar los parámetros en el orden en que deben venir en la url
+			// ep.addPar("empresa", "String").addPar("temporada", "Long").addPar("modelo", "String").addPar("referencia", "String").addPar("renglon", "Long").addPar("mini", "Int");
+			//
+			// // ClsParametrosUrl parametros = new ClsParametrosUrl(ep.dameParametroString("parametrosUrl"));
+			// // int tipo = Integer.parseInt(parametros.dameParametro("tipo"));
+			//
+			// new PmModelo().modeloImagen_dameImagen(response, ep);
+			// return;
+			// }
 
 			ep.notFoundEnBody();
 		} catch (Exception e) {

@@ -33,10 +33,8 @@ public class EpModelos extends HttpServlet {
 				// Se agregar los parámetros en el orden en que deben venir en la url
 				ep.addPar("empresa", "String").addPar("temporada", "Long").addPar("modelo", "String").addPar("referencia", "String").addPar("renglon", "Long").addPar("mini", "Int");
 
-				// ClsParametrosUrl parametros = new ClsParametrosUrl(ep.dameParametroString("parametrosUrl"));
-				// int tipo = Integer.parseInt(parametros.dameParametro("tipo"));
-
-				new PmModelo().modeloImagen_dameImagen(request, response, ep);
+				byte[] imagen = new PmModelo().modeloImagen_dameImagen(ep);
+				ep.imagenEnBody(imagen);
 				return;
 			}
 

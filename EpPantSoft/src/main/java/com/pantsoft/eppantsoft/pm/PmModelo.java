@@ -1,14 +1,10 @@
 package com.pantsoft.eppantsoft.pm;
 
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -635,7 +631,7 @@ public class PmModelo {
 		dbModeloImagen.guardar(datastore);
 	}
 
-	public void modeloImagen_dameImagen(HttpServletRequest req, HttpServletResponse res, ClsEpUtil ep) throws Exception {
+	public byte[] modeloImagen_dameImagen(ClsEpUtil ep) throws Exception {
 		String empresa = ep.dameParametroString("empresa");
 		long temporada = ep.dameParametroLong("temporada");
 		String modelo = ep.dameParametroString("modelo");
@@ -660,13 +656,14 @@ public class PmModelo {
 			}
 		}
 
-		OutputStream out = res.getOutputStream();
+		byte[] arr = null;
 		if (mini == 1) {
-			out.write(dbImagen.getImagenMini());
+			arr = dbImagen.getImagenMini();
 		} else {
-			out.write(dbImagen.getImagen());
+			arr = dbImagen.getImagen();
 		}
-		out.close();
+
+		return arr;
 	}
 
 	public void modeloImagen_eliminar(SerModeloImagen serModeloImagen) throws Exception {
