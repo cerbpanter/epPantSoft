@@ -41,11 +41,12 @@ import com.pantsoft.eppantsoft.entidades.DbModeloHabilitacion;
 import com.pantsoft.eppantsoft.entidades.DbModeloImagen;
 import com.pantsoft.eppantsoft.entidades.DbModeloProceso;
 import com.pantsoft.eppantsoft.entidades.DbModeloProducido;
+import com.pantsoft.eppantsoft.entidades.DbOrden;
+import com.pantsoft.eppantsoft.entidades.DbOrdenProceso;
 import com.pantsoft.eppantsoft.entidades.DbParametro;
 import com.pantsoft.eppantsoft.entidades.DbPedido;
 import com.pantsoft.eppantsoft.entidades.DbPedidoDet;
 import com.pantsoft.eppantsoft.entidades.DbProceso;
-import com.pantsoft.eppantsoft.entidades.DbOrden;
 import com.pantsoft.eppantsoft.entidades.DbProduccion;
 import com.pantsoft.eppantsoft.entidades.DbTalla;
 import com.pantsoft.eppantsoft.entidades.DbTallas;
@@ -1619,6 +1620,12 @@ public class PmEntidad {
 		} else if (entidad.equals("DbModeloProducido")) {
 			DbModeloProducido db = new DbModeloProducido(entity);
 			lstCampos = db.getCampos();
+		} else if (entidad.equals("DbOrden")) {
+			DbOrden db = new DbOrden(entity);
+			lstCampos = db.getCampos();
+		} else if (entidad.equals("DbOrdenProceso")) {
+			DbOrdenProceso db = new DbOrdenProceso(entity);
+			lstCampos = db.getCampos();
 		} else if (entidad.equals("DbParametro")) {
 			DbParametro db = new DbParametro(entity);
 			lstCampos = db.getCampos();
@@ -1630,9 +1637,6 @@ public class PmEntidad {
 			lstCampos = db.getCampos();
 		} else if (entidad.equals("DbProceso")) {
 			DbProceso db = new DbProceso(entity);
-			lstCampos = db.getCampos();
-		} else if (entidad.equals("DbProcesoProduccion")) {
-			DbOrden db = new DbOrden(entity);
 			lstCampos = db.getCampos();
 		} else if (entidad.equals("DbProduccion")) {
 			DbProduccion db = new DbProduccion(entity);
