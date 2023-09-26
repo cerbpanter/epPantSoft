@@ -24,7 +24,7 @@ public class SerPedido {
 		setTemporada(temporada);
 		setZonaHoraria(zonaHoraria);
 		setFechaPedido(fechaPedido);
-		setFolioPedido(folioPedido);
+		setFolioCliente(folioCliente);
 		setCliente(cliente);
 		setSubCliente(subCliente);
 		setFechaCancelacion(fechaCancelacion);

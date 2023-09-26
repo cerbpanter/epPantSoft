@@ -9,13 +9,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.pantsoft.eppantsoft.pm.PmOrden;
 import com.pantsoft.eppantsoft.pm.PmPedido;
-import com.pantsoft.eppantsoft.pm.PmProcesoProduccion;
 import com.pantsoft.eppantsoft.pm.PmProduccion;
 import com.pantsoft.eppantsoft.serializable.Respuesta;
+import com.pantsoft.eppantsoft.serializable.SerOrden;
+import com.pantsoft.eppantsoft.serializable.SerOrdenProceso;
 import com.pantsoft.eppantsoft.serializable.SerPedido;
-import com.pantsoft.eppantsoft.serializable.SerProcesoProduccion;
-import com.pantsoft.eppantsoft.serializable.SerProcesoProduccionLst;
 import com.pantsoft.eppantsoft.serializable.SerProduccion;
 import com.pantsoft.eppantsoft.util.ClsEpUtil;
 
@@ -121,28 +121,48 @@ public class EpProduccion extends HttpServlet {
 				return;
 			}
 
-			// PROCESO PRODUCCION
-			if (ep.esMetodo("procesoProduccion_agregar") && ep.esVersion("v1")) {
-				SerProcesoProduccion serProcesoProduccion = ep.getObjetFromBody(SerProcesoProduccion.class);
-				serProcesoProduccion = new PmProcesoProduccion().agregar(serProcesoProduccion);
-				ep.objectEnBody(serProcesoProduccion);
+			// ORDEN
+			if (ep.esMetodo("orden_agregar") && ep.esVersion("v1")) {
+				SerOrden serOrden = ep.getObjetFromBody(SerOrden.class);
+				serOrden = new PmOrden().agregarOrden(serOrden);
+				ep.objectEnBody(serOrden);
 				return;
 			}
-			if (ep.esMetodo("procesoProduccion_actualizar") && ep.esVersion("v1")) {
-				SerProcesoProduccion serProcesoProduccion = ep.getObjetFromBody(SerProcesoProduccion.class);
-				serProcesoProduccion = new PmProcesoProduccion().actualizar(serProcesoProduccion);
-				ep.objectEnBody(serProcesoProduccion);
+			if (ep.esMetodo("orden_actualizar") && ep.esVersion("v1")) {
+				SerOrden serOrden = ep.getObjetFromBody(SerOrden.class);
+				serOrden = new PmOrden().actualizarOrden(serOrden);
+				ep.objectEnBody(serOrden);
 				return;
 			}
-			if (ep.esMetodo("procesoProduccion_actualizarLst") && ep.esVersion("v1")) {
-				SerProcesoProduccionLst serProcesoProduccionLst = ep.getObjetFromBody(SerProcesoProduccionLst.class);
-				serProcesoProduccionLst = new PmProcesoProduccion().actualizarLst(serProcesoProduccionLst);
-				ep.objectEnBody(serProcesoProduccionLst);
+			if (ep.esMetodo("orden_eliminar") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("folioOrden", "Long");
+				new PmOrden().eliminarOrden(ep.dameParametroString("empresa"), ep.dameParametroLong("folioOrden"));
+				ep.voidEnBody();
 				return;
 			}
-			if (ep.esMetodo("procesoProduccion_eliminar") && ep.esVersion("v1")) {
-				ep.addPar("empresa", "String").addPar("numOrden", "Long");
-				new PmProcesoProduccion().eliminar(ep.dameParametroString("empresa"), ep.dameParametroLong("folioProcesoProduccion"));
+
+			// ORDEN PROCESO
+			if (ep.esMetodo("ordenProceso_agregar") && ep.esVersion("v1")) {
+				SerOrdenProceso serOrdenProceso = ep.getObjetFromBody(SerOrdenProceso.class);
+				serOrdenProceso = new PmOrden().agregarOrdenProceso(serOrdenProceso);
+				ep.objectEnBody(serOrdenProceso);
+				return;
+			}
+			if (ep.esMetodo("ordenProceso_actualizar") && ep.esVersion("v1")) {
+				SerOrdenProceso serOrdenProceso = ep.getObjetFromBody(SerOrdenProceso.class);
+				serOrdenProceso = new PmOrden().actualizarOrdenProceso(serOrdenProceso);
+				ep.objectEnBody(serOrdenProceso);
+				return;
+			}
+			if (ep.esMetodo("ordenProceso_actualizarLst") && ep.esVersion("v1")) {
+				SerOrden serOrden = ep.getObjetFromBody(SerOrden.class);
+				serOrden = new PmOrden().actualizarLstOrdenProceso(serOrden);
+				ep.objectEnBody(serOrden);
+				return;
+			}
+			if (ep.esMetodo("ordenProceso_eliminar") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("folioOrdenProceso", "Long");
+				new PmOrden().eliminarOrdenProceso(ep.dameParametroString("empresa"), ep.dameParametroLong("folioOrdenProceso"));
 				ep.voidEnBody();
 				return;
 			}

@@ -1,15 +1,14 @@
 package com.pantsoft.eppantsoft.serializable;
 
-public class SerProcesoProduccion {
+public class SerOrdenProceso {
 	private String empresa;
-	private long folioProcesoProduccion;
+	private long folioOrdenProceso;
+	private long folioOrden;
 	private long orden;
 	private long temporada;
 	private int estatus;
 	private long folioPedido;
 	private long renglonPedido;
-	private long folioProcesoOrigen;
-	private long folioProcesoDestino;
 	private String modelo;
 	private String referencia;
 	private String tallas;
@@ -21,16 +20,15 @@ public class SerProcesoProduccion {
 	private String detalleEntrada;
 	private String detalleSalida;
 
-	public SerProcesoProduccion(String empresa, long folioProcesoProduccion, long orden, long temporada, int estatus, long folioPedido, long renglonPedido, long folioProcesoOrigen, long folioProcesoDestino, String modelo, String referencia, String tallas, String proceso, String maquilero, long cantidadEntrada, long cantidadSalida, String observaciones, String detalleEntrada, String detalleSalida) {
+	public SerOrdenProceso(String empresa, long folioOrden, long folioOrdenProceso, long orden, long temporada, int estatus, long folioPedido, long renglonPedido, String modelo, String referencia, String tallas, String proceso, String maquilero, long cantidadEntrada, long cantidadSalida, String observaciones, String detalleEntrada, String detalleSalida) {
 		this.empresa = empresa;
-		this.folioProcesoProduccion = folioProcesoProduccion;
+		this.folioOrdenProceso = folioOrdenProceso;
+		this.folioOrden = folioOrden;
 		this.orden = orden;
 		this.temporada = temporada;
 		this.estatus = estatus;
 		this.folioPedido = folioPedido;
 		this.renglonPedido = renglonPedido;
-		this.folioProcesoOrigen = folioProcesoOrigen;
-		this.folioProcesoDestino = folioProcesoDestino;
 		this.modelo = modelo;
 		this.referencia = referencia;
 		this.tallas = tallas;
@@ -43,7 +41,7 @@ public class SerProcesoProduccion {
 		this.detalleSalida = detalleSalida;
 	}
 
-	public SerProcesoProduccion() {
+	public SerOrdenProceso() {
 	}
 
 	public String getEmpresa() {
@@ -54,12 +52,20 @@ public class SerProcesoProduccion {
 		this.empresa = empresa;
 	}
 
-	public long getFolioProcesoProduccion() {
-		return folioProcesoProduccion;
+	public long getFolioOrdenProceso() {
+		return folioOrdenProceso;
 	}
 
-	public void setFolioProcesoProduccion(long folioProcesoProduccion) {
-		this.folioProcesoProduccion = folioProcesoProduccion;
+	public void setFolioOrdenProceso(long folioOrdenProceso) {
+		this.folioOrdenProceso = folioOrdenProceso;
+	}
+
+	public long getFolioOrden() {
+		return folioOrden;
+	}
+
+	public void setFolioOrden(long folioOrden) {
+		this.folioOrden = folioOrden;
 	}
 
 	public long getOrden() {
@@ -100,22 +106,6 @@ public class SerProcesoProduccion {
 
 	public void setRenglonPedido(long renglonPedido) {
 		this.renglonPedido = renglonPedido;
-	}
-
-	public long getFolioProcesoOrigen() {
-		return folioProcesoOrigen;
-	}
-
-	public void setFolioProcesoOrigen(long folioProcesoOrigen) {
-		this.folioProcesoOrigen = folioProcesoOrigen;
-	}
-
-	public long getFolioProcesoDestino() {
-		return folioProcesoDestino;
-	}
-
-	public void setFolioProcesoDestino(long folioProcesoDestino) {
-		this.folioProcesoDestino = folioProcesoDestino;
 	}
 
 	public String getModelo() {
