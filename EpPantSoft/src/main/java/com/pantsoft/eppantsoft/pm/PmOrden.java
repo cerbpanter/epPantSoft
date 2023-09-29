@@ -30,21 +30,30 @@ public class PmOrden {
 	public SerOrden agregarOrden(SerOrden serOrden) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		Transaction tx = null;
+		String pos = "inico";
 		try {
 			tx = ClsEntidad.iniciarTransaccion(datastore);
 
+			pos = "folio";
 			long folio = ClsUtil.dameSiguienteId(serOrden.getEmpresa(), 0L, "Orden", datastore, tx);
 			serOrden.setFolioOrden(folio);
 
+			pos = "Db";
 			DbOrden dbOrden = new DbOrden(serOrden);
 
+			pos = "existe";
 			if (ClsEntidad.existeEntidad(datastore, "DbOrden", dbOrden.getKey().getName()))
-				throw new ExcepcionControlada("El procesoProduccion '" + serOrden.getFolioOrden() + "' ya existe.");
+				throw new ExcepcionControlada("La orden '" + serOrden.getFolioOrden() + "' ya existe.");
 
+			pos = "guardar";
 			dbOrden.guardar(datastore);
+			pos = "commit";
 			tx.commit();
 
+			pos = "serializar";
 			return dbOrden.toSerOrden(null, null);
+		} catch (Exception e) {
+			throw new Exception("Pos: " + pos + " - " + e.getMessage());
 		} finally {
 			if (tx != null && tx.isActive())
 				tx.rollback();
@@ -84,10 +93,11 @@ public class PmOrden {
 
 			Key key = KeyFactory.createKey("DbOrden", empresa + "-" + folioOrden);
 			DbOrden dbOrden = new DbOrden(datastore.get(key));
+
 			// Validar que no participe
 			List<Filter> lstFiltros = new ArrayList<Filter>();
 			lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, empresa));
-			lstFiltros.add(new FilterPredicate("folioOrdenProceso", FilterOperator.EQUAL, folioOrden));
+			lstFiltros.add(new FilterPredicate("folioOrden", FilterOperator.EQUAL, folioOrden));
 			if (ClsEntidad.ejecutarConsultaHayEntidades(datastore, "DbOrdenProceso", lstFiltros))
 				throw new Exception("La orden " + folioOrden + " tiene procesos, imposible eliminar.");
 
@@ -201,8 +211,7 @@ public class PmOrden {
 
 			List<Filter> lstFiltros = new ArrayList<Filter>();
 			lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, serPrimerProceso.getEmpresa()));
-			lstFiltros.add(new FilterPredicate("folioPedido", FilterOperator.EQUAL, serPrimerProceso.getFolioPedido()));
-			lstFiltros.add(new FilterPredicate("renglonPedido", FilterOperator.EQUAL, serPrimerProceso.getRenglonPedido()));
+			lstFiltros.add(new FilterPredicate("folioOrden", FilterOperator.EQUAL, serPrimerProceso.getFolioOrden()));
 			List<Entity> lstProcesos = ClsEntidad.ejecutarConsulta(datastore, "DbOrdenProceso", lstFiltros);
 
 			tx.rollback();
@@ -244,6 +253,8 @@ public class PmOrden {
 
 				if (!serPrimerProceso.getEmpresa().equals(serOrdenProceso.getEmpresa()))
 					throw new Exception("La empresa no puede ser diferente");
+				if (serPrimerProceso.getFolioOrden() != serOrdenProceso.getFolioOrden())
+					throw new Exception("El folioOrden no puede ser diferente");
 				if (serPrimerProceso.getFolioPedido() != serOrdenProceso.getFolioPedido())
 					throw new Exception("El folioPedido no puede ser diferente");
 				if (serPrimerProceso.getRenglonPedido() != serOrdenProceso.getRenglonPedido())
@@ -254,7 +265,8 @@ public class PmOrden {
 
 					pos = "existe obtener:" + serOrdenProceso.getProceso();
 					// Obtengo el OrdenProceso
-					key = KeyFactory.createKey("DbOrdenProceso", serOrdenProceso.getEmpresa() + "-" + serOrdenProceso.getFolioOrdenProceso());
+					Key keyp = KeyFactory.createKey("DbOrden", serOrdenProceso.getEmpresa() + "-" + serOrdenProceso.getFolioOrden());
+					key = KeyFactory.createKey(keyp, "DbOrdenProceso", serOrdenProceso.getEmpresa() + "-" + serOrdenProceso.getFolioOrdenProceso());
 					try {
 						dbOrdenProceso = new DbOrdenProceso(datastore.get(tx, key));
 					} catch (EntityNotFoundException e) {
@@ -348,13 +360,14 @@ public class PmOrden {
 		}
 	}
 
-	public void eliminarOrdenProceso(String empresa, long folioOrdenProceso) throws Exception {
+	public void eliminarOrdenProceso(String empresa, long folioOrden, long folioOrdenProceso) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		Transaction tx = null;
 		try {
 			tx = ClsEntidad.iniciarTransaccion(datastore);
 
-			Key key = KeyFactory.createKey("DbOrdenProceso", empresa + "-" + folioOrdenProceso);
+			Key keyp = KeyFactory.createKey("DbOrden", empresa + "-" + folioOrden);
+			Key key = KeyFactory.createKey(keyp, "DbOrdenProceso", empresa + "-" + folioOrdenProceso);
 			DbOrden dbOrdenProceso = new DbOrden(datastore.get(key));
 			// Validar que no participe
 			// List<Filter> lstFiltros = new ArrayList<Filter>();

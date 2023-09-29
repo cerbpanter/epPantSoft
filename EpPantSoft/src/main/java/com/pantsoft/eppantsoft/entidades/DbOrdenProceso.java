@@ -66,11 +66,11 @@ public class DbOrdenProceso extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, folioOrdenProceso, orden, temporada, estatus, folioPedido, renglonPedido, modelo, referencia, tallas, proceso, maquilero, cantidadEntrada, cantidadSalida, observaciones, detalleEntrada, detalleSalida);
+		return Arrays.asList(empresa, folioOrdenProceso, folioOrden, orden, temporada, estatus, folioPedido, renglonPedido, modelo, referencia, tallas, proceso, maquilero, cantidadEntrada, cantidadSalida, observaciones, detalleEntrada, detalleSalida);
 	}
 
 	public SerOrdenProceso toSerOrdenProceso() throws ExcepcionControlada {
-		return new SerOrdenProceso(getEmpresa(), getFolioOrdenProceso(), getFolioOrden(), getOrden(), getTemporada(), getEstatus(), getFolioPedido(), getRenglonPedido(), getModelo(), getReferencia(), getTallas(), getProceso(), getMaquilero(), getCantidadEntrada(), getCantidadSalida(), getObservaciones(), getDetalleEntrada(), getDetalleSalida());
+		return new SerOrdenProceso(getEmpresa(), getFolioOrden(), getFolioOrdenProceso(), getOrden(), getTemporada(), getEstatus(), getFolioPedido(), getRenglonPedido(), getModelo(), getReferencia(), getTallas(), getProceso(), getMaquilero(), getCantidadEntrada(), getCantidadSalida(), getObservaciones(), getDetalleEntrada(), getDetalleSalida());
 	}
 
 	public String getEmpresa() throws ExcepcionControlada {

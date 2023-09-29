@@ -10,7 +10,6 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Transaction;
 import com.pantsoft.eppantsoft.serializable.SerOrden;
-import com.pantsoft.eppantsoft.serializable.SerOrdenProceso;
 import com.pantsoft.eppantsoft.util.ClsCampo;
 import com.pantsoft.eppantsoft.util.ClsCampo.Tipo;
 import com.pantsoft.eppantsoft.util.ClsEntidad;
@@ -29,7 +28,7 @@ public class DbOrden extends ClsEntidad {
 	private List<DbOrdenProceso> procesos = null;
 
 	public DbOrden(SerOrden serOrden) throws ExcepcionControlada {
-		Key key = KeyFactory.createKey("DbProcesoProduccion", serOrden.getEmpresa() + "-" + serOrden.getFolioOrden());
+		Key key = KeyFactory.createKey("DbOrden", serOrden.getEmpresa() + "-" + serOrden.getFolioOrden());
 		entidad = new Entity(key);
 		asignarValoresDefault();
 		setString(empresa, serOrden.getEmpresa());
@@ -57,12 +56,13 @@ public class DbOrden extends ClsEntidad {
 		SerOrden serOrden = new SerOrden(getEmpresa(), getFolioOrden(), getTemporada(), getFolioPedido(), getRenglonPedido(), getModelo(), getReferencia());
 
 		// Agrego los procesos
-		getProcesos(datastore, tx);
-		List<SerOrdenProceso> lstProcesos = new ArrayList<SerOrdenProceso>();
-		for (DbOrdenProceso dbD : procesos)
-			lstProcesos.add(dbD.toSerOrdenProceso());
-		serOrden.setProcesos(lstProcesos.toArray(new SerOrdenProceso[0]));
-
+		// getProcesos(datastore, tx);
+		// if (procesos != null & procesos.size() > 0) {
+		// List<SerOrdenProceso> lstProcesos = new ArrayList<SerOrdenProceso>();
+		// for (DbOrdenProceso dbD : procesos)
+		// lstProcesos.add(dbD.toSerOrdenProceso());
+		// serOrden.setProcesos(lstProcesos.toArray(new SerOrdenProceso[0]));
+		// }
 		return serOrden;
 	}
 

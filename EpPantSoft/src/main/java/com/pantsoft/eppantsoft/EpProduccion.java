@@ -161,8 +161,8 @@ public class EpProduccion extends HttpServlet {
 				return;
 			}
 			if (ep.esMetodo("ordenProceso_eliminar") && ep.esVersion("v1")) {
-				ep.addPar("empresa", "String").addPar("folioOrdenProceso", "Long");
-				new PmOrden().eliminarOrdenProceso(ep.dameParametroString("empresa"), ep.dameParametroLong("folioOrdenProceso"));
+				ep.addPar("empresa", "String").addPar("folioOrden", "Long").addPar("folioOrdenProceso", "Long");
+				new PmOrden().eliminarOrdenProceso(ep.dameParametroString("empresa"), ep.dameParametroLong("folioOrden"), ep.dameParametroLong("folioOrdenProceso"));
 				ep.voidEnBody();
 				return;
 			}
