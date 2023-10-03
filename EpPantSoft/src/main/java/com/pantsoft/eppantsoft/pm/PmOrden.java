@@ -143,7 +143,8 @@ public class PmOrden {
 		try {
 			tx = ClsEntidad.iniciarTransaccion(datastore);
 
-			Key key = KeyFactory.createKey("DbOrdenProceso", serOrdenProceso.getEmpresa() + "-" + serOrdenProceso.getFolioOrdenProceso());
+			Key keyp = KeyFactory.createKey("DbOrden", serOrdenProceso.getEmpresa() + "-" + serOrdenProceso.getFolioOrden());
+			Key key = KeyFactory.createKey(keyp, "DbOrdenProceso", serOrdenProceso.getEmpresa() + "-" + serOrdenProceso.getFolioOrdenProceso());
 			DbOrdenProceso dbOrdenProceso = new DbOrdenProceso(datastore.get(key));
 
 			dbOrdenProceso.setEstatus(serOrdenProceso.getEstatus());
