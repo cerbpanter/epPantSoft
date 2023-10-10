@@ -78,6 +78,7 @@ public class PmPedido {
 			dbPedido.setDepartamento(serPedido.getDepartamento());
 			dbPedido.setConfirmado(serPedido.getConfirmado());
 			dbPedido.setMarca(serPedido.getMarca());
+			dbPedido.setResurtido(serPedido.getResurtido());
 
 			// Guardo los detalles
 			ArrayList<String> lstModelos = new ArrayList<String>();

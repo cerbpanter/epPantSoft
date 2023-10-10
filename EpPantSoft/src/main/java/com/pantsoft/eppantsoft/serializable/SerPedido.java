@@ -15,10 +15,11 @@ public class SerPedido {
 	private String departamento;
 	private boolean confirmado;
 	private String marca;
+	private boolean resurtido;
 
 	private SerPedidoDet[] detalles;
 
-	public SerPedido(String empresa, long folioPedido, long temporada, String zonaHoraria, Date fechaPedido, Long folioCliente, String cliente, String subCliente, Date fechaCancelacion, String departamento, boolean confirmado, String marca) {
+	public SerPedido(String empresa, long folioPedido, long temporada, String zonaHoraria, Date fechaPedido, Long folioCliente, String cliente, String subCliente, Date fechaCancelacion, String departamento, boolean confirmado, String marca, boolean resurtido) {
 		setEmpresa(empresa);
 		setFolioPedido(folioPedido);
 		setTemporada(temporada);
@@ -31,6 +32,7 @@ public class SerPedido {
 		setDepartamento(departamento);
 		setConfirmado(confirmado);
 		setMarca(marca);
+		setResurtido(resurtido);
 	}
 
 	public String getEmpresa() {
@@ -135,6 +137,14 @@ public class SerPedido {
 
 	public void setMarca(String marca) {
 		this.marca = marca;
+	}
+
+	public boolean getResurtido() {
+		return resurtido;
+	}
+
+	public void setResurtido(boolean resurtido) {
+		this.resurtido = resurtido;
 	}
 
 }

@@ -1,6 +1,7 @@
 package com.pantsoft.eppantsoft.entidades;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import com.google.appengine.api.datastore.Entity;
@@ -10,6 +11,7 @@ import com.pantsoft.eppantsoft.serializable.SerOrdenProceso;
 import com.pantsoft.eppantsoft.util.ClsCampo;
 import com.pantsoft.eppantsoft.util.ClsCampo.Tipo;
 import com.pantsoft.eppantsoft.util.ClsEntidad;
+import com.pantsoft.eppantsoft.util.ClsUtil;
 import com.pantsoft.eppantsoft.util.ExcepcionControlada;
 
 public class DbOrdenProceso extends ClsEntidad {
@@ -31,6 +33,7 @@ public class DbOrdenProceso extends ClsEntidad {
 	private final ClsCampo cantidadSalida = new ClsCampo("cantidadSalida", Tipo.Long, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo detalleEntrada = new ClsCampo("detalleEntrada", Tipo.Text, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo detalleSalida = new ClsCampo("detalleSalida", Tipo.Text, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo bitacora = new ClsCampo("bitacora", Tipo.Text, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 
 	public DbOrdenProceso(SerOrdenProceso serOrdenProceso) throws ExcepcionControlada {
 		Key keyp = KeyFactory.createKey("DbOrden", serOrdenProceso.getEmpresa() + "-" + serOrdenProceso.getFolioOrden());
@@ -66,11 +69,13 @@ public class DbOrdenProceso extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, folioOrdenProceso, folioOrden, orden, temporada, estatus, folioPedido, renglonPedido, modelo, referencia, tallas, proceso, maquilero, cantidadEntrada, cantidadSalida, observaciones, detalleEntrada, detalleSalida);
+		return Arrays.asList(empresa, folioOrdenProceso, folioOrden, orden, temporada, estatus, folioPedido, renglonPedido, modelo, referencia, tallas, proceso, maquilero, cantidadEntrada, cantidadSalida, observaciones, detalleEntrada, detalleSalida, bitacora);
 	}
 
 	public SerOrdenProceso toSerOrdenProceso() throws ExcepcionControlada {
-		return new SerOrdenProceso(getEmpresa(), getFolioOrden(), getFolioOrdenProceso(), getOrden(), getTemporada(), getEstatus(), getFolioPedido(), getRenglonPedido(), getModelo(), getReferencia(), getTallas(), getProceso(), getMaquilero(), getCantidadEntrada(), getCantidadSalida(), getObservaciones(), getDetalleEntrada(), getDetalleSalida());
+		SerOrdenProceso ser = new SerOrdenProceso(getEmpresa(), getFolioOrden(), getFolioOrdenProceso(), getOrden(), getTemporada(), getEstatus(), getFolioPedido(), getRenglonPedido(), getModelo(), getReferencia(), getTallas(), getProceso(), getMaquilero(), getCantidadEntrada(), getCantidadSalida(), getObservaciones(), getDetalleEntrada(), getDetalleSalida());
+		ser.setBitacora(getBitacora());
+		return ser;
 	}
 
 	public String getEmpresa() throws ExcepcionControlada {
@@ -207,5 +212,14 @@ public class DbOrdenProceso extends ClsEntidad {
 
 	public void setDetalleSalida(String detalleSalida) throws ExcepcionControlada {
 		setText(this.detalleSalida, detalleSalida);
+	}
+
+	public String getBitacora() throws ExcepcionControlada {
+		return getText(bitacora);
+	}
+
+	public void setAgregarBitacora(String usuario, Date fecha, String descripcion) throws ExcepcionControlada {
+		String bitacora = ClsUtil.agregarBitacora(getBitacora(), usuario, fecha, descripcion);
+		setText(this.bitacora, bitacora);
 	}
 }

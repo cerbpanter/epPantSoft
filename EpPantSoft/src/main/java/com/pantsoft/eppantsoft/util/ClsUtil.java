@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Date;
 
 import javax.mail.internet.MimeUtility;
 
@@ -12,7 +13,11 @@ import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Transaction;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.pantsoft.eppantsoft.entidades.DbConsecutivo;
+import com.pantsoft.eppantsoft.serializable.SerBitacora;
+import com.pantsoft.eppantsoft.serializable.SerBitacoras;
 
 public class ClsUtil {
 
@@ -463,6 +468,31 @@ public class ClsUtil {
 		}
 		dbConsecutivo.setId(id);
 		dbConsecutivo.guardar(datastore, tx);
+	}
+
+	// BITACORA
+	public static String agregarBitacora(String bitacora, String usuario, Date fecha, String descripcion) {
+		GsonBuilder builder = new GsonBuilder();
+		builder.setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+		Gson gson = builder.create();
+
+		SerBitacoras serBitacoras = null;
+		if (ClsUtil.esNulo(bitacora)) {
+			serBitacoras = new SerBitacoras();
+			serBitacoras.setBitacoras(new SerBitacora[1]);
+			serBitacoras.getBitacoras()[0] = new SerBitacora(usuario, fecha, descripcion);
+		} else {
+			serBitacoras = gson.fromJson(bitacora, SerBitacoras.class);
+			SerBitacora[] arr = new SerBitacora[serBitacoras.getBitacoras().length + 1];
+			for (int i = 0; i < serBitacoras.getBitacoras().length; i++) {
+				arr[i] = serBitacoras.getBitacoras()[i];
+			}
+			arr[serBitacoras.getBitacoras().length] = new SerBitacora(usuario, fecha, descripcion);
+			serBitacoras.setBitacoras(arr);
+		}
+		bitacora = gson.toJson(serBitacoras);
+
+		return bitacora;
 	}
 
 }

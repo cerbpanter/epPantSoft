@@ -19,6 +19,8 @@ public class SerOrdenProceso {
 	private String observaciones;
 	private String detalleEntrada;
 	private String detalleSalida;
+	private String usuario;
+	private String bitacora;
 
 	public SerOrdenProceso(String empresa, long folioOrden, long folioOrdenProceso, long orden, long temporada, int estatus, long folioPedido, long renglonPedido, String modelo, String referencia, String tallas, String proceso, String maquilero, long cantidadEntrada, long cantidadSalida, String observaciones, String detalleEntrada, String detalleSalida) {
 		this.empresa = empresa;
@@ -186,6 +188,22 @@ public class SerOrdenProceso {
 
 	public void setDetalleSalida(String detalleSalida) {
 		this.detalleSalida = detalleSalida;
+	}
+
+	public String getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(String usuario) {
+		this.usuario = usuario;
+	}
+
+	public String getBitacora() {
+		return bitacora;
+	}
+
+	public void setBitacora(String bitacora) {
+		this.bitacora = bitacora;
 	}
 
 }

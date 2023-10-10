@@ -1,6 +1,7 @@
 package com.pantsoft.eppantsoft.pm;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.google.appengine.api.datastore.DatastoreService;
@@ -117,6 +118,10 @@ public class PmOrden {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		Transaction tx = null;
 		try {
+			if (ClsUtil.esNulo(serOrdenProceso.getUsuario())) {
+				throw new Exception("Falta el usuario");
+			}
+
 			tx = ClsEntidad.iniciarTransaccion(datastore);
 
 			long folio = ClsUtil.dameSiguienteId(serOrdenProceso.getEmpresa(), 0L, "OrdenProceso", datastore, tx);
@@ -126,6 +131,8 @@ public class PmOrden {
 
 			if (ClsEntidad.existeEntidad(datastore, "DbOrdenProceso", dbOrdenProceso.getKey().getName()))
 				throw new ExcepcionControlada("El proceso '" + serOrdenProceso.getFolioOrdenProceso() + "' ya existe.");
+
+			dbOrdenProceso.setAgregarBitacora(serOrdenProceso.getUsuario(), new Date(), "Agregar");
 
 			dbOrdenProceso.guardar(datastore);
 			tx.commit();
@@ -141,6 +148,9 @@ public class PmOrden {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		Transaction tx = null;
 		try {
+			if (ClsUtil.esNulo(serOrdenProceso.getUsuario())) {
+				throw new Exception("Falta el usuario");
+			}
 			tx = ClsEntidad.iniciarTransaccion(datastore);
 
 			Key keyp = KeyFactory.createKey("DbOrden", serOrdenProceso.getEmpresa() + "-" + serOrdenProceso.getFolioOrden());
@@ -154,6 +164,7 @@ public class PmOrden {
 			dbOrdenProceso.setObservaciones(serOrdenProceso.getObservaciones());
 			dbOrdenProceso.setDetalleEntrada(serOrdenProceso.getDetalleEntrada());
 			dbOrdenProceso.setDetalleSalida(serOrdenProceso.getDetalleSalida());
+			dbOrdenProceso.setAgregarBitacora(serOrdenProceso.getUsuario(), new Date(), "Actualizar");
 
 			// Validaciones de estatus
 			if (dbOrdenProceso.getEstatus() == 1) { // En proceso
@@ -187,7 +198,6 @@ public class PmOrden {
 		Transaction tx = null;
 		DbConsecutivo dbConsecutivo = null;
 		List<SerOrdenProceso> lstResp = new ArrayList<SerOrdenProceso>();
-		String pos = "ini";
 		try {
 			if (serOrden == null || serOrden.getProcesos() == null || serOrden.getProcesos().length == 0)
 				throw new Exception("Debe mandar al menos un proceso");
@@ -196,6 +206,9 @@ public class PmOrden {
 			for (long i = 1; i <= serOrden.getProcesos().length; i++) {
 				boolean noExiste = true;
 				for (SerOrdenProceso serProc : serOrden.getProcesos()) {
+					if (ClsUtil.esNulo(serProc.getUsuario())) {
+						throw new Exception("Falta el usuario");
+					}
 					if (serProc.getOrden() == i) {
 						noExiste = false;
 						break;
@@ -229,7 +242,6 @@ public class PmOrden {
 
 			tx = ClsEntidad.iniciarTransaccion(datastore);
 
-			pos = "ped";
 			// Obtengo el Pedido
 			Key keyP = KeyFactory.createKey("DbPedido", serPrimerProceso.getEmpresa() + "-" + serPrimerProceso.getFolioPedido());
 			DbPedido dbPedido = null;
@@ -239,7 +251,6 @@ public class PmOrden {
 				throw new Exception("No existe el pedido " + serPrimerProceso.getFolioPedido());
 			}
 
-			pos = "peddet";
 			// Obtengo el PedidoDet
 			Key key = KeyFactory.createKey(keyP, "DbPedidoDet", serPrimerProceso.getEmpresa() + "-" + serPrimerProceso.getFolioPedido() + "-" + serPrimerProceso.getRenglonPedido());
 			DbPedidoDet dbPedidoDet;
@@ -261,10 +272,7 @@ public class PmOrden {
 				if (serPrimerProceso.getRenglonPedido() != serOrdenProceso.getRenglonPedido())
 					throw new Exception("El renglonPedido no puede ser diferente");
 				if (serOrdenProceso.getFolioOrdenProceso() > 0) {
-					pos = "existe:" + serOrdenProceso.getProceso();
 					// Ya existe se actualiza
-
-					pos = "existe obtener:" + serOrdenProceso.getProceso();
 					// Obtengo el OrdenProceso
 					Key keyp = KeyFactory.createKey("DbOrden", serOrdenProceso.getEmpresa() + "-" + serOrdenProceso.getFolioOrden());
 					key = KeyFactory.createKey(keyp, "DbOrdenProceso", serOrdenProceso.getEmpresa() + "-" + serOrdenProceso.getFolioOrdenProceso());
@@ -284,17 +292,15 @@ public class PmOrden {
 						throw new Exception("Las tallas del proceso '" + dbOrdenProceso.getProceso() + "' no coincide con el del pedido. (PED:" + dbPedidoDet.getFolioPedido() + "-" + dbPedidoDet.getRenglon() + ",PROC:" + dbOrdenProceso.getFolioOrdenProceso() + ")");
 
 					if (dbOrdenProceso.getEstatus() == 0) {
-						pos = "existe estatus 0:" + serOrdenProceso.getProceso();
 						if (serOrdenProceso.getOrden() != dbOrdenProceso.getOrden().longValue())
 							dbOrdenProceso.setOrden(serOrdenProceso.getOrden());
+						dbOrdenProceso.setAgregarBitacora(serOrdenProceso.getUsuario(), new Date(), "ActualizarLst");
 						dbOrdenProceso.guardar(datastore, tx);
 					} else {
-						pos = "existe no guardar:" + serOrdenProceso.getProceso();
 						if (serOrdenProceso.getOrden() != dbOrdenProceso.getOrden().longValue())
 							throw new Exception("No se puede modificar el orden del procesoProduccion " + dbOrdenProceso.getFolioOrdenProceso() + " pues ya no se encuentra pendiente");
 					}
 				} else {
-					pos = "no existe:" + serOrdenProceso.getProceso();
 					// No existe se agrega
 					if (dbConsecutivo == null) {
 						try {
@@ -307,7 +313,6 @@ public class PmOrden {
 					long id = dbConsecutivo.getId() + 1;
 					dbConsecutivo.setId(id);
 
-					pos = "ser:" + serOrdenProceso.getProceso();
 					serOrdenProceso.setFolioOrdenProceso(id);
 					serOrdenProceso.setTemporada(dbPedido.getTemporada());
 					serOrdenProceso.setEstatus(0);
@@ -320,11 +325,9 @@ public class PmOrden {
 					serOrdenProceso.setDetalleEntrada(null);
 					serOrdenProceso.setDetalleSalida(null);
 
-					pos = "no existe db:" + dbPedidoDet.getReferencia() + "-" + serOrdenProceso.getReferencia() + "-" + serOrdenProceso.getProceso();
 					dbOrdenProceso = new DbOrdenProceso(serOrdenProceso);
-					pos = "no existe guardar:" + dbPedidoDet.getReferencia() + "-" + serOrdenProceso.getReferencia() + "-" + dbOrdenProceso.getReferencia() + "-" + serOrdenProceso.getProceso();
+					dbOrdenProceso.setAgregarBitacora(serOrdenProceso.getUsuario(), new Date(), "AgregarLst");
 					dbOrdenProceso.guardar(datastore, tx);
-					pos = "no existe siguiente:" + serOrdenProceso.getProceso();
 				}
 				lstResp.add(dbOrdenProceso.toSerOrdenProceso());
 			}
@@ -353,8 +356,6 @@ public class PmOrden {
 
 			serOrden.setProcesos(lstResp.toArray(new SerOrdenProceso[0]));
 			return serOrden;
-		} catch (Exception e) {
-			throw new Exception("Pos:" + pos + "--" + e.getMessage());
 		} finally {
 			if (tx != null && tx.isActive())
 				tx.rollback();
