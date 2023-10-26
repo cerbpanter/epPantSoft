@@ -134,6 +134,24 @@ public class EpProduccion extends HttpServlet {
 				ep.objectEnBody(serOrden);
 				return;
 			}
+			if (ep.esMetodo("orden_terminarDiseno") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("folioOrden", "Long");
+				SerOrden serOrden = new PmOrden().terminarDiseno(ep.dameParametroString("empresa"), ep.dameParametroLong("folioOrden"));
+				ep.objectEnBody(serOrden);
+				return;
+			}
+			if (ep.esMetodo("orden_terminarTrazo") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("folioOrden", "Long");
+				SerOrden serOrden = new PmOrden().terminarTrazo(ep.dameParametroString("empresa"), ep.dameParametroLong("folioOrden"));
+				ep.objectEnBody(serOrden);
+				return;
+			}
+			if (ep.esMetodo("orden_actualizar") && ep.esVersion("v1")) {
+				SerOrden serOrden = ep.getObjetFromBody(SerOrden.class);
+				serOrden = new PmOrden().actualizarOrden(serOrden);
+				ep.objectEnBody(serOrden);
+				return;
+			}
 			if (ep.esMetodo("orden_eliminar") && ep.esVersion("v1")) {
 				ep.addPar("empresa", "String").addPar("folioOrden", "Long");
 				new PmOrden().eliminarOrden(ep.dameParametroString("empresa"), ep.dameParametroLong("folioOrden"));

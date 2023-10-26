@@ -12,11 +12,13 @@ public class SerUsuario {
 	private String[] almacenes;
 	private long[] tiposEntrada;
 	private long[] tiposSalida;
+	private boolean diseno;
+	private boolean trazo;
 
 	public SerUsuario() {
 	}
 
-	public SerUsuario(String empresa, String usuario, String password, long[] permisos, String[] talleres, String[] clientes, String sesion, long vigencia) {
+	public SerUsuario(String empresa, String usuario, String password, long[] permisos, String[] talleres, String[] clientes, String sesion, long vigencia, boolean diseno, boolean trazo) {
 		this.empresa = empresa;
 		this.usuario = usuario;
 		this.password = password;
@@ -25,6 +27,8 @@ public class SerUsuario {
 		this.setClientes(clientes);
 		this.setSesion(sesion);
 		this.setVigencia(vigencia);
+		this.setDiseno(diseno);
+		this.setTrazo(trazo);
 	}
 
 	public String getEmpresa() {
@@ -113,6 +117,22 @@ public class SerUsuario {
 
 	public void setTiposSalida(long[] tiposSalida) {
 		this.tiposSalida = tiposSalida;
+	}
+
+	public boolean getDiseno() {
+		return diseno;
+	}
+
+	public void setDiseno(boolean diseno) {
+		this.diseno = diseno;
+	}
+
+	public boolean getTrazo() {
+		return trazo;
+	}
+
+	public void setTrazo(boolean trazo) {
+		this.trazo = trazo;
 	}
 
 }

@@ -2,6 +2,7 @@ package com.pantsoft.eppantsoft.entidades;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import com.google.appengine.api.datastore.DatastoreService;
@@ -23,6 +24,14 @@ public class DbOrden extends ClsEntidad {
 	private final ClsCampo renglonPedido = new ClsCampo("renglonPedido", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo modelo = new ClsCampo("modelo", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo referencia = new ClsCampo("referencia", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
+	// Diseño
+	private final ClsCampo usuarioDiseno = new ClsCampo("usuarioDiseno", Tipo.String, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo fechaDiseno = new ClsCampo("fechaDiseno", Tipo.Date, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo disenoTerminado = new ClsCampo("disenoTerminado", Tipo.Boolean, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_FALSE, 0, SUSTITUIR_NULL);
+	// Trazo
+	private final ClsCampo usuarioTrazo = new ClsCampo("usuarioTrazo", Tipo.String, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo fechaTrazo = new ClsCampo("fechaTrazo", Tipo.Date, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo trazoTerminado = new ClsCampo("trazoTerminado", Tipo.Boolean, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_FALSE, 0, SUSTITUIR_NULL);
 
 	// Dependencias
 	private List<DbOrdenProceso> procesos = null;
@@ -49,11 +58,11 @@ public class DbOrden extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, folioOrden, temporada, folioPedido, renglonPedido, modelo, referencia);
+		return Arrays.asList(empresa, folioOrden, temporada, folioPedido, renglonPedido, modelo, referencia, usuarioDiseno, fechaDiseno, disenoTerminado, usuarioTrazo, fechaTrazo, trazoTerminado);
 	}
 
 	public SerOrden toSerOrden(DatastoreService datastore, Transaction tx) throws ExcepcionControlada {
-		SerOrden serOrden = new SerOrden(getEmpresa(), getFolioOrden(), getTemporada(), getFolioPedido(), getRenglonPedido(), getModelo(), getReferencia());
+		SerOrden serOrden = new SerOrden(getEmpresa(), getFolioOrden(), getTemporada(), getFolioPedido(), getRenglonPedido(), getModelo(), getReferencia(), getUsuarioDiseno(), getFechaDiseno(), getDisenoTerminado(), getUsuarioTrazo(), getFechaTrazo(), getTrazoTerminado());
 
 		// Agrego los procesos
 		// getProcesos(datastore, tx);
@@ -112,6 +121,54 @@ public class DbOrden extends ClsEntidad {
 
 	public void setReferencia(String referencia) throws ExcepcionControlada {
 		setString(this.referencia, referencia);
+	}
+
+	public String getUsuarioDiseno() throws ExcepcionControlada {
+		return getString(usuarioDiseno);
+	}
+
+	public void setUsuarioDiseno(String usuarioDiseno) throws ExcepcionControlada {
+		setString(this.usuarioDiseno, usuarioDiseno);
+	}
+
+	public Date getFechaDiseno() throws ExcepcionControlada {
+		return getDate(fechaDiseno);
+	}
+
+	public void setFechaDiseno(Date fechaDiseno) throws ExcepcionControlada {
+		setDate(this.fechaDiseno, fechaDiseno);
+	}
+
+	public boolean getDisenoTerminado() throws ExcepcionControlada {
+		return getBoolean(disenoTerminado);
+	}
+
+	public void setDisenoTerminado(boolean disenoTerminado) throws ExcepcionControlada {
+		setBoolean(this.disenoTerminado, disenoTerminado);
+	}
+
+	public String getUsuarioTrazo() throws ExcepcionControlada {
+		return getString(usuarioTrazo);
+	}
+
+	public void setUsuarioTrazo(String usuarioTrazo) throws ExcepcionControlada {
+		setString(this.usuarioTrazo, usuarioTrazo);
+	}
+
+	public Date getFechaTrazo() throws ExcepcionControlada {
+		return getDate(fechaTrazo);
+	}
+
+	public void setFechaTrazo(Date fechaTrazo) throws ExcepcionControlada {
+		setDate(this.fechaTrazo, fechaTrazo);
+	}
+
+	public boolean getTrazoTerminado() throws ExcepcionControlada {
+		return getBoolean(trazoTerminado);
+	}
+
+	public void setTrazoTerminado(boolean trazoTerminado) throws ExcepcionControlada {
+		setBoolean(this.trazoTerminado, trazoTerminado);
 	}
 
 	public List<DbOrdenProceso> getProcesos(DatastoreService datastore, Transaction tx) throws ExcepcionControlada {

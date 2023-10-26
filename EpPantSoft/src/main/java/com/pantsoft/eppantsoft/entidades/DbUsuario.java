@@ -25,6 +25,8 @@ public class DbUsuario extends ClsEntidad {
 	private final ClsCampo almacenes = new ClsCampo("almacenes", Tipo.ArrayString, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo tiposEntrada = new ClsCampo("tiposEntrada", Tipo.ArrayLong, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo tiposSalida = new ClsCampo("tiposSalida", Tipo.ArrayLong, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo diseno = new ClsCampo("diseno", Tipo.Boolean, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_FALSE, 0, SUSTITUIR_NULL);
+	private final ClsCampo trazo = new ClsCampo("trazo", Tipo.Boolean, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_FALSE, 0, SUSTITUIR_NULL);
 
 	public DbUsuario(SerUsuario serUsuario) throws ExcepcionControlada {
 		Key key = KeyFactory.createKey("DbUsuario", serUsuario.getEmpresa() + "-" + serUsuario.getUsuario());
@@ -36,6 +38,8 @@ public class DbUsuario extends ClsEntidad {
 		setPermisos(serUsuario.getPermisos());
 		setSesion("");
 		setVigencia(0);
+		setDiseno(serUsuario.getDiseno());
+		setTrazo(serUsuario.getTrazo());
 	}
 
 	public DbUsuario(Entity entidad) throws Exception {
@@ -48,11 +52,11 @@ public class DbUsuario extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, usuario, password, permisos, talleres, clientes, sesion, vigencia, almacenes, tiposEntrada, tiposSalida);
+		return Arrays.asList(empresa, usuario, password, permisos, talleres, clientes, sesion, vigencia, almacenes, tiposEntrada, tiposSalida, diseno, trazo);
 	}
 
 	public SerUsuario toSerUsuario() throws ExcepcionControlada {
-		SerUsuario serUsuario = new SerUsuario(getEmpresa(), getUsuario(), getPassword(), getPermisos(), getTalleres(), getClientes(), getSesion(), getVigencia());
+		SerUsuario serUsuario = new SerUsuario(getEmpresa(), getUsuario(), getPassword(), getPermisos(), getTalleres(), getClientes(), getSesion(), getVigencia(), getDiseno(), getTrazo());
 		serUsuario.setAlmacenes(getAlmacenes());
 		serUsuario.setTiposEntrada(getTiposEntrada());
 		serUsuario.setTiposSalida(getTiposSalida());
@@ -233,6 +237,22 @@ public class DbUsuario extends ClsEntidad {
 			}
 			setArrayLong(this.tiposSalida, lstTipos);
 		}
+	}
+
+	public boolean getDiseno() throws ExcepcionControlada {
+		return getBoolean(diseno);
+	}
+
+	public void setDiseno(boolean diseno) throws ExcepcionControlada {
+		setBoolean(this.diseno, diseno);
+	}
+
+	public boolean getTrazo() throws ExcepcionControlada {
+		return getBoolean(trazo);
+	}
+
+	public void setTrazo(boolean trazo) throws ExcepcionControlada {
+		setBoolean(this.trazo, trazo);
 	}
 
 }

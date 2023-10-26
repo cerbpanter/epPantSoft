@@ -72,6 +72,8 @@ public class PmOrden {
 
 			dbOrden.setModelo(serOrden.getModelo());
 			dbOrden.setReferencia(serOrden.getReferencia());
+			dbOrden.setUsuarioDiseno(serOrden.getUsuarioDiseno());
+			dbOrden.setUsuarioTrazo(serOrden.getUsuarioTrazo());
 
 			dbOrden.guardar(datastore, tx);
 			tx.commit();
@@ -79,7 +81,63 @@ public class PmOrden {
 			dbOrden = new DbOrden(datastore.get(key));
 			return dbOrden.toSerOrden(null, null);
 		} catch (EntityNotFoundException e) {
-			throw new Exception("El procesoProduccion '" + serOrden.getFolioOrden() + "' no existe.");
+			throw new Exception("Orden '" + serOrden.getFolioOrden() + "' no existe.");
+		} finally {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+		}
+	}
+
+	public SerOrden terminarDiseno(String empresa, long folioOrden) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Transaction tx = null;
+		try {
+			tx = ClsEntidad.iniciarTransaccion(datastore);
+
+			Key key = KeyFactory.createKey("DbOrden", empresa + "-" + folioOrden);
+			DbOrden dbOrden = new DbOrden(datastore.get(key));
+
+			if (dbOrden.getDisenoTerminado())
+				throw new Exception("La orden ya tiene terminado el diseño");
+
+			dbOrden.setFechaDiseno(new Date());
+			dbOrden.setDisenoTerminado(true);
+
+			dbOrden.guardar(datastore, tx);
+			tx.commit();
+
+			dbOrden = new DbOrden(datastore.get(key));
+			return dbOrden.toSerOrden(null, null);
+		} catch (EntityNotFoundException e) {
+			throw new Exception("La orden '" + folioOrden + "' no existe.");
+		} finally {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+		}
+	}
+
+	public SerOrden terminarTrazo(String empresa, long folioOrden) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Transaction tx = null;
+		try {
+			tx = ClsEntidad.iniciarTransaccion(datastore);
+
+			Key key = KeyFactory.createKey("DbOrden", empresa + "-" + folioOrden);
+			DbOrden dbOrden = new DbOrden(datastore.get(key));
+
+			if (dbOrden.getTrazoTerminado())
+				throw new Exception("La orden ya tiene terminado el trazo");
+
+			dbOrden.setFechaTrazo(new Date());
+			dbOrden.setTrazoTerminado(true);
+
+			dbOrden.guardar(datastore, tx);
+			tx.commit();
+
+			dbOrden = new DbOrden(datastore.get(key));
+			return dbOrden.toSerOrden(null, null);
+		} catch (EntityNotFoundException e) {
+			throw new Exception("La orden '" + folioOrden + "' no existe.");
 		} finally {
 			if (tx != null && tx.isActive())
 				tx.rollback();
@@ -157,6 +215,17 @@ public class PmOrden {
 			Key key = KeyFactory.createKey(keyp, "DbOrdenProceso", serOrdenProceso.getEmpresa() + "-" + serOrdenProceso.getFolioOrdenProceso());
 			DbOrdenProceso dbOrdenProceso = new DbOrdenProceso(datastore.get(key));
 
+			String mensajeBitacora = "Actualizar";
+
+			if (dbOrdenProceso.getEstatus() != serOrdenProceso.getEstatus()) {
+				if (serOrdenProceso.getEstatus() == 1) {
+					mensajeBitacora = "Iniciar proceso";
+				}
+				if (serOrdenProceso.getEstatus() == 1) {
+					mensajeBitacora = "Terminar proceso";
+				}
+			}
+
 			dbOrdenProceso.setEstatus(serOrdenProceso.getEstatus());
 			dbOrdenProceso.setMaquilero(serOrdenProceso.getMaquilero());
 			dbOrdenProceso.setCantidadEntrada(serOrdenProceso.getCantidadEntrada());
@@ -164,13 +233,13 @@ public class PmOrden {
 			dbOrdenProceso.setObservaciones(serOrdenProceso.getObservaciones());
 			dbOrdenProceso.setDetalleEntrada(serOrdenProceso.getDetalleEntrada());
 			dbOrdenProceso.setDetalleSalida(serOrdenProceso.getDetalleSalida());
-			dbOrdenProceso.setAgregarBitacora(serOrdenProceso.getUsuario(), new Date(), "Actualizar");
+			dbOrdenProceso.setAgregarBitacora(serOrdenProceso.getUsuario(), new Date(), mensajeBitacora);
 
 			// Validaciones de estatus
-			if (dbOrdenProceso.getEstatus() == 1) { // En proceso
-				if (ClsUtil.esNulo(dbOrdenProceso.getMaquilero()))
-					throw new Exception("Un proceso en producción debe tener maquilero");
-			}
+			// if (dbOrdenProceso.getEstatus() == 1) { // En proceso
+			// if (ClsUtil.esNulo(dbOrdenProceso.getMaquilero()))
+			// throw new Exception("Un proceso en producción debe tener maquilero");
+			// }
 			if (dbOrdenProceso.getEstatus() == 2) { // Terminado
 				if (ClsUtil.esNulo(dbOrdenProceso.getMaquilero()))
 					throw new Exception("Un proceso terminado debe tener maquilero");
@@ -294,7 +363,7 @@ public class PmOrden {
 					if (dbOrdenProceso.getEstatus() == 0) {
 						if (serOrdenProceso.getOrden() != dbOrdenProceso.getOrden().longValue())
 							dbOrdenProceso.setOrden(serOrdenProceso.getOrden());
-						dbOrdenProceso.setAgregarBitacora(serOrdenProceso.getUsuario(), new Date(), "ActualizarLst");
+						dbOrdenProceso.setAgregarBitacora(serOrdenProceso.getUsuario(), new Date(), "Actualizar orden");
 						dbOrdenProceso.guardar(datastore, tx);
 					} else {
 						if (serOrdenProceso.getOrden() != dbOrdenProceso.getOrden().longValue())
@@ -326,7 +395,7 @@ public class PmOrden {
 					serOrdenProceso.setDetalleSalida(null);
 
 					dbOrdenProceso = new DbOrdenProceso(serOrdenProceso);
-					dbOrdenProceso.setAgregarBitacora(serOrdenProceso.getUsuario(), new Date(), "AgregarLst");
+					dbOrdenProceso.setAgregarBitacora(serOrdenProceso.getUsuario(), new Date(), "Agregar orden");
 					dbOrdenProceso.guardar(datastore, tx);
 				}
 				lstResp.add(dbOrdenProceso.toSerOrdenProceso());

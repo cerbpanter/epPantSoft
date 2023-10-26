@@ -42,6 +42,8 @@ public class PmUsuario {
 
 			dbUsuario.setPassword(serUsuario.getPassword());
 			dbUsuario.setPermisos(serUsuario.getPermisos());
+			dbUsuario.setDiseno(serUsuario.getDiseno());
+			dbUsuario.setTrazo(serUsuario.getTrazo());
 			dbUsuario.guardar(datastore);
 		} catch (EntityNotFoundException e) {
 			throw new Exception("El usuario '" + serUsuario.getUsuario() + "' no existe.");
