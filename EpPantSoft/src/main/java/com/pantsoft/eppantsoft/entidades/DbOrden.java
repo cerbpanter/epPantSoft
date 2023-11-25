@@ -47,10 +47,13 @@ public class DbOrden extends ClsEntidad {
 		setRenglonPedido(serOrden.getRenglonPedido());
 		setModelo(serOrden.getModelo());
 		setReferencia(serOrden.getReferencia());
+		setUsuarioDiseno(serOrden.getUsuarioDiseno());
+		setUsuarioTrazo(serOrden.getUsuarioTrazo());
 	}
 
-	public DbOrden(Entity entidad) {
+	public DbOrden(Entity entidad) throws Exception {
 		this.entidad = entidad;
+		asignarValoresDefault();
 	}
 
 	public boolean getLiberado() {
