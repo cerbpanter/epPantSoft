@@ -17,11 +17,12 @@ public class SerProveedorPago {
 	private Date fechaFactura;
 	private Date fechaVencimiento;
 	private String zonaHoraria;
+	private long semana;
 
 	public SerProveedorPago() {
 	}
 
-	public SerProveedorPago(String empresa, String serieFactura, long folioFactura, String uuid, double importeTotal, boolean revisado, boolean autorizado, boolean pagado, boolean terminado, long folioProveedor, String proveedor, Date fechaFactura, Date fechaVencimiento) {
+	public SerProveedorPago(String empresa, String serieFactura, long folioFactura, String uuid, double importeTotal, boolean revisado, boolean autorizado, boolean pagado, boolean terminado, long folioProveedor, String proveedor, Date fechaFactura, Date fechaVencimiento, long semana) {
 		setEmpresa(empresa);
 		setSerieFactura(serieFactura);
 		setFolioFactura(folioFactura);
@@ -35,6 +36,7 @@ public class SerProveedorPago {
 		setProveedor(proveedor);
 		setFechaFactura(fechaFactura);
 		setFechaVencimiento(fechaVencimiento);
+		setSemana(semana);
 	}
 
 	public String getEmpresa() {
@@ -147,6 +149,14 @@ public class SerProveedorPago {
 
 	public void setZonaHoraria(String zonaHoraria) {
 		this.zonaHoraria = zonaHoraria;
+	}
+
+	public long getSemana() {
+		return semana;
+	}
+
+	public void setSemana(long semana) {
+		this.semana = semana;
 	}
 
 }

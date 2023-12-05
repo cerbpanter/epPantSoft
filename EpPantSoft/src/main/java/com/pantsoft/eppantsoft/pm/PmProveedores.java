@@ -1,5 +1,7 @@
 package com.pantsoft.eppantsoft.pm;
 
+import java.util.List;
+
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.EntityNotFoundException;
@@ -24,9 +26,10 @@ public class PmProveedores {
 			pos = "Db";
 			serProveedorPago.setRevisado(false);
 			serProveedorPago.setAutorizado(false);
-			serProveedorPago.setPagado(false);
+			// serProveedorPago.setPagado(false);
 			serProveedorPago.setTerminado(false);
 			serProveedorPago.setFechaVencimiento(null);
+			serProveedorPago.setSemana(1);
 			DbProveedorPago dbProveedorPago = new DbProveedorPago(serProveedorPago);
 
 			pos = "existe";
@@ -154,6 +157,27 @@ public class PmProveedores {
 		} finally {
 			if (tx != null && tx.isActive())
 				tx.rollback();
+		}
+	}
+
+	public void asignarSemana(List<String> lstKeys, long semana) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		DbProveedorPago dbProveedorPago;
+
+		for (String keyName : lstKeys) {
+			try {
+				dbProveedorPago = new DbProveedorPago(ClsEntidad.obtenerEntidad(datastore, "DbProveedorPago", keyName));
+			} catch (EntityNotFoundException e) {
+				throw new Exception("Error al obtener los datos de la factura  [asignarMonedaParidad {" + keyName + "}]");
+			}
+
+			if (dbProveedorPago.getTerminado())
+				throw new Exception("El proveedorPago ya está terminado: " + keyName);
+
+			if (dbProveedorPago.getSemana() != semana) {
+				dbProveedorPago.setSemana(semana);
+				dbProveedorPago.guardar(datastore);
+			}
 		}
 	}
 

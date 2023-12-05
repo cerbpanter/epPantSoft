@@ -17,7 +17,7 @@ import com.pantsoft.eppantsoft.util.ExcepcionControlada;
 
 public class DbProveedorPago extends ClsEntidad {
 	private final ClsCampo empresa = new ClsCampo("empresa", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 1, NO_SUSTITUIR_NULL);
-	private final ClsCampo serieFactura = new ClsCampo("serieFactura", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 2, NO_SUSTITUIR_NULL);
+	private final ClsCampo serieFactura = new ClsCampo("serieFactura", Tipo.String, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 2, NO_SUSTITUIR_NULL);
 	private final ClsCampo folioFactura = new ClsCampo("folioFactura", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo uuid = new ClsCampo("uuid", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo importeTotal = new ClsCampo("importeTotal", Tipo.Double, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
@@ -37,8 +37,11 @@ public class DbProveedorPago extends ClsEntidad {
 	private final ClsCampo semanaVencimiento = new ClsCampo("semanaVencimiento", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo mesVencimiento = new ClsCampo("mesVencimiento", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo anioVencimiento = new ClsCampo("anioVencimiento", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo semana = new ClsCampo("semana", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "1", 0, NO_SUSTITUIR_NULL);
 
 	public DbProveedorPago(SerProveedorPago serProveedorPago) throws ExcepcionControlada {
+		if (serProveedorPago.getSerieFactura() == null)
+			throw new ExcepcionControlada("El campo 'serieFactura' no puede ser Null");
 		Key key = KeyFactory.createKey("DbProveedorPago", serProveedorPago.getEmpresa() + "-" + serProveedorPago.getUuid());
 		entidad = new Entity(key);
 		asignarValoresDefault();
@@ -55,6 +58,7 @@ public class DbProveedorPago extends ClsEntidad {
 		setProveedor(serProveedorPago.getProveedor());
 		setFechaFactura(serProveedorPago.getFechaFactura(), serProveedorPago.getZonaHoraria());
 		setFechaVencimiento(serProveedorPago.getFechaVencimiento(), serProveedorPago.getZonaHoraria());
+		setSemana(serProveedorPago.getSemana());
 	}
 
 	public DbProveedorPago(Entity entidad) {
@@ -66,11 +70,11 @@ public class DbProveedorPago extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, serieFactura, folioFactura, uuid, importeTotal, revisado, autorizado, pagado, terminado, folioProveedor, proveedor, fechaFactura, diaFactura, semanaFactura, mesFactura, anioFactura, fechaVencimiento, diaVencimiento, semanaVencimiento, mesVencimiento, anioVencimiento);
+		return Arrays.asList(empresa, serieFactura, folioFactura, uuid, importeTotal, revisado, autorizado, pagado, terminado, folioProveedor, proveedor, fechaFactura, diaFactura, semanaFactura, mesFactura, anioFactura, fechaVencimiento, diaVencimiento, semanaVencimiento, mesVencimiento, anioVencimiento, semana);
 	}
 
 	public SerProveedorPago toSerProveedorPago() throws ExcepcionControlada {
-		return new SerProveedorPago(getEmpresa(), getSerieFactura(), getFolioFactura(), getUuid(), getImporteTotal(), getRevisado(), getAutorizado(), getPagado(), getTerminado(), getFolioProveedor(), getProveedor(), getFechaFactura(), getFechaVencimiento());
+		return new SerProveedorPago(getEmpresa(), getSerieFactura(), getFolioFactura(), getUuid(), getImporteTotal(), getRevisado(), getAutorizado(), getPagado(), getTerminado(), getFolioProveedor(), getProveedor(), getFechaFactura(), getFechaVencimiento(), getSemana());
 	}
 
 	public String getEmpresa() throws ExcepcionControlada {
@@ -232,4 +236,13 @@ public class DbProveedorPago extends ClsEntidad {
 	public Long getAnioVencimiento() throws ExcepcionControlada {
 		return getLong(anioVencimiento);
 	}
+
+	public Long getSemana() throws ExcepcionControlada {
+		return getLong(semana);
+	}
+
+	public void setSemana(Long semana) throws ExcepcionControlada {
+		setLong(this.semana, semana);
+	}
+
 }

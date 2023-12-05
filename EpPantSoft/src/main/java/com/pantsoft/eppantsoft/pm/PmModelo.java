@@ -281,8 +281,15 @@ public class PmModelo {
 			lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, empresa));
 			lstFiltros.add(new FilterPredicate("temporada", FilterOperator.EQUAL, temporada));
 			lstFiltros.add(new FilterPredicate("modelo", FilterOperator.EQUAL, modelo));
+			lstFiltros.add(new FilterPredicate("referencia", FilterOperator.EQUAL, referencia));
 			if (ClsEntidad.ejecutarConsultaHayEntidades(datastore, "DbProduccion", lstFiltros))
-				throw new Exception("El modelo " + modelo + " tiene producciones, imposible eliminar.");
+				throw new Exception("El modelo " + modelo + "-" + referencia + " tiene producciones, imposible eliminar.");
+
+			if (ClsEntidad.ejecutarConsultaHayEntidades(datastore, "DbPedidoDet", lstFiltros))
+				throw new Exception("El modelo " + modelo + "-" + referencia + " tiene pedidos, imposible eliminar.");
+
+			if (ClsEntidad.ejecutarConsultaHayEntidades(datastore, "DbOrden", lstFiltros))
+				throw new Exception("El modelo " + modelo + "-" + referencia + " tiene ordenes, imposible eliminar.");
 
 			dbModelo.eliminar(datastore, tx);
 
