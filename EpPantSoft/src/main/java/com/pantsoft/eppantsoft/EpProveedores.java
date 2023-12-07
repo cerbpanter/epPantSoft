@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.pantsoft.eppantsoft.pm.PmProveedores;
 import com.pantsoft.eppantsoft.serializable.Respuesta;
 import com.pantsoft.eppantsoft.serializable.SerProveedorPago;
+import com.pantsoft.eppantsoft.serializable.SerProveedorPagoMes;
 import com.pantsoft.eppantsoft.util.ClsBlobReaderParametros;
 import com.pantsoft.eppantsoft.util.ClsEpUtil;
 
@@ -38,6 +39,26 @@ public class EpProveedores extends HttpServlet {
 				return;
 			}
 
+			// ProveedorPagoMes
+			if (ep.esMetodo("proveedorPagoMes_agregar") && ep.esVersion("v1")) {
+				SerProveedorPagoMes serProveedorPagoMes = ep.getObjetFromBody(SerProveedorPagoMes.class);
+				serProveedorPagoMes = new PmProveedores().agregarProveedorPagoMes(serProveedorPagoMes);
+				ep.objectEnBody(serProveedorPagoMes);
+				return;
+			}
+			if (ep.esMetodo("proveedorPagoMes_autorizarSemana") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("mesVencimiento", "Long").addPar("semana", "Long");
+				new PmProveedores().autorizarSemana(ep.dameParametroString("empresa"), ep.dameParametroLong("mesVencimiento"), ep.dameParametroLong("semana"));
+				ep.voidEnBody();
+				return;
+			}
+			if (ep.esMetodo("proveedorPagoMes_terminarMes") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("mesVencimiento", "Long");
+				new PmProveedores().terminarMes(ep.dameParametroString("empresa"), ep.dameParametroLong("mesVencimiento"));
+				ep.voidEnBody();
+				return;
+			}
+
 			// ProveedorPago
 			if (ep.esMetodo("proveedorPago_agregar") && ep.esVersion("v1")) {
 				SerProveedorPago serProveedorPago = ep.getObjetFromBody(SerProveedorPago.class);
@@ -51,22 +72,26 @@ public class EpProveedores extends HttpServlet {
 				ep.objectEnBody(serProveedorPago);
 				return;
 			}
-			if (ep.esMetodo("proveedorPago_marcarAutorizado") && ep.esVersion("v1")) {
+			// if (ep.esMetodo("proveedorPago_marcarAutorizado") && ep.esVersion("v1")) {
+			// ep.addPar("empresa", "String").addPar("mesVencimiento", "Long").addPar("semana", "Long");
+			// new PmProveedores().marcarAutorizado(ep.dameParametroString("empresa"), ep.dameParametroLong("mesVencimiento"), ep.dameParametroLong("semana"));
+			// ep.voidEnBody();
+			// return;
+			// }
+			if (ep.esMetodo("proveedorPago_actualizarPagado") && ep.esVersion("v1")) {
 				SerProveedorPago serProveedorPago = ep.getObjetFromBody(SerProveedorPago.class);
-				serProveedorPago = new PmProveedores().marcarAutorizado(serProveedorPago);
-				ep.objectEnBody(serProveedorPago);
-				return;
-			}
-			if (ep.esMetodo("proveedorPago_marcarPagado") && ep.esVersion("v1")) {
-				SerProveedorPago serProveedorPago = ep.getObjetFromBody(SerProveedorPago.class);
-				serProveedorPago = new PmProveedores().marcarPagado(serProveedorPago);
+				serProveedorPago = new PmProveedores().actualizarPagado(serProveedorPago);
 				ep.objectEnBody(serProveedorPago);
 				return;
 			}
 			if (ep.esMetodo("proveedorPago_marcarTerminado") && ep.esVersion("v1")) {
-				SerProveedorPago serProveedorPago = ep.getObjetFromBody(SerProveedorPago.class);
-				serProveedorPago = new PmProveedores().marcarTerminado(serProveedorPago);
-				ep.objectEnBody(serProveedorPago);
+				Respuesta resp = ep.getObjetFromBody(Respuesta.class);
+
+				ClsBlobReaderParametros blobP = new ClsBlobReaderParametros(resp.cadena);
+				List<String> lstKeys = blobP.getValorArrayString("keys");
+
+				new PmProveedores().marcarTerminado(lstKeys);
+				ep.voidEnBody();
 				return;
 			}
 			if (ep.esMetodo("proveedorPago_asignarSemana") && ep.esVersion("v1")) {

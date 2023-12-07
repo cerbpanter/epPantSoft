@@ -42,7 +42,18 @@ public class DbProveedorPago extends ClsEntidad {
 	public DbProveedorPago(SerProveedorPago serProveedorPago) throws ExcepcionControlada {
 		if (serProveedorPago.getSerieFactura() == null)
 			throw new ExcepcionControlada("El campo 'serieFactura' no puede ser Null");
-		Key key = KeyFactory.createKey("DbProveedorPago", serProveedorPago.getEmpresa() + "-" + serProveedorPago.getUuid());
+		long mes = 0;
+		// Si no esta revisdo no tiene fechavencimiento y se asigna el mes cero, de lo contrario se asigna al mes de fechaVencimiento
+		if (fechaVencimiento != null) {
+			TimeZone tzGMT = TimeZone.getTimeZone(serProveedorPago.getZonaHoraria());
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(serProveedorPago.getFechaVencimiento());
+			cal.setTimeZone(tzGMT);
+
+			mes = (long) ((cal.get(Calendar.YEAR) * 100) + cal.get(Calendar.MONTH) + 1);
+		}
+		Key keyp = KeyFactory.createKey("DbProveedorPagoMes", serProveedorPago.getEmpresa() + "-" + mes);
+		Key key = KeyFactory.createKey(keyp, "DbProveedorPago", serProveedorPago.getEmpresa() + "-" + serProveedorPago.getUuid());
 		entidad = new Entity(key);
 		asignarValoresDefault();
 		setString(empresa, serProveedorPago.getEmpresa());
