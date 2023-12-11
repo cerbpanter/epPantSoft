@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class SerProveedorPago {
 	private String empresa;
+	private long mes;
 	private String serieFactura;
 	private long folioFactura;
 	private String uuid;
@@ -22,8 +23,9 @@ public class SerProveedorPago {
 	public SerProveedorPago() {
 	}
 
-	public SerProveedorPago(String empresa, String serieFactura, long folioFactura, String uuid, double importeTotal, boolean revisado, boolean autorizado, boolean pagado, boolean terminado, long folioProveedor, String proveedor, Date fechaFactura, Date fechaVencimiento, long semana) {
+	public SerProveedorPago(String empresa, long mes, String serieFactura, long folioFactura, String uuid, double importeTotal, boolean revisado, boolean autorizado, boolean pagado, boolean terminado, long folioProveedor, String proveedor, Date fechaFactura, Date fechaVencimiento, long semana) {
 		setEmpresa(empresa);
+		setMes(mes);
 		setSerieFactura(serieFactura);
 		setFolioFactura(folioFactura);
 		setUuid(uuid);
@@ -45,6 +47,14 @@ public class SerProveedorPago {
 
 	public void setEmpresa(String empresa) {
 		this.empresa = empresa;
+	}
+
+	public long getMes() {
+		return mes;
+	}
+
+	public void setMes(long mes) {
+		this.mes = mes;
 	}
 
 	public String getSerieFactura() {

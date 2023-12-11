@@ -49,6 +49,7 @@ import com.pantsoft.eppantsoft.entidades.DbPedidoDet;
 import com.pantsoft.eppantsoft.entidades.DbProceso;
 import com.pantsoft.eppantsoft.entidades.DbProduccion;
 import com.pantsoft.eppantsoft.entidades.DbProveedorPago;
+import com.pantsoft.eppantsoft.entidades.DbProveedorPagoMes;
 import com.pantsoft.eppantsoft.entidades.DbTalla;
 import com.pantsoft.eppantsoft.entidades.DbTallas;
 import com.pantsoft.eppantsoft.entidades.DbTelaHabilitacion;
@@ -1644,6 +1645,9 @@ public class PmEntidad {
 			lstCampos = db.getCampos();
 		} else if (entidad.equals("DbProveedorPago")) {
 			DbProveedorPago db = new DbProveedorPago(entity);
+			lstCampos = db.getCampos();
+		} else if (entidad.equals("DbProveedorPagoMes")) {
+			DbProveedorPagoMes db = new DbProveedorPagoMes(entity);
 			lstCampos = db.getCampos();
 		} else if (entidad.equals("DbTalla")) {
 			DbTalla db = new DbTalla(entity);
