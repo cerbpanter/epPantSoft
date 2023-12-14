@@ -187,6 +187,8 @@ public class PmProveedores {
 	public SerProveedorPago marcarRevisado(SerProveedorPago serProveedorPago) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		Transaction tx = null;
+		DbProveedorPago dbProveedorPago;
+
 		try {
 			tx = ClsEntidad.iniciarTransaccion(datastore);
 
@@ -194,9 +196,13 @@ public class PmProveedores {
 				throw new Exception("El ProveedorPago ya tiene mes");
 			}
 
-			Key keyp = KeyFactory.createKey("DbProveedorPagoMes", serProveedorPago.getEmpresa() + "-" + serProveedorPago.getMes());
-			Key key = KeyFactory.createKey(keyp, "DbProveedorPago", serProveedorPago.getEmpresa() + "-" + serProveedorPago.getUuid());
-			DbProveedorPago dbProveedorPago = new DbProveedorPago(datastore.get(tx, key));
+			try {
+				Key keyp = KeyFactory.createKey("DbProveedorPagoMes", serProveedorPago.getEmpresa() + "-" + serProveedorPago.getMes());
+				Key key = KeyFactory.createKey(keyp, "DbProveedorPago", serProveedorPago.getEmpresa() + "-" + serProveedorPago.getUuid());
+				dbProveedorPago = new DbProveedorPago(datastore.get(tx, key));
+			} catch (EntityNotFoundException e) {
+				throw new Exception("La proveedorPago '" + serProveedorPago.getUuid() + "' no existe.");
+			}
 
 			if (dbProveedorPago.getTerminado())
 				throw new Exception("El proveedorPago ya está terminado: " + dbProveedorPago.getKey().getName());
@@ -222,10 +228,7 @@ public class PmProveedores {
 
 			tx.commit();
 
-			dbProveedorPago = new DbProveedorPago(datastore.get(key));
-			return dbProveedorPago.toSerProveedorPago();
-		} catch (EntityNotFoundException e) {
-			throw new Exception("La proveedorPago '" + serProveedorPago.getUuid() + "' no existe.");
+			return dbProveedorPagoNuevo.toSerProveedorPago();
 		} finally {
 			if (tx != null && tx.isActive())
 				tx.rollback();

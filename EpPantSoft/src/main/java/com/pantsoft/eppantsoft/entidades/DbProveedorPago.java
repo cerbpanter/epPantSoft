@@ -44,8 +44,8 @@ public class DbProveedorPago extends ClsEntidad {
 		if (serProveedorPago.getSerieFactura() == null)
 			throw new ExcepcionControlada("El campo 'serieFactura' no puede ser Null");
 		long mes = 0;
-		// Si no esta revisdo no tiene fechavencimiento y se asigna el mes cero, de lo contrario se asigna al mes de fechaVencimiento
-		if (fechaVencimiento != null) {
+		// Si no esta revisdo no tiene fechaVencimiento y se asigna el mes cero, de lo contrario se asigna al mes de fechaVencimiento
+		if (serProveedorPago.getFechaVencimiento() != null) {
 			TimeZone tzGMT = TimeZone.getTimeZone(serProveedorPago.getZonaHoraria());
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(serProveedorPago.getFechaVencimiento());
