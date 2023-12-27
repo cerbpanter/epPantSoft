@@ -56,6 +56,12 @@ public class EpProveedores extends HttpServlet {
 				ep.voidEnBody();
 				return;
 			}
+			if (ep.esMetodo("proveedorPagoMes_actualizarTitulo") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("mesVencimiento", "Long").addPar("semana", "Long").addPar("titulo", "String");
+				new PmProveedores().actualizarTitulo(ep.dameParametroString("empresa"), ep.dameParametroLong("mesVencimiento"), ep.dameParametroLong("semana"), ep.dameParametroString("titulo"));
+				ep.voidEnBody();
+				return;
+			}
 
 			// ProveedorPago
 			if (ep.esMetodo("proveedorPago_agregar") && ep.esVersion("v1")) {

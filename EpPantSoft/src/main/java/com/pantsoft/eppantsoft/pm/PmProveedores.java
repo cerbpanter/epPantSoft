@@ -18,40 +18,6 @@ import com.pantsoft.eppantsoft.util.ExcepcionControlada;
 
 public class PmProveedores {
 	// ProveedorPagoMes ////////////////////////////////////////////////////////////////////
-	// public SerProveedorPagoMes agregarProveedorPagoMes(SerProveedorPagoMes serProveedorPagoMes) throws Exception {
-	// DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-	// Transaction tx = null;
-	// String pos = "inico";
-	// try {
-	// tx = ClsEntidad.iniciarTransaccion(datastore);
-	//
-	// pos = "Db";
-	// serProveedorPagoMes.setAutorizado1(false);
-	// serProveedorPagoMes.setAutorizado2(false);
-	// serProveedorPagoMes.setAutorizado3(false);
-	// serProveedorPagoMes.setAutorizado4(false);
-	// serProveedorPagoMes.setAutorizado5(false);
-	// serProveedorPagoMes.setTerminado(false);
-	// DbProveedorPagoMes dbProveedorPagoMes = new DbProveedorPagoMes(serProveedorPagoMes);
-	//
-	// pos = "existe";
-	// if (ClsEntidad.existeEntidad(datastore, "DbProveedorPagoMes", dbProveedorPagoMes.getKey().getName()))
-	// throw new ExcepcionControlada("El DbProveedorPagoMes '" + serProveedorPagoMes.getMes() + "' ya existe.");
-	//
-	// pos = "guardar";
-	// dbProveedorPagoMes.guardar(datastore);
-	// pos = "commit";
-	// tx.commit();
-	//
-	// pos = "serializar";
-	// return dbProveedorPagoMes.toSerProveedorPagoMes();
-	// } catch (Exception e) {
-	// throw new Exception("Pos: " + pos + " - " + e.getMessage());
-	// } finally {
-	// if (tx != null && tx.isActive())
-	// tx.rollback();
-	// }
-	// }
 
 	public void autorizarSemana(String empresa, long mesVencimiento, long semana) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -122,7 +88,7 @@ public class PmProveedores {
 			tx = ClsEntidad.iniciarTransaccion(datastore);
 			try {
 				Key key = KeyFactory.createKey("DbProveedorPagoMes", empresa + "-" + mesVencimiento);
-				dbProveedorPagoMes = new DbProveedorPagoMes(datastore.get(key));
+				dbProveedorPagoMes = new DbProveedorPagoMes(datastore.get(tx, key));
 			} catch (EntityNotFoundException e) {
 				throw new Exception("No existe el DbProveedorPagoMes: " + mesVencimiento);
 			}
@@ -130,6 +96,7 @@ public class PmProveedores {
 				throw new Exception("El mes ya está terminado");
 			}
 			dbProveedorPagoMes.setTerminado(true);
+			dbProveedorPagoMes.guardar(datastore, tx);
 
 			List<DbProveedorPago> lstProveedorPago = dbProveedorPagoMes.getPagos(datastore, tx);
 			if (lstProveedorPago != null && lstProveedorPago.size() > 0) {
@@ -146,6 +113,33 @@ public class PmProveedores {
 			if (tx != null && tx.isActive())
 				tx.rollback();
 		}
+	}
+
+	public void actualizarTitulo(String empresa, long mesVencimiento, long semana, String titulo) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		DbProveedorPagoMes dbProveedorPagoMes;
+
+		try {
+			Key key = KeyFactory.createKey("DbProveedorPagoMes", empresa + "-" + mesVencimiento);
+			dbProveedorPagoMes = new DbProveedorPagoMes(datastore.get(key));
+		} catch (EntityNotFoundException e) {
+			throw new Exception("No existe el DbProveedorPagoMes: " + mesVencimiento);
+		}
+		if (dbProveedorPagoMes.getTerminado()) {
+			throw new Exception("El mes ya está terminado");
+		}
+		if (semana == 1L) {
+			dbProveedorPagoMes.setTitulo1(titulo);
+		} else if (semana == 2L) {
+			dbProveedorPagoMes.setTitulo2(titulo);
+		} else if (semana == 3L) {
+			dbProveedorPagoMes.setTitulo3(titulo);
+		} else if (semana == 4L) {
+			dbProveedorPagoMes.setTitulo4(titulo);
+		} else if (semana == 5L) {
+			dbProveedorPagoMes.setTitulo5(titulo);
+		}
+		dbProveedorPagoMes.guardar(datastore);
 	}
 
 	// ProveedorPago ////////////////////////////////////////////////////////////////////
@@ -222,7 +216,7 @@ public class PmProveedores {
 
 			// Reviso que exista el encabezado si no lo creo
 			if (!ClsEntidad.existeEntidad(datastore, "DbProveedorPagoMes", dbProveedorPagoNuevo.getEmpresa() + "-" + dbProveedorPagoNuevo.getMes())) {
-				DbProveedorPagoMes dbProveedorPagoMes = new DbProveedorPagoMes(new SerProveedorPagoMes(dbProveedorPagoNuevo.getEmpresa(), dbProveedorPagoNuevo.getMes(), false, false, false, false, false, false));
+				DbProveedorPagoMes dbProveedorPagoMes = new DbProveedorPagoMes(new SerProveedorPagoMes(dbProveedorPagoNuevo.getEmpresa(), dbProveedorPagoNuevo.getMes(), false, false, false, false, false, false, null, null, null, null, null));
 				dbProveedorPagoMes.guardar(datastore, tx);
 			}
 

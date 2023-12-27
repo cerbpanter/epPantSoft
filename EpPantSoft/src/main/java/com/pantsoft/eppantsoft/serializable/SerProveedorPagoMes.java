@@ -9,11 +9,16 @@ public class SerProveedorPagoMes {
 	private boolean autorizado4;
 	private boolean autorizado5;
 	private boolean terminado;
+	private String titulo1;
+	private String titulo2;
+	private String titulo3;
+	private String titulo4;
+	private String titulo5;
 
 	public SerProveedorPagoMes() {
 	}
 
-	public SerProveedorPagoMes(String empresa, long mes, boolean autorizado1, boolean autorizado2, boolean autorizado3, boolean autorizado4, boolean autorizado5, boolean terminado) {
+	public SerProveedorPagoMes(String empresa, long mes, boolean autorizado1, boolean autorizado2, boolean autorizado3, boolean autorizado4, boolean autorizado5, boolean terminado, String titulo1, String titulo2, String titulo3, String titulo4, String titulo5) {
 		setEmpresa(empresa);
 		setMes(mes);
 		setAutorizado1(autorizado1);
@@ -22,6 +27,11 @@ public class SerProveedorPagoMes {
 		setAutorizado1(autorizado1);
 		setAutorizado1(autorizado1);
 		setTerminado(terminado);
+		setTitulo1(titulo1);
+		setTitulo2(titulo2);
+		setTitulo3(titulo3);
+		setTitulo4(titulo4);
+		setTitulo5(titulo5);
 	}
 
 	public String getEmpresa() {
@@ -86,6 +96,46 @@ public class SerProveedorPagoMes {
 
 	public void setTerminado(boolean terminado) {
 		this.terminado = terminado;
+	}
+
+	public String getTitulo1() {
+		return titulo1;
+	}
+
+	public void setTitulo1(String titulo1) {
+		this.titulo1 = titulo1;
+	}
+
+	public String getTitulo2() {
+		return titulo2;
+	}
+
+	public void setTitulo2(String titulo2) {
+		this.titulo2 = titulo2;
+	}
+
+	public String getTitulo3() {
+		return titulo3;
+	}
+
+	public void setTitulo3(String titulo3) {
+		this.titulo3 = titulo3;
+	}
+
+	public String getTitulo4() {
+		return titulo4;
+	}
+
+	public void setTitulo4(String titulo4) {
+		this.titulo4 = titulo4;
+	}
+
+	public String getTitulo5() {
+		return titulo5;
+	}
+
+	public void setTitulo5(String titulo5) {
+		this.titulo5 = titulo5;
 	}
 
 }
