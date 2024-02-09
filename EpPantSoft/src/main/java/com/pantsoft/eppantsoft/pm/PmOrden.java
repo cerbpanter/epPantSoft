@@ -88,13 +88,13 @@ public class PmOrden {
 		}
 	}
 
-	public SerOrden terminarDiseno(String empresa, long folioOrden) throws Exception {
+	public SerOrden terminarDiseno(SerOrden serOrden) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		Transaction tx = null;
 		try {
 			tx = ClsEntidad.iniciarTransaccion(datastore);
 
-			Key key = KeyFactory.createKey("DbOrden", empresa + "-" + folioOrden);
+			Key key = KeyFactory.createKey("DbOrden", serOrden.getEmpresa() + "-" + serOrden.getFolioOrden());
 			DbOrden dbOrden = new DbOrden(datastore.get(key));
 
 			if (dbOrden.getDisenoTerminado())
@@ -102,6 +102,8 @@ public class PmOrden {
 
 			dbOrden.setFechaDiseno(new Date());
 			dbOrden.setDisenoTerminado(true);
+			dbOrden.setCarpetaTrazo(serOrden.getCarpetaTrazo());
+			dbOrden.setPiezasMolde(serOrden.getPiezasMolde());
 
 			dbOrden.guardar(datastore, tx);
 			tx.commit();
@@ -109,20 +111,20 @@ public class PmOrden {
 			dbOrden = new DbOrden(datastore.get(key));
 			return dbOrden.toSerOrden(null, null);
 		} catch (EntityNotFoundException e) {
-			throw new Exception("La orden '" + folioOrden + "' no existe.");
+			throw new Exception("La orden '" + serOrden.getFolioOrden() + "' no existe.");
 		} finally {
 			if (tx != null && tx.isActive())
 				tx.rollback();
 		}
 	}
 
-	public SerOrden terminarTrazo(String empresa, long folioOrden) throws Exception {
+	public SerOrden terminarTrazo(SerOrden serOrden) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		Transaction tx = null;
 		try {
 			tx = ClsEntidad.iniciarTransaccion(datastore);
 
-			Key key = KeyFactory.createKey("DbOrden", empresa + "-" + folioOrden);
+			Key key = KeyFactory.createKey("DbOrden", serOrden.getEmpresa() + "-" + serOrden.getFolioOrden());
 			DbOrden dbOrden = new DbOrden(datastore.get(key));
 
 			if (dbOrden.getTrazoTerminado())
@@ -130,6 +132,9 @@ public class PmOrden {
 
 			dbOrden.setFechaTrazo(new Date());
 			dbOrden.setTrazoTerminado(true);
+			dbOrden.setDistribucion(serOrden.getDistribucion());
+			dbOrden.setLargoTrazoTela(serOrden.getLargoTrazoTela());
+			dbOrden.setLargoTrazoBies(serOrden.getLargoTrazoBies());
 
 			dbOrden.guardar(datastore, tx);
 			tx.commit();
@@ -137,7 +142,7 @@ public class PmOrden {
 			dbOrden = new DbOrden(datastore.get(key));
 			return dbOrden.toSerOrden(null, null);
 		} catch (EntityNotFoundException e) {
-			throw new Exception("La orden '" + folioOrden + "' no existe.");
+			throw new Exception("La orden '" + serOrden.getFolioOrden() + "' no existe.");
 		} finally {
 			if (tx != null && tx.isActive())
 				tx.rollback();
@@ -165,6 +170,76 @@ public class PmOrden {
 			tx.commit();
 		} catch (EntityNotFoundException e) {
 			throw new ExcepcionControlada("La orden '" + folioOrden + "' no existe.");
+		} finally {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+		}
+	}
+
+	public void actualizarRevisado(SerOrden serOrden) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Transaction tx = null;
+		try {
+			tx = ClsEntidad.iniciarTransaccion(datastore);
+
+			Key key = KeyFactory.createKey("DbOrden", serOrden.getEmpresa() + "-" + serOrden.getFolioOrden());
+			DbOrden dbOrden = new DbOrden(datastore.get(key));
+
+			if (dbOrden.getRevisado() != serOrden.getRevisado()) {
+				dbOrden.setRevisado(serOrden.getRevisado());
+				dbOrden.guardar(datastore, tx);
+				tx.commit();
+			}
+		} catch (EntityNotFoundException e) {
+			throw new Exception("Orden '" + serOrden.getFolioOrden() + "' no existe.");
+		} finally {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+		}
+	}
+
+	public SerOrden actualizarPrioridadDiseno(String empresa, long folioOrden, long prioridad) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Transaction tx = null;
+		try {
+			tx = ClsEntidad.iniciarTransaccion(datastore);
+
+			Key key = KeyFactory.createKey("DbOrden", empresa + "-" + folioOrden);
+			DbOrden dbOrden = new DbOrden(datastore.get(key));
+
+			dbOrden.setPrioridadDiseno(prioridad);
+
+			dbOrden.guardar(datastore, tx);
+			tx.commit();
+
+			dbOrden = new DbOrden(datastore.get(key));
+			return dbOrden.toSerOrden(null, null);
+		} catch (EntityNotFoundException e) {
+			throw new Exception("La orden '" + folioOrden + "' no existe.");
+		} finally {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+		}
+	}
+
+	public SerOrden actualizarPrioridadTrazo(String empresa, long folioOrden, long prioridad) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Transaction tx = null;
+		try {
+			tx = ClsEntidad.iniciarTransaccion(datastore);
+
+			Key key = KeyFactory.createKey("DbOrden", empresa + "-" + folioOrden);
+			DbOrden dbOrden = new DbOrden(datastore.get(key));
+
+			dbOrden.setPrioridadTrazo(prioridad);
+
+			dbOrden.guardar(datastore, tx);
+			tx.commit();
+
+			dbOrden = new DbOrden(datastore.get(key));
+			return dbOrden.toSerOrden(null, null);
+		} catch (EntityNotFoundException e) {
+			throw new Exception("La orden '" + folioOrden + "' no existe.");
 		} finally {
 			if (tx != null && tx.isActive())
 				tx.rollback();

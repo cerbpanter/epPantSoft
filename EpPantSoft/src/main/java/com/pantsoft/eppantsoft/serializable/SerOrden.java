@@ -10,18 +10,26 @@ public class SerOrden {
 	private long renglonPedido;
 	private String modelo;
 	private String referencia;
+	private boolean revisado;
 	// Diseño
 	private String usuarioDiseno;
 	private Date fechaDiseno;
 	private boolean disenoTerminado;
+	private String carpetaTrazo;
+	private long piezasMolde;
+	private long prioridadDiseno;
 	// Trazo
 	private String usuarioTrazo;
 	private Date fechaTrazo;
 	private boolean trazoTerminado;
+	private String distribucion;
+	private double largoTrazoTela;
+	private double largoTrazoBies;
+	private long prioridadTrazo;
 
 	private SerOrdenProceso procesos[];
 
-	public SerOrden(String empresa, long folioOrden, long temporada, long folioPedido, long renglonPedido, String modelo, String referencia, String usuarioDiseno, Date fechaDiseno, boolean disenoTerminado, String usuarioTrazo, Date fechaTrazo, boolean trazoTerminado) {
+	public SerOrden(String empresa, long folioOrden, long temporada, long folioPedido, long renglonPedido, String modelo, String referencia, boolean revisado, String usuarioDiseno, Date fechaDiseno, boolean disenoTerminado, String usuarioTrazo, Date fechaTrazo, boolean trazoTerminado) {
 		this.empresa = empresa;
 		this.folioOrden = folioOrden;
 		this.temporada = temporada;
@@ -35,6 +43,7 @@ public class SerOrden {
 		this.usuarioTrazo = usuarioTrazo;
 		this.fechaTrazo = fechaTrazo;
 		this.trazoTerminado = trazoTerminado;
+		this.revisado = revisado;
 	}
 
 	public SerOrden() {
@@ -96,6 +105,14 @@ public class SerOrden {
 		this.referencia = referencia;
 	}
 
+	public boolean getRevisado() {
+		return revisado;
+	}
+
+	public void setRevisado(boolean revisado) {
+		this.revisado = revisado;
+	}
+
 	public SerOrdenProceso[] getProcesos() {
 		return procesos;
 	}
@@ -128,6 +145,30 @@ public class SerOrden {
 		this.disenoTerminado = disenoTerminado;
 	}
 
+	public String getCarpetaTrazo() {
+		return carpetaTrazo;
+	}
+
+	public void setCarpetaTrazo(String carpetaTrazo) {
+		this.carpetaTrazo = carpetaTrazo;
+	}
+
+	public long getPiezasMolde() {
+		return piezasMolde;
+	}
+
+	public void setPiezasMolde(long piezasMolde) {
+		this.piezasMolde = piezasMolde;
+	}
+
+	public long getPrioridadDiseno() {
+		return prioridadDiseno;
+	}
+
+	public void setPrioridadDiseno(long prioridadDiseno) {
+		this.prioridadDiseno = prioridadDiseno;
+	}
+
 	public String getUsuarioTrazo() {
 		return usuarioTrazo;
 	}
@@ -150,6 +191,38 @@ public class SerOrden {
 
 	public void setTrazoTerminado(boolean trazoTerminado) {
 		this.trazoTerminado = trazoTerminado;
+	}
+
+	public String getDistribucion() {
+		return distribucion;
+	}
+
+	public void setDistribucion(String distribucion) {
+		this.distribucion = distribucion;
+	}
+
+	public double getLargoTrazoTela() {
+		return largoTrazoTela;
+	}
+
+	public void setLargoTrazoTela(double largoTrazoTela) {
+		this.largoTrazoTela = largoTrazoTela;
+	}
+
+	public double getLargoTrazoBies() {
+		return largoTrazoBies;
+	}
+
+	public void setLargoTrazoBies(double largoTrazoBies) {
+		this.largoTrazoBies = largoTrazoBies;
+	}
+
+	public long getPrioridadTrazo() {
+		return prioridadTrazo;
+	}
+
+	public void setPrioridadTrazo(long prioridadTrazo) {
+		this.prioridadTrazo = prioridadTrazo;
 	}
 
 }

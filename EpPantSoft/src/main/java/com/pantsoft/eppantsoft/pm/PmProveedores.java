@@ -229,6 +229,66 @@ public class PmProveedores {
 		}
 	}
 
+	public SerProveedorPago actualizarFechaVencimiento(SerProveedorPago serProveedorPago) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Transaction tx = null;
+		DbProveedorPago dbProveedorPago;
+		long mesOriginal;
+
+		try {
+			tx = ClsEntidad.iniciarTransaccion(datastore);
+
+			if (serProveedorPago.getMes() == 0) {
+				throw new Exception("El ProveedorPago no se ha revisado");
+			}
+			mesOriginal = serProveedorPago.getMes();
+
+			try {
+				Key keyp = KeyFactory.createKey("DbProveedorPagoMes", serProveedorPago.getEmpresa() + "-" + serProveedorPago.getMes());
+				Key key = KeyFactory.createKey(keyp, "DbProveedorPago", serProveedorPago.getEmpresa() + "-" + serProveedorPago.getUuid());
+				dbProveedorPago = new DbProveedorPago(datastore.get(tx, key));
+			} catch (EntityNotFoundException e) {
+				throw new Exception("La proveedorPago '" + serProveedorPago.getUuid() + "' no existe.");
+			}
+
+			if (dbProveedorPago.getTerminado())
+				throw new Exception("El proveedorPago ya está terminado: " + dbProveedorPago.getKey().getName());
+			if (!dbProveedorPago.getRevisado())
+				throw new Exception("El proveedorPago no se ha revisado");
+
+			dbProveedorPago.setFechaVencimiento(serProveedorPago.getFechaVencimiento(), serProveedorPago.getZonaHoraria());
+
+			if (mesOriginal == dbProveedorPago.getMes()) {
+				// No cambió el mes, solo se actualiza la entidad
+				dbProveedorPago.guardar(datastore, tx);
+			} else {
+				// Creo la copia incluyendo la fechaCancelación para que se vincule al mes correcto
+				SerProveedorPago serProveedorPagoNuevo = dbProveedorPago.toSerProveedorPago();
+				serProveedorPagoNuevo.setFechaVencimiento(serProveedorPago.getFechaVencimiento());
+				serProveedorPagoNuevo.setZonaHoraria(serProveedorPago.getZonaHoraria());
+
+				DbProveedorPago dbProveedorPagoNuevo = new DbProveedorPago(serProveedorPagoNuevo);
+
+				dbProveedorPagoNuevo.guardar(datastore, tx);
+				dbProveedorPago.eliminar(datastore, tx);
+
+				// Reviso que exista el encabezado si no lo creo
+				if (!ClsEntidad.existeEntidad(datastore, "DbProveedorPagoMes", dbProveedorPagoNuevo.getEmpresa() + "-" + dbProveedorPagoNuevo.getMes())) {
+					DbProveedorPagoMes dbProveedorPagoMes = new DbProveedorPagoMes(new SerProveedorPagoMes(dbProveedorPagoNuevo.getEmpresa(), dbProveedorPagoNuevo.getMes(), false, false, false, false, false, false, null, null, null, null, null));
+					dbProveedorPagoMes.guardar(datastore, tx);
+				}
+				dbProveedorPago = dbProveedorPagoNuevo;
+			}
+
+			tx.commit();
+
+			return dbProveedorPago.toSerProveedorPago();
+		} finally {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+		}
+	}
+
 	public SerProveedorPago actualizarPagado(SerProveedorPago serProveedorPago) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		Transaction tx = null;

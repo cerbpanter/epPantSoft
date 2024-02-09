@@ -24,14 +24,22 @@ public class DbOrden extends ClsEntidad {
 	private final ClsCampo renglonPedido = new ClsCampo("renglonPedido", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo modelo = new ClsCampo("modelo", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo referencia = new ClsCampo("referencia", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo revisado = new ClsCampo("revisado", Tipo.Boolean, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_FALSE, 0, NO_SUSTITUIR_NULL);
 	// Diseño
 	private final ClsCampo usuarioDiseno = new ClsCampo("usuarioDiseno", Tipo.String, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo fechaDiseno = new ClsCampo("fechaDiseno", Tipo.Date, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo disenoTerminado = new ClsCampo("disenoTerminado", Tipo.Boolean, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_FALSE, 0, SUSTITUIR_NULL);
+	private final ClsCampo carpetaTrazo = new ClsCampo("carpetaTrazo", Tipo.String, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo piezasMolde = new ClsCampo("piezasMolde", Tipo.Long, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo prioridadDiseno = new ClsCampo("prioridadDiseno", Tipo.Long, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	// Trazo
 	private final ClsCampo usuarioTrazo = new ClsCampo("usuarioTrazo", Tipo.String, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo fechaTrazo = new ClsCampo("fechaTrazo", Tipo.Date, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo trazoTerminado = new ClsCampo("trazoTerminado", Tipo.Boolean, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_FALSE, 0, SUSTITUIR_NULL);
+	private final ClsCampo distribucion = new ClsCampo("distribucion", Tipo.String, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo largoTrazoTela = new ClsCampo("largoTrazoTela", Tipo.Double, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo largoTrazoBies = new ClsCampo("largoTrazoBies", Tipo.Double, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo prioridadTrazo = new ClsCampo("prioridadTrazo", Tipo.Long, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 
 	// Dependencias
 	private List<DbOrdenProceso> procesos = null;
@@ -47,6 +55,7 @@ public class DbOrden extends ClsEntidad {
 		setRenglonPedido(serOrden.getRenglonPedido());
 		setModelo(serOrden.getModelo());
 		setReferencia(serOrden.getReferencia());
+		setRevisado(false);
 		setUsuarioDiseno(serOrden.getUsuarioDiseno());
 		setUsuarioTrazo(serOrden.getUsuarioTrazo());
 	}
@@ -61,11 +70,11 @@ public class DbOrden extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, folioOrden, temporada, folioPedido, renglonPedido, modelo, referencia, usuarioDiseno, fechaDiseno, disenoTerminado, usuarioTrazo, fechaTrazo, trazoTerminado);
+		return Arrays.asList(empresa, folioOrden, temporada, folioPedido, renglonPedido, modelo, referencia, revisado, usuarioDiseno, fechaDiseno, disenoTerminado, carpetaTrazo, piezasMolde, prioridadDiseno, usuarioTrazo, fechaTrazo, trazoTerminado, distribucion, largoTrazoTela, largoTrazoBies, prioridadTrazo);
 	}
 
 	public SerOrden toSerOrden(DatastoreService datastore, Transaction tx) throws ExcepcionControlada {
-		SerOrden serOrden = new SerOrden(getEmpresa(), getFolioOrden(), getTemporada(), getFolioPedido(), getRenglonPedido(), getModelo(), getReferencia(), getUsuarioDiseno(), getFechaDiseno(), getDisenoTerminado(), getUsuarioTrazo(), getFechaTrazo(), getTrazoTerminado());
+		SerOrden serOrden = new SerOrden(getEmpresa(), getFolioOrden(), getTemporada(), getFolioPedido(), getRenglonPedido(), getModelo(), getReferencia(), getRevisado(), getUsuarioDiseno(), getFechaDiseno(), getDisenoTerminado(), getUsuarioTrazo(), getFechaTrazo(), getTrazoTerminado());
 
 		// Agrego los procesos
 		// getProcesos(datastore, tx);
@@ -126,6 +135,14 @@ public class DbOrden extends ClsEntidad {
 		setString(this.referencia, referencia);
 	}
 
+	public Boolean getRevisado() throws ExcepcionControlada {
+		return getBoolean(revisado);
+	}
+
+	public void setRevisado(boolean revisado) throws ExcepcionControlada {
+		setBoolean(this.revisado, revisado);
+	}
+
 	public String getUsuarioDiseno() throws ExcepcionControlada {
 		return getString(usuarioDiseno);
 	}
@@ -150,6 +167,30 @@ public class DbOrden extends ClsEntidad {
 		setBoolean(this.disenoTerminado, disenoTerminado);
 	}
 
+	public String getCarpetaTrazo() throws ExcepcionControlada {
+		return getString(carpetaTrazo);
+	}
+
+	public void setCarpetaTrazo(String carpetaTrazo) throws ExcepcionControlada {
+		setString(this.carpetaTrazo, carpetaTrazo);
+	}
+
+	public Long getPiezasMolde() throws ExcepcionControlada {
+		return getLong(piezasMolde);
+	}
+
+	public void setPiezasMolde(Long piezasMolde) throws ExcepcionControlada {
+		setLong(this.piezasMolde, piezasMolde);
+	}
+
+	public Long getPrioridadDiseno() throws ExcepcionControlada {
+		return getLong(prioridadDiseno);
+	}
+
+	public void setPrioridadDiseno(Long rioridadDiseno) throws ExcepcionControlada {
+		setLong(this.prioridadDiseno, rioridadDiseno);
+	}
+
 	public String getUsuarioTrazo() throws ExcepcionControlada {
 		return getString(usuarioTrazo);
 	}
@@ -172,6 +213,38 @@ public class DbOrden extends ClsEntidad {
 
 	public void setTrazoTerminado(boolean trazoTerminado) throws ExcepcionControlada {
 		setBoolean(this.trazoTerminado, trazoTerminado);
+	}
+
+	public String getDistribucion() throws ExcepcionControlada {
+		return getString(distribucion);
+	}
+
+	public void setDistribucion(String distribucion) throws ExcepcionControlada {
+		setString(this.distribucion, distribucion);
+	}
+
+	public Double getLargoTrazoTela() throws ExcepcionControlada {
+		return getDouble(largoTrazoTela);
+	}
+
+	public void setLargoTrazoTela(Double largoTrazoTela) throws ExcepcionControlada {
+		setDouble(this.largoTrazoTela, largoTrazoTela);
+	}
+
+	public Double getLargoTrazoBies() throws ExcepcionControlada {
+		return getDouble(largoTrazoBies);
+	}
+
+	public void setLargoTrazoBies(Double largoTrazoBies) throws ExcepcionControlada {
+		setDouble(this.largoTrazoBies, largoTrazoBies);
+	}
+
+	public Long getPrioridadTrazo() throws ExcepcionControlada {
+		return getLong(prioridadTrazo);
+	}
+
+	public void setPrioridadTrazo(Long rioridadTrazo) throws ExcepcionControlada {
+		setLong(this.prioridadTrazo, rioridadTrazo);
 	}
 
 	public List<DbOrdenProceso> getProcesos(DatastoreService datastore, Transaction tx) throws ExcepcionControlada {

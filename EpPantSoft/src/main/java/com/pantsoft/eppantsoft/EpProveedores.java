@@ -76,6 +76,12 @@ public class EpProveedores extends HttpServlet {
 				ep.objectEnBody(serProveedorPago);
 				return;
 			}
+			if (ep.esMetodo("proveedorPago_actualizarFechaVencimiento") && ep.esVersion("v1")) {
+				SerProveedorPago serProveedorPago = ep.getObjetFromBody(SerProveedorPago.class);
+				serProveedorPago = new PmProveedores().actualizarFechaVencimiento(serProveedorPago);
+				ep.objectEnBody(serProveedorPago);
+				return;
+			}
 			// if (ep.esMetodo("proveedorPago_marcarAutorizado") && ep.esVersion("v1")) {
 			// ep.addPar("empresa", "String").addPar("mesVencimiento", "Long").addPar("semana", "Long");
 			// new PmProveedores().marcarAutorizado(ep.dameParametroString("empresa"), ep.dameParametroLong("mesVencimiento"), ep.dameParametroLong("semana"));

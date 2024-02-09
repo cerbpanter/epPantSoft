@@ -52,8 +52,9 @@ public class DbProveedorPagoMes extends ClsEntidad {
 		setTitulo5(serProveedorPagoMes.getTitulo5());
 	}
 
-	public DbProveedorPagoMes(Entity entidad) {
+	public DbProveedorPagoMes(Entity entidad) throws ExcepcionControlada {
 		this.entidad = entidad;
+		asignarValoresDefault();
 	}
 
 	public boolean getLiberado() {

@@ -135,14 +135,14 @@ public class EpProduccion extends HttpServlet {
 				return;
 			}
 			if (ep.esMetodo("orden_terminarDiseno") && ep.esVersion("v1")) {
-				ep.addPar("empresa", "String").addPar("folioOrden", "Long");
-				SerOrden serOrden = new PmOrden().terminarDiseno(ep.dameParametroString("empresa"), ep.dameParametroLong("folioOrden"));
+				SerOrden serOrden = ep.getObjetFromBody(SerOrden.class);
+				serOrden = new PmOrden().terminarDiseno(serOrden);
 				ep.objectEnBody(serOrden);
 				return;
 			}
 			if (ep.esMetodo("orden_terminarTrazo") && ep.esVersion("v1")) {
-				ep.addPar("empresa", "String").addPar("folioOrden", "Long");
-				SerOrden serOrden = new PmOrden().terminarTrazo(ep.dameParametroString("empresa"), ep.dameParametroLong("folioOrden"));
+				SerOrden serOrden = ep.getObjetFromBody(SerOrden.class);
+				serOrden = new PmOrden().terminarTrazo(serOrden);
 				ep.objectEnBody(serOrden);
 				return;
 			}
@@ -155,6 +155,24 @@ public class EpProduccion extends HttpServlet {
 			if (ep.esMetodo("orden_eliminar") && ep.esVersion("v1")) {
 				ep.addPar("empresa", "String").addPar("folioOrden", "Long");
 				new PmOrden().eliminarOrden(ep.dameParametroString("empresa"), ep.dameParametroLong("folioOrden"));
+				ep.voidEnBody();
+				return;
+			}
+			if (ep.esMetodo("orden_actualizarRevisado") && ep.esVersion("v1")) {
+				SerOrden serOrden = ep.getObjetFromBody(SerOrden.class);
+				new PmOrden().actualizarRevisado(serOrden);
+				ep.voidEnBody();
+				return;
+			}
+			if (ep.esMetodo("orden_actualizarPrioridadDiseno") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("folioOrden", "Long").addPar("prioridad", "Long");
+				new PmOrden().actualizarPrioridadDiseno(ep.dameParametroString("empresa"), ep.dameParametroLong("folioOrden"), ep.dameParametroLong("prioridad"));
+				ep.voidEnBody();
+				return;
+			}
+			if (ep.esMetodo("orden_actualizarPrioridadTrazo") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("folioOrden", "Long").addPar("prioridad", "Long");
+				new PmOrden().actualizarPrioridadTrazo(ep.dameParametroString("empresa"), ep.dameParametroLong("folioOrden"), ep.dameParametroLong("prioridad"));
 				ep.voidEnBody();
 				return;
 			}
