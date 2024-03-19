@@ -39,6 +39,7 @@ public class DbOrden extends ClsEntidad {
 	private final ClsCampo distribucion = new ClsCampo("distribucion", Tipo.String, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo largoTrazoTela = new ClsCampo("largoTrazoTela", Tipo.Double, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo largoTrazoBies = new ClsCampo("largoTrazoBies", Tipo.Double, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo trazos = new ClsCampo("trazos", Tipo.Text, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo prioridadTrazo = new ClsCampo("prioridadTrazo", Tipo.Long, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 
 	// Dependencias
@@ -70,7 +71,7 @@ public class DbOrden extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, folioOrden, temporada, folioPedido, renglonPedido, modelo, referencia, revisado, usuarioDiseno, fechaDiseno, disenoTerminado, carpetaTrazo, piezasMolde, prioridadDiseno, usuarioTrazo, fechaTrazo, trazoTerminado, distribucion, largoTrazoTela, largoTrazoBies, prioridadTrazo);
+		return Arrays.asList(empresa, folioOrden, temporada, folioPedido, renglonPedido, modelo, referencia, revisado, usuarioDiseno, fechaDiseno, disenoTerminado, carpetaTrazo, piezasMolde, prioridadDiseno, usuarioTrazo, fechaTrazo, trazoTerminado, distribucion, largoTrazoTela, largoTrazoBies, trazos, prioridadTrazo);
 	}
 
 	public SerOrden toSerOrden(DatastoreService datastore, Transaction tx) throws ExcepcionControlada {
@@ -237,6 +238,14 @@ public class DbOrden extends ClsEntidad {
 
 	public void setLargoTrazoBies(Double largoTrazoBies) throws ExcepcionControlada {
 		setDouble(this.largoTrazoBies, largoTrazoBies);
+	}
+
+	public String getTrazos() throws ExcepcionControlada {
+		return getText(trazos);
+	}
+
+	public void setTrazos(String trazos) throws ExcepcionControlada {
+		setText(this.trazos, trazos);
 	}
 
 	public Long getPrioridadTrazo() throws ExcepcionControlada {

@@ -132,9 +132,10 @@ public class PmOrden {
 
 			dbOrden.setFechaTrazo(new Date());
 			dbOrden.setTrazoTerminado(true);
-			dbOrden.setDistribucion(serOrden.getDistribucion());
-			dbOrden.setLargoTrazoTela(serOrden.getLargoTrazoTela());
-			dbOrden.setLargoTrazoBies(serOrden.getLargoTrazoBies());
+			// dbOrden.setDistribucion(serOrden.getDistribucion());
+			// dbOrden.setLargoTrazoTela(serOrden.getLargoTrazoTela());
+			// dbOrden.setLargoTrazoBies(serOrden.getLargoTrazoBies());
+			dbOrden.setTrazos(serOrden.getTrazos());
 
 			dbOrden.guardar(datastore, tx);
 			tx.commit();

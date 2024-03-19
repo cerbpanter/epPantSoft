@@ -299,12 +299,13 @@ public class PmProveedores {
 			Key key = KeyFactory.createKey(keyp, "DbProveedorPago", serProveedorPago.getEmpresa() + "-" + serProveedorPago.getUuid());
 			DbProveedorPago dbProveedorPago = new DbProveedorPago(datastore.get(key));
 
-			if (dbProveedorPago.getPagado() != serProveedorPago.getPagado()) {
-				dbProveedorPago.setPagado(serProveedorPago.getPagado());
+			// if (dbProveedorPago.getPagado() != serProveedorPago.getPagado()) {
+			dbProveedorPago.setPagado(serProveedorPago.getPagado());
+			dbProveedorPago.setImporteTotal(serProveedorPago.getImporteTotal());
 
-				dbProveedorPago.guardar(datastore, tx);
-				tx.commit();
-			}
+			dbProveedorPago.guardar(datastore, tx);
+			tx.commit();
+			// }
 
 			dbProveedorPago = new DbProveedorPago(datastore.get(key));
 			return dbProveedorPago.toSerProveedorPago();

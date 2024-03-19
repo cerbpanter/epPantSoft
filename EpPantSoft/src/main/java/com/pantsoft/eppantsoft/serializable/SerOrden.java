@@ -25,6 +25,7 @@ public class SerOrden {
 	private String distribucion;
 	private double largoTrazoTela;
 	private double largoTrazoBies;
+	private String trazos;
 	private long prioridadTrazo;
 
 	private SerOrdenProceso procesos[];
@@ -223,6 +224,14 @@ public class SerOrden {
 
 	public void setPrioridadTrazo(long prioridadTrazo) {
 		this.prioridadTrazo = prioridadTrazo;
+	}
+
+	public String getTrazos() {
+		return trazos;
+	}
+
+	public void setTrazos(String trazos) {
+		this.trazos = trazos;
 	}
 
 }
