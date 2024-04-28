@@ -17,14 +17,12 @@ public class SerOrden {
 	private boolean disenoTerminado;
 	private String carpetaTrazo;
 	private long piezasMolde;
+	private String bies;
 	private long prioridadDiseno;
 	// Trazo
 	private String usuarioTrazo;
 	private Date fechaTrazo;
 	private boolean trazoTerminado;
-	private String distribucion;
-	private double largoTrazoTela;
-	private double largoTrazoBies;
 	private String trazos;
 	private long prioridadTrazo;
 
@@ -162,6 +160,14 @@ public class SerOrden {
 		this.piezasMolde = piezasMolde;
 	}
 
+	public String getBies() {
+		return bies;
+	}
+
+	public void setBies(String bies) {
+		this.bies = bies;
+	}
+
 	public long getPrioridadDiseno() {
 		return prioridadDiseno;
 	}
@@ -192,30 +198,6 @@ public class SerOrden {
 
 	public void setTrazoTerminado(boolean trazoTerminado) {
 		this.trazoTerminado = trazoTerminado;
-	}
-
-	public String getDistribucion() {
-		return distribucion;
-	}
-
-	public void setDistribucion(String distribucion) {
-		this.distribucion = distribucion;
-	}
-
-	public double getLargoTrazoTela() {
-		return largoTrazoTela;
-	}
-
-	public void setLargoTrazoTela(double largoTrazoTela) {
-		this.largoTrazoTela = largoTrazoTela;
-	}
-
-	public double getLargoTrazoBies() {
-		return largoTrazoBies;
-	}
-
-	public void setLargoTrazoBies(double largoTrazoBies) {
-		this.largoTrazoBies = largoTrazoBies;
 	}
 
 	public long getPrioridadTrazo() {

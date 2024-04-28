@@ -103,6 +103,7 @@ public class PmOrden {
 			dbOrden.setFechaDiseno(new Date());
 			dbOrden.setDisenoTerminado(true);
 			dbOrden.setCarpetaTrazo(serOrden.getCarpetaTrazo());
+			dbOrden.setBies(serOrden.getBies());
 			dbOrden.setPiezasMolde(serOrden.getPiezasMolde());
 
 			dbOrden.guardar(datastore, tx);
@@ -132,9 +133,6 @@ public class PmOrden {
 
 			dbOrden.setFechaTrazo(new Date());
 			dbOrden.setTrazoTerminado(true);
-			// dbOrden.setDistribucion(serOrden.getDistribucion());
-			// dbOrden.setLargoTrazoTela(serOrden.getLargoTrazoTela());
-			// dbOrden.setLargoTrazoBies(serOrden.getLargoTrazoBies());
 			dbOrden.setTrazos(serOrden.getTrazos());
 
 			dbOrden.guardar(datastore, tx);

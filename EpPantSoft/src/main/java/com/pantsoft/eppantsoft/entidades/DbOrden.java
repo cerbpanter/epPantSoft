@@ -31,14 +31,12 @@ public class DbOrden extends ClsEntidad {
 	private final ClsCampo disenoTerminado = new ClsCampo("disenoTerminado", Tipo.Boolean, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_FALSE, 0, SUSTITUIR_NULL);
 	private final ClsCampo carpetaTrazo = new ClsCampo("carpetaTrazo", Tipo.String, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo piezasMolde = new ClsCampo("piezasMolde", Tipo.Long, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo bies = new ClsCampo("bies", Tipo.Text, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo prioridadDiseno = new ClsCampo("prioridadDiseno", Tipo.Long, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	// Trazo
 	private final ClsCampo usuarioTrazo = new ClsCampo("usuarioTrazo", Tipo.String, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo fechaTrazo = new ClsCampo("fechaTrazo", Tipo.Date, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo trazoTerminado = new ClsCampo("trazoTerminado", Tipo.Boolean, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_FALSE, 0, SUSTITUIR_NULL);
-	private final ClsCampo distribucion = new ClsCampo("distribucion", Tipo.String, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
-	private final ClsCampo largoTrazoTela = new ClsCampo("largoTrazoTela", Tipo.Double, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
-	private final ClsCampo largoTrazoBies = new ClsCampo("largoTrazoBies", Tipo.Double, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo trazos = new ClsCampo("trazos", Tipo.Text, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo prioridadTrazo = new ClsCampo("prioridadTrazo", Tipo.Long, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 
@@ -71,7 +69,7 @@ public class DbOrden extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, folioOrden, temporada, folioPedido, renglonPedido, modelo, referencia, revisado, usuarioDiseno, fechaDiseno, disenoTerminado, carpetaTrazo, piezasMolde, prioridadDiseno, usuarioTrazo, fechaTrazo, trazoTerminado, distribucion, largoTrazoTela, largoTrazoBies, trazos, prioridadTrazo);
+		return Arrays.asList(empresa, folioOrden, temporada, folioPedido, renglonPedido, modelo, referencia, revisado, usuarioDiseno, fechaDiseno, disenoTerminado, carpetaTrazo, piezasMolde, bies, prioridadDiseno, usuarioTrazo, fechaTrazo, trazoTerminado, trazos, prioridadTrazo);
 	}
 
 	public SerOrden toSerOrden(DatastoreService datastore, Transaction tx) throws ExcepcionControlada {
@@ -184,6 +182,14 @@ public class DbOrden extends ClsEntidad {
 		setLong(this.piezasMolde, piezasMolde);
 	}
 
+	public String getBies() throws ExcepcionControlada {
+		return getText(bies);
+	}
+
+	public void setBies(String bies) throws ExcepcionControlada {
+		setText(this.bies, bies);
+	}
+
 	public Long getPrioridadDiseno() throws ExcepcionControlada {
 		return getLong(prioridadDiseno);
 	}
@@ -214,30 +220,6 @@ public class DbOrden extends ClsEntidad {
 
 	public void setTrazoTerminado(boolean trazoTerminado) throws ExcepcionControlada {
 		setBoolean(this.trazoTerminado, trazoTerminado);
-	}
-
-	public String getDistribucion() throws ExcepcionControlada {
-		return getString(distribucion);
-	}
-
-	public void setDistribucion(String distribucion) throws ExcepcionControlada {
-		setString(this.distribucion, distribucion);
-	}
-
-	public Double getLargoTrazoTela() throws ExcepcionControlada {
-		return getDouble(largoTrazoTela);
-	}
-
-	public void setLargoTrazoTela(Double largoTrazoTela) throws ExcepcionControlada {
-		setDouble(this.largoTrazoTela, largoTrazoTela);
-	}
-
-	public Double getLargoTrazoBies() throws ExcepcionControlada {
-		return getDouble(largoTrazoBies);
-	}
-
-	public void setLargoTrazoBies(Double largoTrazoBies) throws ExcepcionControlada {
-		setDouble(this.largoTrazoBies, largoTrazoBies);
 	}
 
 	public String getTrazos() throws ExcepcionControlada {
