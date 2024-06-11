@@ -19,6 +19,7 @@ import com.pantsoft.eppantsoft.entidades.DbOrden;
 import com.pantsoft.eppantsoft.entidades.DbOrdenProceso;
 import com.pantsoft.eppantsoft.entidades.DbPedido;
 import com.pantsoft.eppantsoft.entidades.DbPedidoDet;
+import com.pantsoft.eppantsoft.entidades.DbProduccion;
 import com.pantsoft.eppantsoft.serializable.SerOrden;
 import com.pantsoft.eppantsoft.serializable.SerOrdenProceso;
 import com.pantsoft.eppantsoft.util.ClsEntidad;
@@ -105,6 +106,33 @@ public class PmOrden {
 			dbOrden.setCarpetaTrazo(serOrden.getCarpetaTrazo());
 			dbOrden.setBies(serOrden.getBies());
 			dbOrden.setPiezasMolde(serOrden.getPiezasMolde());
+
+			dbOrden.guardar(datastore, tx);
+			tx.commit();
+
+			dbOrden = new DbOrden(datastore.get(key));
+			return dbOrden.toSerOrden(null, null);
+		} catch (EntityNotFoundException e) {
+			throw new Exception("La orden '" + serOrden.getFolioOrden() + "' no existe.");
+		} finally {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+		}
+	}
+
+	public SerOrden grabarTrazo(SerOrden serOrden) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Transaction tx = null;
+		try {
+			tx = ClsEntidad.iniciarTransaccion(datastore);
+
+			Key key = KeyFactory.createKey("DbOrden", serOrden.getEmpresa() + "-" + serOrden.getFolioOrden());
+			DbOrden dbOrden = new DbOrden(datastore.get(key));
+
+			// if (dbOrden.getTrazoTerminado())
+			// throw new Exception("La orden ya tiene terminado el trazo");
+
+			dbOrden.setTrazos(serOrden.getTrazos());
 
 			dbOrden.guardar(datastore, tx);
 			tx.commit();
@@ -294,9 +322,18 @@ public class PmOrden {
 			if (dbOrdenProceso.getEstatus() != serOrdenProceso.getEstatus()) {
 				if (serOrdenProceso.getEstatus() == 1) {
 					mensajeBitacora = "Iniciar proceso";
-				}
-				if (serOrdenProceso.getEstatus() == 1) {
+				} else if (serOrdenProceso.getEstatus() == 2) {
 					mensajeBitacora = "Terminar proceso";
+					if (dbOrdenProceso.getProceso().equals("CORTE")) {
+						// Guardo el corte en Producción
+						try {
+							Key key2 = KeyFactory.createKey("DbProduccion", serOrdenProceso.getEmpresa() + "-" + serOrdenProceso.getTemporada() + "-" + serOrdenProceso.getFolioOrden());
+							DbProduccion dbProduccion = new DbProduccion(datastore.get(key2));
+							dbProduccion.setCantidadCorte(serOrdenProceso.getCantidadSalida());
+						} catch (Exception e) {
+							// No se hace nada si falla
+						}
+					}
 				}
 			}
 

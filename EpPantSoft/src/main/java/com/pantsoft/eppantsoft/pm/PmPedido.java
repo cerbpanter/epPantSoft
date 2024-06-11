@@ -3,6 +3,7 @@ package com.pantsoft.eppantsoft.pm;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.google.appengine.api.datastore.DatastoreService;
@@ -10,6 +11,9 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Transaction;
 import com.pantsoft.eppantsoft.entidades.DbPedido;
 import com.pantsoft.eppantsoft.entidades.DbPedidoDet;
@@ -143,12 +147,11 @@ public class PmPedido {
 			Key key = KeyFactory.createKey("DbPedido", empresa + "-" + folioPedido);
 			DbPedido dbPedido = new DbPedido(datastore.get(key));
 			// Validar que no participe
-			// List<Filter> lstFiltros = new ArrayList<Filter>();
-			// lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, empresa));
-			// lstFiltros.add(new FilterPredicate("temporada", FilterOperator.EQUAL, temporada));
-			// lstFiltros.add(new FilterPredicate("pedido", FilterOperator.EQUAL, pedido));
-			// if (ClsEntidad.ejecutarConsultaHayEntidades(datastore, "DbProduccion", lstFiltros))
-			// throw new Exception("El pedido " + pedido + " tiene producciones, imposible eliminar.");
+			List<Filter> lstFiltros = new ArrayList<Filter>();
+			lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, empresa));
+			lstFiltros.add(new FilterPredicate("folioPedido", FilterOperator.EQUAL, folioPedido));
+			if (ClsEntidad.ejecutarConsultaHayEntidades(datastore, "DbOrden", lstFiltros))
+				throw new Exception("El pedido " + folioPedido + " tiene ordenes, imposible eliminar.");
 
 			dbPedido.eliminar(datastore, tx);
 

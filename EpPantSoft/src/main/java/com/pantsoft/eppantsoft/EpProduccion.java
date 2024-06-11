@@ -140,6 +140,12 @@ public class EpProduccion extends HttpServlet {
 				ep.objectEnBody(serOrden);
 				return;
 			}
+			if (ep.esMetodo("orden_grabarTrazo") && ep.esVersion("v1")) {
+				SerOrden serOrden = ep.getObjetFromBody(SerOrden.class);
+				serOrden = new PmOrden().grabarTrazo(serOrden);
+				ep.objectEnBody(serOrden);
+				return;
+			}
 			if (ep.esMetodo("orden_terminarTrazo") && ep.esVersion("v1")) {
 				SerOrden serOrden = ep.getObjetFromBody(SerOrden.class);
 				serOrden = new PmOrden().terminarTrazo(serOrden);
