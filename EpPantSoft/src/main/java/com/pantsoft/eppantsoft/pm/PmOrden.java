@@ -120,6 +120,34 @@ public class PmOrden {
 		}
 	}
 
+	public SerOrden abrirDiseno(SerOrden serOrden) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Transaction tx = null;
+		try {
+			tx = ClsEntidad.iniciarTransaccion(datastore);
+
+			Key key = KeyFactory.createKey("DbOrden", serOrden.getEmpresa() + "-" + serOrden.getFolioOrden());
+			DbOrden dbOrden = new DbOrden(datastore.get(key));
+
+			if (!dbOrden.getDisenoTerminado())
+				throw new Exception("La orden no tiene terminado el diseño");
+
+			dbOrden.setFechaDiseno(null);
+			dbOrden.setDisenoTerminado(false);
+
+			dbOrden.guardar(datastore, tx);
+			tx.commit();
+
+			dbOrden = new DbOrden(datastore.get(key));
+			return dbOrden.toSerOrden(null, null);
+		} catch (EntityNotFoundException e) {
+			throw new Exception("La orden '" + serOrden.getFolioOrden() + "' no existe.");
+		} finally {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+		}
+	}
+
 	public SerOrden grabarTrazo(SerOrden serOrden) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		Transaction tx = null;
@@ -162,6 +190,34 @@ public class PmOrden {
 			dbOrden.setFechaTrazo(new Date());
 			dbOrden.setTrazoTerminado(true);
 			dbOrden.setTrazos(serOrden.getTrazos());
+
+			dbOrden.guardar(datastore, tx);
+			tx.commit();
+
+			dbOrden = new DbOrden(datastore.get(key));
+			return dbOrden.toSerOrden(null, null);
+		} catch (EntityNotFoundException e) {
+			throw new Exception("La orden '" + serOrden.getFolioOrden() + "' no existe.");
+		} finally {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+		}
+	}
+
+	public SerOrden abrirTrazo(SerOrden serOrden) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Transaction tx = null;
+		try {
+			tx = ClsEntidad.iniciarTransaccion(datastore);
+
+			Key key = KeyFactory.createKey("DbOrden", serOrden.getEmpresa() + "-" + serOrden.getFolioOrden());
+			DbOrden dbOrden = new DbOrden(datastore.get(key));
+
+			if (!dbOrden.getTrazoTerminado())
+				throw new Exception("La orden no tiene terminado el trazo");
+
+			dbOrden.setFechaTrazo(null);
+			dbOrden.setTrazoTerminado(false);
 
 			dbOrden.guardar(datastore, tx);
 			tx.commit();

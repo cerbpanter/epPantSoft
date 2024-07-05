@@ -140,6 +140,12 @@ public class EpProduccion extends HttpServlet {
 				ep.objectEnBody(serOrden);
 				return;
 			}
+			if (ep.esMetodo("orden_abrirDiseno") && ep.esVersion("v1")) {
+				SerOrden serOrden = ep.getObjetFromBody(SerOrden.class);
+				serOrden = new PmOrden().abrirDiseno(serOrden);
+				ep.objectEnBody(serOrden);
+				return;
+			}
 			if (ep.esMetodo("orden_grabarTrazo") && ep.esVersion("v1")) {
 				SerOrden serOrden = ep.getObjetFromBody(SerOrden.class);
 				serOrden = new PmOrden().grabarTrazo(serOrden);
@@ -149,6 +155,12 @@ public class EpProduccion extends HttpServlet {
 			if (ep.esMetodo("orden_terminarTrazo") && ep.esVersion("v1")) {
 				SerOrden serOrden = ep.getObjetFromBody(SerOrden.class);
 				serOrden = new PmOrden().terminarTrazo(serOrden);
+				ep.objectEnBody(serOrden);
+				return;
+			}
+			if (ep.esMetodo("orden_abrirTrazo") && ep.esVersion("v1")) {
+				SerOrden serOrden = ep.getObjetFromBody(SerOrden.class);
+				serOrden = new PmOrden().abrirTrazo(serOrden);
 				ep.objectEnBody(serOrden);
 				return;
 			}
