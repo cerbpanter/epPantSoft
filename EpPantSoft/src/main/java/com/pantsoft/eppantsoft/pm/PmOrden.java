@@ -380,16 +380,20 @@ public class PmOrden {
 					mensajeBitacora = "Iniciar proceso";
 				} else if (serOrdenProceso.getEstatus() == 2) {
 					mensajeBitacora = "Terminar proceso";
-					if (dbOrdenProceso.getProceso().equals("CORTE")) {
-						// Guardo el corte en Producción
-						try {
-							Key key2 = KeyFactory.createKey("DbProduccion", serOrdenProceso.getEmpresa() + "-" + serOrdenProceso.getTemporada() + "-" + serOrdenProceso.getFolioOrden());
-							DbProduccion dbProduccion = new DbProduccion(datastore.get(key2));
-							dbProduccion.setCantidadCorte(serOrdenProceso.getCantidadSalida());
-						} catch (Exception e) {
-							// No se hace nada si falla
-						}
+				}
+			}
+
+			if (dbOrdenProceso.getProceso().equals("CORTE")) {
+				// Guardo el corte en Producción
+				try {
+					Key key2 = KeyFactory.createKey("DbProduccion", serOrdenProceso.getEmpresa() + "-" + serOrdenProceso.getTemporada() + "-" + serOrdenProceso.getFolioOrden());
+					DbProduccion dbProduccion = new DbProduccion(datastore.get(tx, key2));
+					if (dbProduccion.getCantidadCorte().longValue() != serOrdenProceso.getCantidadSalida()) {
+						dbProduccion.setCantidadCorte(serOrdenProceso.getCantidadSalida());
+						dbProduccion.guardar(datastore, tx);
 					}
+				} catch (Exception e) {
+					// No se hace nada si falla
 				}
 			}
 
