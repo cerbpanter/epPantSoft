@@ -371,7 +371,7 @@ public class PmOrden {
 
 			Key keyp = KeyFactory.createKey("DbOrden", serOrdenProceso.getEmpresa() + "-" + serOrdenProceso.getFolioOrden());
 			Key key = KeyFactory.createKey(keyp, "DbOrdenProceso", serOrdenProceso.getEmpresa() + "-" + serOrdenProceso.getFolioOrdenProceso());
-			DbOrdenProceso dbOrdenProceso = new DbOrdenProceso(datastore.get(key));
+			DbOrdenProceso dbOrdenProceso = new DbOrdenProceso(datastore.get(tx, key));
 
 			String mensajeBitacora = "Actualizar";
 
@@ -405,6 +405,7 @@ public class PmOrden {
 			dbOrdenProceso.setDetalleEntrada(serOrdenProceso.getDetalleEntrada());
 			dbOrdenProceso.setDetalleSalida(serOrdenProceso.getDetalleSalida());
 			dbOrdenProceso.setAgregarBitacora(serOrdenProceso.getUsuario(), new Date(), mensajeBitacora);
+			dbOrdenProceso.setPorRevisar(serOrdenProceso.getPorRevisar());
 
 			// Validaciones de estatus
 			// if (dbOrdenProceso.getEstatus() == 1) { // En proceso
@@ -430,6 +431,44 @@ public class PmOrden {
 		} finally {
 			if (tx != null && tx.isActive())
 				tx.rollback();
+		}
+	}
+
+	public void actualizarOrdenProceso_PorRevisar(SerOrdenProceso serOrdenProceso) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		try {
+			if (ClsUtil.esNulo(serOrdenProceso.getUsuario())) {
+				throw new Exception("Falta el usuario");
+			}
+
+			Key keyp = KeyFactory.createKey("DbOrden", serOrdenProceso.getEmpresa() + "-" + serOrdenProceso.getFolioOrden());
+			Key key = KeyFactory.createKey(keyp, "DbOrdenProceso", serOrdenProceso.getEmpresa() + "-" + serOrdenProceso.getFolioOrdenProceso());
+			DbOrdenProceso dbOrdenProceso = new DbOrdenProceso(datastore.get(key));
+
+			dbOrdenProceso.setPorRevisar(serOrdenProceso.getPorRevisar());
+			dbOrdenProceso.setAgregarBitacora(serOrdenProceso.getUsuario(), new Date(), "Actualizar porRevisar");
+			dbOrdenProceso.guardar(datastore);
+		} catch (EntityNotFoundException e) {
+			throw new Exception("El proceso '" + serOrdenProceso.getFolioOrdenProceso() + "' no existe.");
+		}
+	}
+
+	public void actualizarOrdenProceso_ObsRevision(SerOrdenProceso serOrdenProceso) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		try {
+			if (ClsUtil.esNulo(serOrdenProceso.getUsuario())) {
+				throw new Exception("Falta el usuario");
+			}
+
+			Key keyp = KeyFactory.createKey("DbOrden", serOrdenProceso.getEmpresa() + "-" + serOrdenProceso.getFolioOrden());
+			Key key = KeyFactory.createKey(keyp, "DbOrdenProceso", serOrdenProceso.getEmpresa() + "-" + serOrdenProceso.getFolioOrdenProceso());
+			DbOrdenProceso dbOrdenProceso = new DbOrdenProceso(datastore.get(key));
+
+			dbOrdenProceso.setObsRevision(serOrdenProceso.getObsRevision());
+			dbOrdenProceso.setAgregarBitacora(serOrdenProceso.getUsuario(), new Date(), "Actualizar obsRevision");
+			dbOrdenProceso.guardar(datastore);
+		} catch (EntityNotFoundException e) {
+			throw new Exception("El proceso '" + serOrdenProceso.getFolioOrdenProceso() + "' no existe.");
 		}
 	}
 

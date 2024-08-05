@@ -21,8 +21,10 @@ public class SerOrdenProceso {
 	private String detalleSalida;
 	private String usuario;
 	private String bitacora;
+	private boolean porRevisar;
+	private String obsRevision;
 
-	public SerOrdenProceso(String empresa, long folioOrden, long folioOrdenProceso, long orden, long temporada, int estatus, long folioPedido, long renglonPedido, String modelo, String referencia, String tallas, String proceso, String maquilero, long cantidadEntrada, long cantidadSalida, String observaciones, String detalleEntrada, String detalleSalida) {
+	public SerOrdenProceso(String empresa, long folioOrden, long folioOrdenProceso, long orden, long temporada, int estatus, long folioPedido, long renglonPedido, String modelo, String referencia, String tallas, String proceso, String maquilero, long cantidadEntrada, long cantidadSalida, String observaciones, String detalleEntrada, String detalleSalida, boolean porRevisar, String obsRevision) {
 		this.empresa = empresa;
 		this.folioOrdenProceso = folioOrdenProceso;
 		this.folioOrden = folioOrden;
@@ -41,6 +43,8 @@ public class SerOrdenProceso {
 		this.observaciones = observaciones;
 		this.detalleEntrada = detalleEntrada;
 		this.detalleSalida = detalleSalida;
+		this.porRevisar = porRevisar;
+		this.obsRevision = obsRevision;
 	}
 
 	public SerOrdenProceso() {
@@ -204,6 +208,22 @@ public class SerOrdenProceso {
 
 	public void setBitacora(String bitacora) {
 		this.bitacora = bitacora;
+	}
+
+	public boolean getPorRevisar() {
+		return porRevisar;
+	}
+
+	public void setPorRevisar(boolean porRevisar) {
+		this.porRevisar = porRevisar;
+	}
+
+	public String getObsRevision() {
+		return obsRevision;
+	}
+
+	public void setObsRevision(String obsRevision) {
+		this.obsRevision = obsRevision;
 	}
 
 }

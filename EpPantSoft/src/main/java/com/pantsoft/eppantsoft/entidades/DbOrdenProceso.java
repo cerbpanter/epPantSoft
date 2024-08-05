@@ -34,6 +34,8 @@ public class DbOrdenProceso extends ClsEntidad {
 	private final ClsCampo detalleEntrada = new ClsCampo("detalleEntrada", Tipo.Text, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo detalleSalida = new ClsCampo("detalleSalida", Tipo.Text, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo bitacora = new ClsCampo("bitacora", Tipo.Text, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo porRevisar = new ClsCampo("porRevisar", Tipo.Boolean, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_FALSE, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo obsRevision = new ClsCampo("obsRevision", Tipo.String, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 
 	public DbOrdenProceso(SerOrdenProceso serOrdenProceso) throws ExcepcionControlada {
 		Key keyp = KeyFactory.createKey("DbOrden", serOrdenProceso.getEmpresa() + "-" + serOrdenProceso.getFolioOrden());
@@ -58,6 +60,8 @@ public class DbOrdenProceso extends ClsEntidad {
 		setObservaciones(serOrdenProceso.getObservaciones());
 		setDetalleEntrada(serOrdenProceso.getDetalleEntrada());
 		setDetalleSalida(serOrdenProceso.getDetalleSalida());
+		setPorRevisar(serOrdenProceso.getPorRevisar());
+		setObsRevision(serOrdenProceso.getObsRevision());
 	}
 
 	public DbOrdenProceso(Entity entidad) {
@@ -69,11 +73,11 @@ public class DbOrdenProceso extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, folioOrdenProceso, folioOrden, orden, temporada, estatus, folioPedido, renglonPedido, modelo, referencia, tallas, proceso, maquilero, cantidadEntrada, cantidadSalida, observaciones, detalleEntrada, detalleSalida, bitacora);
+		return Arrays.asList(empresa, folioOrdenProceso, folioOrden, orden, temporada, estatus, folioPedido, renglonPedido, modelo, referencia, tallas, proceso, maquilero, cantidadEntrada, cantidadSalida, observaciones, detalleEntrada, detalleSalida, bitacora, porRevisar, obsRevision);
 	}
 
 	public SerOrdenProceso toSerOrdenProceso() throws ExcepcionControlada {
-		SerOrdenProceso ser = new SerOrdenProceso(getEmpresa(), getFolioOrden(), getFolioOrdenProceso(), getOrden(), getTemporada(), getEstatus(), getFolioPedido(), getRenglonPedido(), getModelo(), getReferencia(), getTallas(), getProceso(), getMaquilero(), getCantidadEntrada(), getCantidadSalida(), getObservaciones(), getDetalleEntrada(), getDetalleSalida());
+		SerOrdenProceso ser = new SerOrdenProceso(getEmpresa(), getFolioOrden(), getFolioOrdenProceso(), getOrden(), getTemporada(), getEstatus(), getFolioPedido(), getRenglonPedido(), getModelo(), getReferencia(), getTallas(), getProceso(), getMaquilero(), getCantidadEntrada(), getCantidadSalida(), getObservaciones(), getDetalleEntrada(), getDetalleSalida(), getPorRevisar(), getObsRevision());
 		ser.setBitacora(getBitacora());
 		return ser;
 	}
@@ -222,4 +226,21 @@ public class DbOrdenProceso extends ClsEntidad {
 		String bitacora = ClsUtil.agregarBitacora(getBitacora(), usuario, fecha, descripcion);
 		setText(this.bitacora, bitacora);
 	}
+
+	public boolean getPorRevisar() throws ExcepcionControlada {
+		return getBoolean(porRevisar);
+	}
+
+	public void setPorRevisar(boolean porRevisar) throws ExcepcionControlada {
+		setBoolean(this.porRevisar, porRevisar);
+	}
+
+	public String getObsRevision() throws ExcepcionControlada {
+		return getString(obsRevision);
+	}
+
+	public void setObsRevision(String obsRevision) throws ExcepcionControlada {
+		setString(this.obsRevision, obsRevision);
+	}
+
 }
