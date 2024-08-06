@@ -238,7 +238,7 @@ public class DbOrden extends ClsEntidad {
 		setLong(this.prioridadTrazo, rioridadTrazo);
 	}
 
-	public List<DbOrdenProceso> getProcesos(DatastoreService datastore, Transaction tx) throws ExcepcionControlada {
+	public List<DbOrdenProceso> getProcesos(DatastoreService datastore, Transaction tx) throws Exception {
 		if (procesos == null && datastore != null) {
 			List<Entity> lstProcesos = ejecutarConsulta(datastore, tx, "DbOrdenProceso", getKey());
 			procesos = new ArrayList<DbOrdenProceso>();

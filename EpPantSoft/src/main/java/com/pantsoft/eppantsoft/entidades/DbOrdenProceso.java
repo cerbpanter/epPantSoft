@@ -64,8 +64,9 @@ public class DbOrdenProceso extends ClsEntidad {
 		setObsRevision(serOrdenProceso.getObsRevision());
 	}
 
-	public DbOrdenProceso(Entity entidad) {
+	public DbOrdenProceso(Entity entidad) throws Exception {
 		this.entidad = entidad;
+		asignarValoresDefault();
 	}
 
 	public boolean getLiberado() {
