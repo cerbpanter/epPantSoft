@@ -35,7 +35,7 @@ public class DbOrdenProceso extends ClsEntidad {
 	private final ClsCampo detalleSalida = new ClsCampo("detalleSalida", Tipo.Text, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo bitacora = new ClsCampo("bitacora", Tipo.Text, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo porRevisar = new ClsCampo("porRevisar", Tipo.Boolean, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_FALSE, 0, NO_SUSTITUIR_NULL);
-	private final ClsCampo obsRevision = new ClsCampo("obsRevision", Tipo.String, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo obsRevision = new ClsCampo("obsRevision", Tipo.String, NO_INDEXADO, PERMITIR_NULL, 0, 500, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 
 	public DbOrdenProceso(SerOrdenProceso serOrdenProceso) throws ExcepcionControlada {
 		Key keyp = KeyFactory.createKey("DbOrden", serOrdenProceso.getEmpresa() + "-" + serOrdenProceso.getFolioOrden());
