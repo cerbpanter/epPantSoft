@@ -329,6 +329,19 @@ public class PmOrden {
 		}
 	}
 
+	public void actualizarHabilitacion(SerOrden serOrden) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		try {
+			Key key = KeyFactory.createKey("DbOrden", serOrden.getEmpresa() + "-" + serOrden.getFolioOrden());
+			DbOrden dbOrden = new DbOrden(datastore.get(key));
+
+			dbOrden.setHabilitacion(serOrden.getHabilitacion());
+			dbOrden.guardar(datastore);
+		} catch (EntityNotFoundException e) {
+			throw new Exception("La orden '" + serOrden.getFolioOrden() + "' no existe.");
+		}
+	}
+
 	// OrdenProceso ////////////////////////////////////////////////////////////////////
 	public SerOrdenProceso agregarOrdenProceso(SerOrdenProceso serOrdenProceso) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();

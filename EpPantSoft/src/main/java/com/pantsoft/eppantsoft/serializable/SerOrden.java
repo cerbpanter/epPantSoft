@@ -25,6 +25,7 @@ public class SerOrden {
 	private boolean trazoTerminado;
 	private String trazos;
 	private long prioridadTrazo;
+	private boolean habilitacion;
 
 	private SerOrdenProceso procesos[];
 
@@ -214,6 +215,14 @@ public class SerOrden {
 
 	public void setTrazos(String trazos) {
 		this.trazos = trazos;
+	}
+
+	public boolean getHabilitacion() {
+		return habilitacion;
+	}
+
+	public void setHabilitacion(boolean habilitacion) {
+		this.habilitacion = habilitacion;
 	}
 
 }

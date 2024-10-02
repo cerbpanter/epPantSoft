@@ -114,6 +114,12 @@ public class EpProveedores extends HttpServlet {
 				ep.voidEnBody();
 				return;
 			}
+			if (ep.esMetodo("proveedorPago_corregir") && ep.esVersion("v1")) {
+				ep.addPar("empresa", "String").addPar("mes", "Long").addPar("cursor", "String");
+				Respuesta resp = new PmProveedores().corregirProveedorPago(ep.dameParametroString("empresa"), ep.dameParametroLong("mes"), ep.dameParametroString("cursor"));
+				ep.objectEnBody(resp);
+				return;
+			}
 
 			ep.notFoundEnBody();
 		} catch (Exception e) {

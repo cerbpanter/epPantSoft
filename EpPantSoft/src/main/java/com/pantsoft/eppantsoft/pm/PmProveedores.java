@@ -1,15 +1,21 @@
 package com.pantsoft.eppantsoft.pm;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Transaction;
 import com.pantsoft.eppantsoft.entidades.DbProveedorPago;
 import com.pantsoft.eppantsoft.entidades.DbProveedorPagoMes;
+import com.pantsoft.eppantsoft.serializable.Respuesta;
 import com.pantsoft.eppantsoft.serializable.SerProveedorPago;
 import com.pantsoft.eppantsoft.serializable.SerProveedorPagoMes;
 import com.pantsoft.eppantsoft.util.ClsBlobReader;
@@ -387,6 +393,38 @@ public class PmProveedores {
 		} finally {
 			if (tx != null && tx.isActive())
 				tx.rollback();
+		}
+	}
+
+	public Respuesta corregirProveedorPago(String empresa, long mes, String cursor) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+		String pos = "Inicio;";
+		try {
+			if (cursor.equals("Inicio"))
+				cursor = null;
+
+			Respuesta resp = new Respuesta();
+			List<Filter> lstFiltros = new ArrayList<Filter>();
+			lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, empresa));
+			lstFiltros.add(new FilterPredicate("mes", FilterOperator.EQUAL, mes));
+			lstFiltros.add(new FilterPredicate("pagado", FilterOperator.EQUAL, false));
+			lstFiltros.add(new FilterPredicate("terminado", FilterOperator.EQUAL, true));
+			List<Entity> lstDetalle = ClsEntidad.ejecutarConsulta(datastore, "DbProveedorPago", lstFiltros, 100, cursor);
+			if (lstDetalle != null && lstDetalle.size() > 0) {
+				if (lstDetalle.size() == 100)
+					resp.setCadena(ClsEntidad.getStrCursor());
+				pos = "for";
+				for (Entity entidad : lstDetalle) {
+					DbProveedorPago dbPago = new DbProveedorPago(entidad);
+					dbPago.setTerminado(false);
+					datastore.put(entidad);
+				}
+			}
+			pos = "return";
+			return resp;
+		} catch (Exception e) {
+			throw new Exception("Pos: " + pos + " - " + e.getMessage());
 		}
 	}
 

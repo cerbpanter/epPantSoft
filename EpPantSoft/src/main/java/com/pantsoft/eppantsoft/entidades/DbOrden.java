@@ -39,6 +39,7 @@ public class DbOrden extends ClsEntidad {
 	private final ClsCampo trazoTerminado = new ClsCampo("trazoTerminado", Tipo.Boolean, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_FALSE, 0, SUSTITUIR_NULL);
 	private final ClsCampo trazos = new ClsCampo("trazos", Tipo.Text, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo prioridadTrazo = new ClsCampo("prioridadTrazo", Tipo.Long, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo habilitacion = new ClsCampo("habilitacion", Tipo.Boolean, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_FALSE, 0, SUSTITUIR_NULL);
 
 	// Dependencias
 	private List<DbOrdenProceso> procesos = null;
@@ -69,7 +70,7 @@ public class DbOrden extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, folioOrden, temporada, folioPedido, renglonPedido, modelo, referencia, revisado, usuarioDiseno, fechaDiseno, disenoTerminado, carpetaTrazo, piezasMolde, bies, prioridadDiseno, usuarioTrazo, fechaTrazo, trazoTerminado, trazos, prioridadTrazo);
+		return Arrays.asList(empresa, folioOrden, temporada, folioPedido, renglonPedido, modelo, referencia, revisado, usuarioDiseno, fechaDiseno, disenoTerminado, carpetaTrazo, piezasMolde, bies, prioridadDiseno, usuarioTrazo, fechaTrazo, trazoTerminado, trazos, prioridadTrazo, habilitacion);
 	}
 
 	public SerOrden toSerOrden(DatastoreService datastore, Transaction tx) throws ExcepcionControlada {
@@ -236,6 +237,14 @@ public class DbOrden extends ClsEntidad {
 
 	public void setPrioridadTrazo(Long rioridadTrazo) throws ExcepcionControlada {
 		setLong(this.prioridadTrazo, rioridadTrazo);
+	}
+
+	public boolean getHabilitacion() throws ExcepcionControlada {
+		return getBoolean(habilitacion);
+	}
+
+	public void setHabilitacion(boolean habilitacion) throws ExcepcionControlada {
+		setBoolean(this.habilitacion, habilitacion);
 	}
 
 	public List<DbOrdenProceso> getProcesos(DatastoreService datastore, Transaction tx) throws Exception {
