@@ -1,8 +1,10 @@
 package com.pantsoft.eppantsoft.entidades;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
@@ -80,7 +82,7 @@ public class DbOrdenProceso extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, folioOrdenProceso, folioOrden, orden, temporada, estatus, folioPedido, renglonPedido, modelo, referencia, tallas, proceso, maquilero, cantidadEntrada, cantidadSalida, observaciones, detalleEntrada, detalleSalida, bitacora, porRevisar, obsRevision);
+		return Arrays.asList(empresa, folioOrdenProceso, folioOrden, orden, temporada, estatus, folioPedido, renglonPedido, modelo, referencia, tallas, proceso, maquilero, cantidadEntrada, cantidadSalida, observaciones, detalleEntrada, detalleSalida, bitacora, porRevisar, obsRevision, usuarioModifico, fechaModifico, anioModifico, mesModifico, semanaModifico, diaModifico);
 	}
 
 	public SerOrdenProceso toSerOrdenProceso() throws ExcepcionControlada {
@@ -248,6 +250,31 @@ public class DbOrdenProceso extends ClsEntidad {
 
 	public void setObsRevision(String obsRevision) throws ExcepcionControlada {
 		setString(this.obsRevision, obsRevision);
+	}
+
+	public String getUsuarioModifico() throws ExcepcionControlada {
+		return getString(usuarioModifico);
+	}
+
+	public void setUsuarioModifico(String usuarioModifico) throws ExcepcionControlada {
+		setString(this.usuarioModifico, usuarioModifico);
+	}
+
+	public void setFechaModifico(Date fechaModifico, String zonaHoraria) throws ExcepcionControlada {
+		if (fechaModifico == null)
+			throw new ExcepcionControlada("El campo Fecha Cotización no puede quedar vacío.");
+		if (zonaHoraria == null)
+			throw new ExcepcionControlada("La zona horaria no puede estar vacía.");
+		setDate(this.fechaModifico, fechaModifico);
+		TimeZone tzGMT = TimeZone.getTimeZone(zonaHoraria);
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(fechaModifico);
+		cal.setTimeZone(tzGMT);
+
+		setLong(this.anioModifico, (long) (cal.get(Calendar.YEAR)));
+		setLong(this.mesModifico, (long) ((cal.get(Calendar.YEAR) * 100) + cal.get(Calendar.MONTH) + 1));
+		setLong(this.semanaModifico, (long) ((cal.get(Calendar.YEAR) * 100) + cal.get(Calendar.WEEK_OF_YEAR)));
+		setLong(this.diaModifico, (long) ((cal.get(Calendar.YEAR) * 10000) + ((cal.get(Calendar.MONTH) + 1) * 100) + cal.get(Calendar.DAY_OF_MONTH)));
 	}
 
 }

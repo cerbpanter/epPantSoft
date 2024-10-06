@@ -23,6 +23,7 @@ public class SerOrdenProceso {
 	private String bitacora;
 	private boolean porRevisar;
 	private String obsRevision;
+	private String zonaHoraria;
 
 	public SerOrdenProceso(String empresa, long folioOrden, long folioOrdenProceso, long orden, long temporada, int estatus, long folioPedido, long renglonPedido, String modelo, String referencia, String tallas, String proceso, String maquilero, long cantidadEntrada, long cantidadSalida, String observaciones, String detalleEntrada, String detalleSalida, boolean porRevisar, String obsRevision) {
 		this.empresa = empresa;
@@ -224,6 +225,14 @@ public class SerOrdenProceso {
 
 	public void setObsRevision(String obsRevision) {
 		this.obsRevision = obsRevision;
+	}
+
+	public String getZonaHoraria() {
+		return zonaHoraria;
+	}
+
+	public void setZonaHoraria(String zonaHoraria) {
+		this.zonaHoraria = zonaHoraria;
 	}
 
 }

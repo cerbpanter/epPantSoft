@@ -200,6 +200,12 @@ public class EpProduccion extends HttpServlet {
 				ep.voidEnBody();
 				return;
 			}
+			if (ep.esMetodo("orden_actualizarTela") && ep.esVersion("v1")) {
+				SerOrden serOrden = ep.getObjetFromBody(SerOrden.class);
+				new PmOrden().actualizarTela(serOrden);
+				ep.voidEnBody();
+				return;
+			}
 
 			// ORDEN PROCESO
 			if (ep.esMetodo("ordenProceso_agregar") && ep.esVersion("v1")) {

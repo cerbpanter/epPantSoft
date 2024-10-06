@@ -40,6 +40,9 @@ public class DbOrden extends ClsEntidad {
 	private final ClsCampo trazos = new ClsCampo("trazos", Tipo.Text, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo prioridadTrazo = new ClsCampo("prioridadTrazo", Tipo.Long, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo habilitacion = new ClsCampo("habilitacion", Tipo.Boolean, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_FALSE, 0, SUSTITUIR_NULL);
+	// Telas
+	private final ClsCampo entregasTela = new ClsCampo("entregasTela", Tipo.Text, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, SUSTITUIR_NULL);
+	private final ClsCampo estatusTela = new ClsCampo("estatusTela", Tipo.Rating, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, SUSTITUIR_NULL, "0:Sin entregas,1:Entregas parciales,2:Terminado");
 
 	// Dependencias
 	private List<DbOrdenProceso> procesos = null;
@@ -70,7 +73,7 @@ public class DbOrden extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, folioOrden, temporada, folioPedido, renglonPedido, modelo, referencia, revisado, usuarioDiseno, fechaDiseno, disenoTerminado, carpetaTrazo, piezasMolde, bies, prioridadDiseno, usuarioTrazo, fechaTrazo, trazoTerminado, trazos, prioridadTrazo, habilitacion);
+		return Arrays.asList(empresa, folioOrden, temporada, folioPedido, renglonPedido, modelo, referencia, revisado, usuarioDiseno, fechaDiseno, disenoTerminado, carpetaTrazo, piezasMolde, bies, prioridadDiseno, usuarioTrazo, fechaTrazo, trazoTerminado, trazos, prioridadTrazo, habilitacion, entregasTela, estatusTela);
 	}
 
 	public SerOrden toSerOrden(DatastoreService datastore, Transaction tx) throws ExcepcionControlada {
@@ -245,6 +248,22 @@ public class DbOrden extends ClsEntidad {
 
 	public void setHabilitacion(boolean habilitacion) throws ExcepcionControlada {
 		setBoolean(this.habilitacion, habilitacion);
+	}
+
+	public String getEntregasTela() throws ExcepcionControlada {
+		return getText(entregasTela);
+	}
+
+	public void setEntregasTela(String entregasTela) throws ExcepcionControlada {
+		setText(this.entregasTela, entregasTela);
+	}
+
+	public int getEstatusTela() throws ExcepcionControlada {
+		return getRating(estatusTela);
+	}
+
+	public void setEstatusTela(int estatusTela) throws ExcepcionControlada {
+		setRating(this.estatusTela, estatusTela);
 	}
 
 	public List<DbOrdenProceso> getProcesos(DatastoreService datastore, Transaction tx) throws Exception {

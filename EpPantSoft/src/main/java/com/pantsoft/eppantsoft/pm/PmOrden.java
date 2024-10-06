@@ -342,6 +342,20 @@ public class PmOrden {
 		}
 	}
 
+	public void actualizarTela(SerOrden serOrden) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		try {
+			Key key = KeyFactory.createKey("DbOrden", serOrden.getEmpresa() + "-" + serOrden.getFolioOrden());
+			DbOrden dbOrden = new DbOrden(datastore.get(key));
+
+			dbOrden.setEntregasTela(serOrden.getEntregasTela());
+			dbOrden.setEstatusTela(serOrden.getEstatusTela());
+			dbOrden.guardar(datastore);
+		} catch (EntityNotFoundException e) {
+			throw new Exception("La orden '" + serOrden.getFolioOrden() + "' no existe.");
+		}
+	}
+
 	// OrdenProceso ////////////////////////////////////////////////////////////////////
 	public SerOrdenProceso agregarOrdenProceso(SerOrdenProceso serOrdenProceso) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -419,6 +433,8 @@ public class PmOrden {
 			dbOrdenProceso.setDetalleSalida(serOrdenProceso.getDetalleSalida());
 			dbOrdenProceso.setAgregarBitacora(serOrdenProceso.getUsuario(), new Date(), mensajeBitacora);
 			dbOrdenProceso.setPorRevisar(serOrdenProceso.getPorRevisar());
+			dbOrdenProceso.setUsuarioModifico(serOrdenProceso.getUsuario());
+			dbOrdenProceso.setFechaModifico(new Date(), serOrdenProceso.getZonaHoraria());
 
 			// Validaciones de estatus
 			// if (dbOrdenProceso.getEstatus() == 1) { // En proceso

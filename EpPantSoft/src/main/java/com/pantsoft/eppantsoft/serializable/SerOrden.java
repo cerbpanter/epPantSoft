@@ -26,6 +26,9 @@ public class SerOrden {
 	private String trazos;
 	private long prioridadTrazo;
 	private boolean habilitacion;
+	// Telas
+	private String entregasTela;
+	private int estatusTela;
 
 	private SerOrdenProceso procesos[];
 
@@ -223,6 +226,22 @@ public class SerOrden {
 
 	public void setHabilitacion(boolean habilitacion) {
 		this.habilitacion = habilitacion;
+	}
+
+	public String getEntregasTela() {
+		return entregasTela;
+	}
+
+	public void setEntregasTela(String entregasTela) {
+		this.entregasTela = entregasTela;
+	}
+
+	public int getEstatusTela() {
+		return estatusTela;
+	}
+
+	public void setEstatusTela(int estatusTela) {
+		this.estatusTela = estatusTela;
 	}
 
 }
