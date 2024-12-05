@@ -626,6 +626,17 @@ public class PmModelo {
 		return ClsUtil.Redondear(precosto, 2);
 	}
 
+	public void modelo_actualizarTrazoTela(SerModeloHabilitacion serModeloHabilitacion) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+		Key keyP = KeyFactory.createKey("DbModelo", serModeloHabilitacion.getEmpresa() + "-" + serModeloHabilitacion.getTemporada() + "-" + serModeloHabilitacion.getModelo() + "-" + serModeloHabilitacion.getReferencia());
+		Key key = KeyFactory.createKey(keyP, "DbModeloHabilitacion", serModeloHabilitacion.getEmpresa() + "-" + serModeloHabilitacion.getTemporada() + "-" + serModeloHabilitacion.getModelo() + "-" + serModeloHabilitacion.getReferencia() + "-" + serModeloHabilitacion.getMateria());
+		DbModeloHabilitacion dbMateria = new DbModeloHabilitacion(datastore.get(key));
+
+		dbMateria.setTrazo(serModeloHabilitacion.getTrazo());
+		dbMateria.guardar(datastore);
+	}
+
 	// Modelo Imagen //////////////////////////////////////////////////////////
 	public void modeloImagen_agregar(SerModeloImagen serModeloImagen) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();

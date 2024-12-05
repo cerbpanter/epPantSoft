@@ -118,7 +118,7 @@ public class PmProduccion {
 			}
 			dbProduccion.setCantidad(serProduccion.getCantidad());
 			dbProduccion.setCorteSobreTela(serProduccion.getCorteSobreTela());
-			dbProduccion.setCantidadCorte(serProduccion.getCantidadCorte());
+			// dbProduccion.setCantidadCorte(serProduccion.getCantidadCorte());
 			// Cantidad Entrega ya es por entrada de almacén
 			// dbProduccion.setCantidadEntrega(serProduccion.getCantidadEntrega());
 			dbProduccion.setFaltanteMaquilero(serProduccion.getFaltanteMaquilero());

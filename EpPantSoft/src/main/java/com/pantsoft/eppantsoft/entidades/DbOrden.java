@@ -42,7 +42,7 @@ public class DbOrden extends ClsEntidad {
 	private final ClsCampo habilitacion = new ClsCampo("habilitacion", Tipo.Boolean, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_FALSE, 0, SUSTITUIR_NULL);
 	// Telas
 	private final ClsCampo entregasTela = new ClsCampo("entregasTela", Tipo.Text, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, SUSTITUIR_NULL);
-	private final ClsCampo estatusTela = new ClsCampo("estatusTela", Tipo.Rating, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, SUSTITUIR_NULL, "0:Sin entregas,1:Entregas parciales,2:Terminado");
+	private final ClsCampo estatusTela = new ClsCampo("estatusTela", Tipo.Rating, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, SUSTITUIR_NULL, "0:Sin entregas,1:Entregas parciales,2:Terminado,3:Entrega sin trazo");
 
 	// Dependencias
 	private List<DbOrdenProceso> procesos = null;

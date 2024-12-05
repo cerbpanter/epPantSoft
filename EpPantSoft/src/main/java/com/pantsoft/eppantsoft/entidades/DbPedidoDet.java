@@ -25,6 +25,7 @@ public class DbPedidoDet extends ClsEntidad {
 	private final ClsCampo observaciones = new ClsCampo("observaciones", Tipo.String, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo detalle = new ClsCampo("detalle", Tipo.Text, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo revisado = new ClsCampo("revisado", Tipo.Boolean, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_FALSE, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo marca = new ClsCampo("marca", Tipo.String, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 
 	public DbPedidoDet(SerPedidoDet serPedidoDet) throws ExcepcionControlada {
 		Key keyP = KeyFactory.createKey("DbPedido", serPedidoDet.getEmpresa() + "-" + serPedidoDet.getFolioPedido());
@@ -43,6 +44,7 @@ public class DbPedidoDet extends ClsEntidad {
 		setObservaciones(serPedidoDet.getObservaciones());
 		setDetalle(serPedidoDet.getDetalle());
 		setRevisado(serPedidoDet.getRevisado());
+		setMarca(serPedidoDet.getMarca());
 	}
 
 	public DbPedidoDet(Entity entidad) {
@@ -54,11 +56,11 @@ public class DbPedidoDet extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, folioPedido, renglon, temporada, modelo, referencia, precio, cantidad, tallas, observaciones, detalle, revisado);
+		return Arrays.asList(empresa, folioPedido, renglon, temporada, modelo, referencia, precio, cantidad, tallas, observaciones, detalle, revisado, marca);
 	}
 
 	public SerPedidoDet toSerPedidoDet() throws ExcepcionControlada {
-		return new SerPedidoDet(getEmpresa(), getFolioPedido(), getRenglon(), getTemporada(), getModelo(), getReferencia(), getPrecio(), getCantidad(), getTallas(), getObservaciones(), getDetalle(), getRevisado());
+		return new SerPedidoDet(getEmpresa(), getFolioPedido(), getRenglon(), getTemporada(), getModelo(), getReferencia(), getPrecio(), getCantidad(), getTallas(), getObservaciones(), getDetalle(), getRevisado(), getMarca());
 	}
 
 	public String getEmpresa() throws ExcepcionControlada {
@@ -144,4 +146,13 @@ public class DbPedidoDet extends ClsEntidad {
 	public void setRevisado(boolean revisado) throws ExcepcionControlada {
 		setBoolean(this.revisado, revisado);
 	}
+
+	public String getMarca() throws ExcepcionControlada {
+		return getString(marca);
+	}
+
+	public void setMarca(String marca) throws ExcepcionControlada {
+		setString(this.marca, marca);
+	}
+
 }

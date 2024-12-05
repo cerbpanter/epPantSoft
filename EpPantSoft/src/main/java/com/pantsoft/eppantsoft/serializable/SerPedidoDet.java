@@ -13,8 +13,9 @@ public class SerPedidoDet {
 	private String observaciones;
 	private String detalle;
 	private boolean revisado;
+	private String marca;
 
-	public SerPedidoDet(String empresa, long folioPedido, long renglon, long temporada, String modelo, String referencia, double precio, long cantidad, String tallas, String observaciones, String detalle, boolean revisado) {
+	public SerPedidoDet(String empresa, long folioPedido, long renglon, long temporada, String modelo, String referencia, double precio, long cantidad, String tallas, String observaciones, String detalle, boolean revisado, String marca) {
 		setEmpresa(empresa);
 		setFolioPedido(folioPedido);
 		setRenglon(renglon);
@@ -27,6 +28,7 @@ public class SerPedidoDet {
 		setObservaciones(observaciones);
 		setDetalle(detalle);
 		setRevisado(revisado);
+		setMarca(marca);
 	}
 
 	public String getEmpresa() {
@@ -123,6 +125,14 @@ public class SerPedidoDet {
 
 	public void setRevisado(boolean revisado) {
 		this.revisado = revisado;
+	}
+
+	public String getMarca() {
+		return marca;
+	}
+
+	public void setMarca(String marca) {
+		this.marca = marca;
 	}
 
 }

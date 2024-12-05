@@ -36,7 +36,6 @@ public class DbPedido extends ClsEntidad {
 	private final ClsCampo departamento = new ClsCampo("departamento", Tipo.String, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo confirmado = new ClsCampo("confirmado", Tipo.Boolean, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_FALSE, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo modelos = new ClsCampo("modelos", Tipo.ArrayString, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
-	private final ClsCampo marca = new ClsCampo("marca", Tipo.String, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo resurtido = new ClsCampo("resurtido", Tipo.Boolean, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_FALSE, 0, NO_SUSTITUIR_NULL);
 
 	// Dependencias
@@ -56,7 +55,6 @@ public class DbPedido extends ClsEntidad {
 		setFechaCancelacion(serPedido.getFechaCancelacion(), serPedido.getZonaHoraria());
 		setDepartamento(serPedido.getDepartamento());
 		setConfirmado(serPedido.getConfirmado());
-		setMarca(serPedido.getMarca());
 		setResurtido(serPedido.getResurtido());
 	}
 
@@ -69,11 +67,11 @@ public class DbPedido extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, folioPedido, temporada, zonaHoraria, fechaCancelacion, fechaPedido, diaCancelacion, semanaCancelacion, mesCancelacion, anioCancelacion, folioCliente, cliente, subCliente, departamento, confirmado, modelos, marca, resurtido);
+		return Arrays.asList(empresa, folioPedido, temporada, zonaHoraria, fechaCancelacion, fechaPedido, diaCancelacion, semanaCancelacion, mesCancelacion, anioCancelacion, folioCliente, cliente, subCliente, departamento, confirmado, modelos, resurtido);
 	}
 
 	public SerPedido toSerPedido(DatastoreService datastore, Transaction tx) throws ExcepcionControlada {
-		SerPedido serPedido = new SerPedido(getEmpresa(), getFolioPedido(), getTemporada(), getZonaHoraria(), getFechaPedido(), getFolioCliente(), getCliente(), getSubCliente(), getFechaCancelacion(), getDepartamento(), getConfirmado(), getMarca(), getResurtido());
+		SerPedido serPedido = new SerPedido(getEmpresa(), getFolioPedido(), getTemporada(), getZonaHoraria(), getFechaPedido(), getFolioCliente(), getCliente(), getSubCliente(), getFechaCancelacion(), getDepartamento(), getConfirmado(), getResurtido());
 
 		// Agrego los Detalles
 		getDetalles(datastore, tx);
@@ -194,14 +192,6 @@ public class DbPedido extends ClsEntidad {
 
 	public void setConfirmado(boolean confirmado) throws ExcepcionControlada {
 		setBoolean(this.confirmado, confirmado);
-	}
-
-	public String getMarca() throws ExcepcionControlada {
-		return getString(marca);
-	}
-
-	public void setMarca(String marca) throws ExcepcionControlada {
-		setString(this.marca, marca);
 	}
 
 	public List<DbPedidoDet> getDetalles(DatastoreService datastore, Transaction tx) throws ExcepcionControlada {

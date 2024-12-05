@@ -15,6 +15,7 @@ import com.pantsoft.eppantsoft.serializable.SerListaPrecios;
 import com.pantsoft.eppantsoft.serializable.SerListaPreciosDet;
 import com.pantsoft.eppantsoft.serializable.SerListaPreciosDetArr;
 import com.pantsoft.eppantsoft.serializable.SerModelo;
+import com.pantsoft.eppantsoft.serializable.SerModeloHabilitacion;
 import com.pantsoft.eppantsoft.serializable.SerModeloImagen;
 import com.pantsoft.eppantsoft.util.ClsEpUtil;
 
@@ -137,6 +138,12 @@ public class EpModelos extends HttpServlet {
 				ep.addPar("empresa", "String").addPar("cursor", "String");
 				Respuesta resp = new PmModelo().modelo_corregirProcesos(ep.dameParametroString("empresa"), ep.dameParametroString("cursor"));
 				ep.objectEnBody(resp);
+				return;
+			}
+			if (ep.esMetodo("modelo_actualizarTrazoTela") && ep.esVersion("v1")) {
+				SerModeloHabilitacion serMateria = ep.getObjetFromBody(SerModeloHabilitacion.class);
+				new PmModelo().modelo_actualizarTrazoTela(serMateria);
+				ep.voidEnBody();
 				return;
 			}
 

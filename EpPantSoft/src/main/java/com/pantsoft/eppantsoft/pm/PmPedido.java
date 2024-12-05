@@ -81,7 +81,6 @@ public class PmPedido {
 			dbPedido.setFechaCancelacion(serPedido.getFechaCancelacion(), serPedido.getZonaHoraria());
 			dbPedido.setDepartamento(serPedido.getDepartamento());
 			dbPedido.setConfirmado(serPedido.getConfirmado());
-			dbPedido.setMarca(serPedido.getMarca());
 			dbPedido.setResurtido(serPedido.getResurtido());
 
 			// Guardo los detalles
@@ -106,6 +105,7 @@ public class PmPedido {
 							dbDet.setObservaciones(serDet.getObservaciones());
 							dbDet.setDetalle(serDet.getDetalle());
 							dbDet.setRevisado(serDet.getRevisado());
+							dbDet.setMarca(serDet.getMarca());
 							dbDet.guardar(datastore, tx);
 							esNuevo = false;
 							break;
@@ -135,6 +135,21 @@ public class PmPedido {
 		} finally {
 			if (tx != null && tx.isActive())
 				tx.rollback();
+		}
+	}
+
+	public void actualizarMarca(SerPedidoDet serDet) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		try {
+			Key keyp = KeyFactory.createKey("DbPedido", serDet.getEmpresa() + "-" + serDet.getFolioPedido());
+			Key key = KeyFactory.createKey(keyp, "DbPedidoDet", serDet.getEmpresa() + "-" + serDet.getFolioPedido() + "-" + serDet.getRenglon());
+			DbPedidoDet dbDet = new DbPedidoDet(datastore.get(key));
+
+			dbDet.setMarca(serDet.getMarca());
+
+			dbDet.guardar(datastore);
+		} catch (EntityNotFoundException e) {
+			throw new Exception("El pedido det '" + serDet.getFolioPedido() + "-" + serDet.getRenglon() + "' no existe.");
 		}
 	}
 

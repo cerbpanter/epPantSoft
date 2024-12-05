@@ -16,6 +16,7 @@ import com.pantsoft.eppantsoft.serializable.Respuesta;
 import com.pantsoft.eppantsoft.serializable.SerOrden;
 import com.pantsoft.eppantsoft.serializable.SerOrdenProceso;
 import com.pantsoft.eppantsoft.serializable.SerPedido;
+import com.pantsoft.eppantsoft.serializable.SerPedidoDet;
 import com.pantsoft.eppantsoft.serializable.SerProduccion;
 import com.pantsoft.eppantsoft.util.ClsEpUtil;
 
@@ -112,6 +113,12 @@ public class EpProduccion extends HttpServlet {
 				SerPedido serPedido = ep.getObjetFromBody(SerPedido.class);
 				serPedido = new PmPedido().actualizar(serPedido);
 				ep.objectEnBody(serPedido);
+				return;
+			}
+			if (ep.esMetodo("pedido_actualizarMarca") && ep.esVersion("v1")) {
+				SerPedidoDet serDet = ep.getObjetFromBody(SerPedidoDet.class);
+				new PmPedido().actualizarMarca(serDet);
+				ep.voidEnBody();
 				return;
 			}
 			if (ep.esMetodo("pedido_eliminar") && ep.esVersion("v1")) {
