@@ -29,6 +29,8 @@ public class SerOrden {
 	// Telas
 	private String entregasTela;
 	private int estatusTela;
+	// CodigosDeBarras
+	private String codigosDeBarras;
 
 	private SerOrdenProceso procesos[];
 
@@ -242,6 +244,14 @@ public class SerOrden {
 
 	public void setEstatusTela(int estatusTela) {
 		this.estatusTela = estatusTela;
+	}
+
+	public String getCodigosDeBarras() {
+		return codigosDeBarras;
+	}
+
+	public void setCodigosDeBarras(String codigosDeBarras) {
+		this.codigosDeBarras = codigosDeBarras;
 	}
 
 }

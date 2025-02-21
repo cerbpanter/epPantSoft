@@ -43,6 +43,8 @@ public class DbOrden extends ClsEntidad {
 	// Telas
 	private final ClsCampo entregasTela = new ClsCampo("entregasTela", Tipo.Text, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, SUSTITUIR_NULL);
 	private final ClsCampo estatusTela = new ClsCampo("estatusTela", Tipo.Rating, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, SUSTITUIR_NULL, "0:Sin entregas,1:Entregas parciales,2:Terminado,3:Entrega sin trazo");
+	// CodigosDeBarras
+	private final ClsCampo codigosDeBarras = new ClsCampo("codigosDeBarras", Tipo.Text, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, SUSTITUIR_NULL);
 
 	// Dependencias
 	private List<DbOrdenProceso> procesos = null;
@@ -73,7 +75,7 @@ public class DbOrden extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, folioOrden, temporada, folioPedido, renglonPedido, modelo, referencia, revisado, usuarioDiseno, fechaDiseno, disenoTerminado, carpetaTrazo, piezasMolde, bies, prioridadDiseno, usuarioTrazo, fechaTrazo, trazoTerminado, trazos, prioridadTrazo, habilitacion, entregasTela, estatusTela);
+		return Arrays.asList(empresa, folioOrden, temporada, folioPedido, renglonPedido, modelo, referencia, revisado, usuarioDiseno, fechaDiseno, disenoTerminado, carpetaTrazo, piezasMolde, bies, prioridadDiseno, usuarioTrazo, fechaTrazo, trazoTerminado, trazos, prioridadTrazo, habilitacion, entregasTela, estatusTela, codigosDeBarras);
 	}
 
 	public SerOrden toSerOrden(DatastoreService datastore, Transaction tx) throws ExcepcionControlada {
@@ -264,6 +266,14 @@ public class DbOrden extends ClsEntidad {
 
 	public void setEstatusTela(int estatusTela) throws ExcepcionControlada {
 		setRating(this.estatusTela, estatusTela);
+	}
+
+	public String getCodigosDeBarras() throws ExcepcionControlada {
+		return getText(codigosDeBarras);
+	}
+
+	public void setCodigosDeBarras(String codigosDeBarras) throws ExcepcionControlada {
+		setText(this.codigosDeBarras, codigosDeBarras);
 	}
 
 	public List<DbOrdenProceso> getProcesos(DatastoreService datastore, Transaction tx) throws Exception {

@@ -356,6 +356,37 @@ public class PmOrden {
 		}
 	}
 
+	public SerOrden actualizarCodigosDeBarras(SerOrden serOrden) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Transaction tx = null;
+		try {
+			tx = ClsEntidad.iniciarTransaccion(datastore);
+
+			Key key = KeyFactory.createKey("DbOrden", serOrden.getEmpresa() + "-" + serOrden.getFolioOrden());
+			DbOrden dbOrden = new DbOrden(datastore.get(key));
+
+			// Validar que no participe
+			List<Filter> lstFiltros = new ArrayList<Filter>();
+			lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, serOrden.getEmpresa()));
+			lstFiltros.add(new FilterPredicate("folioOrdenProduccion", FilterOperator.EQUAL, serOrden.getFolioOrden()));
+			if (ClsEntidad.ejecutarConsultaHayEntidades(datastore, "DbAlmEntradaDet", lstFiltros))
+				throw new Exception("La orden " + serOrden.getFolioOrden() + " ya tiene entradas de almacén.");
+
+			dbOrden.setCodigosDeBarras(serOrden.getCodigosDeBarras());
+
+			dbOrden.guardar(datastore, tx);
+			tx.commit();
+
+			dbOrden = new DbOrden(datastore.get(key));
+			return dbOrden.toSerOrden(null, null);
+		} catch (EntityNotFoundException e) {
+			throw new Exception("La orden '" + serOrden.getFolioOrden() + "' no existe.");
+		} finally {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+		}
+	}
+
 	// OrdenProceso ////////////////////////////////////////////////////////////////////
 	public SerOrdenProceso agregarOrdenProceso(SerOrdenProceso serOrdenProceso) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
