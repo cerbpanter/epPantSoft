@@ -29,6 +29,7 @@ public class DbOrdenProceso extends ClsEntidad {
 	private final ClsCampo referencia = new ClsCampo("referencia", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo tallas = new ClsCampo("tallas", Tipo.String, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo proceso = new ClsCampo("proceso", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo folioMaquilero = new ClsCampo("folioMaquilero", Tipo.Long, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo maquilero = new ClsCampo("maquilero", Tipo.String, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo observaciones = new ClsCampo("observaciones", Tipo.String, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo cantidadEntrada = new ClsCampo("cantidadEntrada", Tipo.Long, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
@@ -62,6 +63,7 @@ public class DbOrdenProceso extends ClsEntidad {
 		setReferencia(serOrdenProceso.getReferencia());
 		setTallas(serOrdenProceso.getTallas());
 		setProceso(serOrdenProceso.getProceso());
+		setFolioMaquilero(serOrdenProceso.getFolioMaquilero());
 		setMaquilero(serOrdenProceso.getMaquilero());
 		setCantidadEntrada(serOrdenProceso.getCantidadEntrada());
 		setCantidadSalida(serOrdenProceso.getCantidadSalida());
@@ -177,6 +179,14 @@ public class DbOrdenProceso extends ClsEntidad {
 
 	public void setProceso(String proceso) throws ExcepcionControlada {
 		setString(this.proceso, proceso);
+	}
+
+	public Long getFolioMaquilero() throws ExcepcionControlada {
+		return getLong(folioMaquilero);
+	}
+
+	public void setFolioMaquilero(long folioMaquilero) throws ExcepcionControlada {
+		setLong(this.folioMaquilero, folioMaquilero);
 	}
 
 	public String getMaquilero() throws ExcepcionControlada {

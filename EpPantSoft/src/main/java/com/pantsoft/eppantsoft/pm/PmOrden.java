@@ -456,6 +456,7 @@ public class PmOrden {
 			}
 
 			dbOrdenProceso.setEstatus(serOrdenProceso.getEstatus());
+			dbOrdenProceso.setFolioMaquilero(serOrdenProceso.getFolioMaquilero());
 			dbOrdenProceso.setMaquilero(serOrdenProceso.getMaquilero());
 			dbOrdenProceso.setCantidadEntrada(serOrdenProceso.getCantidadEntrada());
 			dbOrdenProceso.setCantidadSalida(serOrdenProceso.getCantidadSalida());

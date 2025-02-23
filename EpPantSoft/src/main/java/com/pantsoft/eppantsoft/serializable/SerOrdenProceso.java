@@ -13,6 +13,7 @@ public class SerOrdenProceso {
 	private String referencia;
 	private String tallas;
 	private String proceso;
+	private long folioMaquilero;
 	private String maquilero;
 	private long cantidadEntrada;
 	private long cantidadSalida;
@@ -145,6 +146,14 @@ public class SerOrdenProceso {
 
 	public void setProceso(String proceso) {
 		this.proceso = proceso;
+	}
+
+	public long getFolioMaquilero() {
+		return folioMaquilero;
+	}
+
+	public void setFolioMaquilero(long folioMaquilero) {
+		this.folioMaquilero = folioMaquilero;
 	}
 
 	public String getMaquilero() {
