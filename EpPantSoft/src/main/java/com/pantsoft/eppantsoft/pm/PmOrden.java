@@ -495,6 +495,22 @@ public class PmOrden {
 		}
 	}
 
+	public void actualizarOrdenProcesoMaquilero(SerOrdenProceso serOrdenProceso) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		try {
+			Key keyp = KeyFactory.createKey("DbOrden", serOrdenProceso.getEmpresa() + "-" + serOrdenProceso.getFolioOrden());
+			Key key = KeyFactory.createKey(keyp, "DbOrdenProceso", serOrdenProceso.getEmpresa() + "-" + serOrdenProceso.getFolioOrdenProceso());
+			DbOrdenProceso dbOrdenProceso = new DbOrdenProceso(datastore.get(key));
+
+			dbOrdenProceso.setFolioMaquilero(serOrdenProceso.getFolioMaquilero());
+			dbOrdenProceso.setMaquilero(serOrdenProceso.getMaquilero());
+
+			dbOrdenProceso.guardar(datastore);
+		} catch (EntityNotFoundException e) {
+			throw new Exception("El proceso '" + serOrdenProceso.getFolioOrdenProceso() + "' no existe.");
+		}
+	}
+
 	public void actualizarOrdenProceso_PorRevisar(SerOrdenProceso serOrdenProceso) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		try {

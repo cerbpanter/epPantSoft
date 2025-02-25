@@ -233,6 +233,12 @@ public class EpProduccion extends HttpServlet {
 				ep.objectEnBody(serOrdenProceso);
 				return;
 			}
+			if (ep.esMetodo("ordenProceso_actualizarMaquilero") && ep.esVersion("v1")) {
+				SerOrdenProceso serOrdenProceso = ep.getObjetFromBody(SerOrdenProceso.class);
+				new PmOrden().actualizarOrdenProcesoMaquilero(serOrdenProceso);
+				ep.voidEnBody();
+				return;
+			}
 			if (ep.esMetodo("ordenProceso_actPorRevisar") && ep.esVersion("v1")) {
 				SerOrdenProceso serOrdenProceso = ep.getObjetFromBody(SerOrdenProceso.class);
 				new PmOrden().actualizarOrdenProceso_PorRevisar(serOrdenProceso);
