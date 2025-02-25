@@ -84,7 +84,7 @@ public class DbOrdenProceso extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, folioOrdenProceso, folioOrden, orden, temporada, estatus, folioPedido, renglonPedido, modelo, referencia, tallas, proceso, maquilero, cantidadEntrada, cantidadSalida, observaciones, detalleEntrada, detalleSalida, bitacora, porRevisar, obsRevision, usuarioModifico, fechaModifico, anioModifico, mesModifico, semanaModifico, diaModifico);
+		return Arrays.asList(empresa, folioOrdenProceso, folioOrden, orden, temporada, estatus, folioPedido, renglonPedido, modelo, referencia, tallas, proceso, folioMaquilero, maquilero, cantidadEntrada, cantidadSalida, observaciones, detalleEntrada, detalleSalida, bitacora, porRevisar, obsRevision, usuarioModifico, fechaModifico, anioModifico, mesModifico, semanaModifico, diaModifico);
 	}
 
 	public SerOrdenProceso toSerOrdenProceso() throws ExcepcionControlada {
