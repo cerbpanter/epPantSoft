@@ -204,6 +204,38 @@ public class PmOrden {
 		}
 	}
 
+	public SerOrden terminarOrden(SerOrden serOrden) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Transaction tx = null;
+		try {
+			tx = ClsEntidad.iniciarTransaccion(datastore);
+
+			Key key = KeyFactory.createKey("DbOrden", serOrden.getEmpresa() + "-" + serOrden.getFolioOrden());
+			DbOrden dbOrden = new DbOrden(datastore.get(key));
+
+			if (serOrden.getTerminada()) {
+				if (dbOrden.getTerminada())
+					throw new Exception("La orden ya está terminada");
+			} else {
+				if (!dbOrden.getTerminada())
+					throw new Exception("La orden no está terminada");
+			}
+
+			dbOrden.setTerminada(serOrden.getTerminada());
+
+			dbOrden.guardar(datastore, tx);
+			tx.commit();
+
+			dbOrden = new DbOrden(datastore.get(key));
+			return dbOrden.toSerOrden(null, null);
+		} catch (EntityNotFoundException e) {
+			throw new Exception("La orden '" + serOrden.getFolioOrden() + "' no existe.");
+		} finally {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+		}
+	}
+
 	public SerOrden abrirTrazo(SerOrden serOrden) throws Exception {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		Transaction tx = null;
@@ -373,6 +405,66 @@ public class PmOrden {
 				throw new Exception("La orden " + serOrden.getFolioOrden() + " ya tiene entradas de almacén.");
 
 			dbOrden.setCodigosDeBarras(serOrden.getCodigosDeBarras());
+
+			dbOrden.guardar(datastore, tx);
+			tx.commit();
+
+			dbOrden = new DbOrden(datastore.get(key));
+			return dbOrden.toSerOrden(null, null);
+		} catch (EntityNotFoundException e) {
+			throw new Exception("La orden '" + serOrden.getFolioOrden() + "' no existe.");
+		} finally {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+		}
+	}
+
+	public SerOrden actualizarModelo(SerOrden serOrden) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Transaction tx = null;
+		try {
+			tx = ClsEntidad.iniciarTransaccion(datastore);
+
+			Key key = KeyFactory.createKey("DbOrden", serOrden.getEmpresa() + "-" + serOrden.getFolioOrden());
+			DbOrden dbOrden = new DbOrden(datastore.get(key));
+
+			// Validar que no participe
+			// List<Filter> lstFiltros = new ArrayList<Filter>();
+			// lstFiltros.add(new FilterPredicate("empresa", FilterOperator.EQUAL, serOrden.getEmpresa()));
+			// lstFiltros.add(new FilterPredicate("folioOrdenProduccion", FilterOperator.EQUAL, serOrden.getFolioOrden()));
+			// if (ClsEntidad.ejecutarConsultaHayEntidades(datastore, "DbAlmEntradaDet", lstFiltros))
+			// throw new Exception("La orden " + serOrden.getFolioOrden() + " ya tiene entradas de almacén.");
+
+			dbOrden.setModelo(serOrden.getModelo());
+			dbOrden.setReferencia(serOrden.getReferencia());
+
+			dbOrden.guardar(datastore, tx);
+			tx.commit();
+
+			dbOrden = new DbOrden(datastore.get(key));
+			return dbOrden.toSerOrden(null, null);
+		} catch (EntityNotFoundException e) {
+			throw new Exception("La orden '" + serOrden.getFolioOrden() + "' no existe.");
+		} finally {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+		}
+	}
+
+	public SerOrden actualizarFaltanteTela(SerOrden serOrden) throws Exception {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Transaction tx = null;
+		try {
+			tx = ClsEntidad.iniciarTransaccion(datastore);
+
+			Key key = KeyFactory.createKey("DbOrden", serOrden.getEmpresa() + "-" + serOrden.getFolioOrden());
+			DbOrden dbOrden = new DbOrden(datastore.get(key));
+
+			if (dbOrden.getTerminada())
+				throw new Exception("La orden ya está terminada");
+
+			dbOrden.setFaltanteTela(serOrden.getFaltanteTela());
+			dbOrden.setPorcentajeTela(serOrden.getPorcentajeTela());
 
 			dbOrden.guardar(datastore, tx);
 			tx.commit();

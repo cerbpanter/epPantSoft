@@ -25,6 +25,7 @@ public class DbOrden extends ClsEntidad {
 	private final ClsCampo modelo = new ClsCampo("modelo", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo referencia = new ClsCampo("referencia", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_MISSING, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo revisado = new ClsCampo("revisado", Tipo.Boolean, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_FALSE, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo terminada = new ClsCampo("terminada", Tipo.Boolean, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_FALSE, 0, NO_SUSTITUIR_NULL);
 	// Diseño
 	private final ClsCampo usuarioDiseno = new ClsCampo("usuarioDiseno", Tipo.String, INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo fechaDiseno = new ClsCampo("fechaDiseno", Tipo.Date, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
@@ -43,6 +44,8 @@ public class DbOrden extends ClsEntidad {
 	// Telas
 	private final ClsCampo entregasTela = new ClsCampo("entregasTela", Tipo.Text, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, SUSTITUIR_NULL);
 	private final ClsCampo estatusTela = new ClsCampo("estatusTela", Tipo.Rating, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, SUSTITUIR_NULL, "0:Sin entregas,1:Entregas parciales,2:Terminado,3:Entrega sin trazo");
+	private final ClsCampo faltanteTela = new ClsCampo("faltanteTela", Tipo.Boolean, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_FALSE, 0, SUSTITUIR_NULL, "Si en alguna tela o color falta tela sera true");
+	private final ClsCampo porcentajeTela = new ClsCampo("porcentajeTela", Tipo.Double, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL, "Porcentaje general entre todas las telas y colores");
 	// CodigosDeBarras
 	private final ClsCampo codigosDeBarras = new ClsCampo("codigosDeBarras", Tipo.Text, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, SUSTITUIR_NULL);
 
@@ -61,8 +64,11 @@ public class DbOrden extends ClsEntidad {
 		setModelo(serOrden.getModelo());
 		setReferencia(serOrden.getReferencia());
 		setRevisado(false);
+		setTerminada(false);
 		setUsuarioDiseno(serOrden.getUsuarioDiseno());
 		setUsuarioTrazo(serOrden.getUsuarioTrazo());
+		setFaltanteTela(true);
+		setPorcentajeTela(0D);
 	}
 
 	public DbOrden(Entity entidad) throws Exception {
@@ -75,7 +81,7 @@ public class DbOrden extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, folioOrden, temporada, folioPedido, renglonPedido, modelo, referencia, revisado, usuarioDiseno, fechaDiseno, disenoTerminado, carpetaTrazo, piezasMolde, bies, prioridadDiseno, usuarioTrazo, fechaTrazo, trazoTerminado, trazos, prioridadTrazo, habilitacion, entregasTela, estatusTela, codigosDeBarras);
+		return Arrays.asList(empresa, folioOrden, temporada, folioPedido, renglonPedido, modelo, referencia, revisado, terminada, usuarioDiseno, fechaDiseno, disenoTerminado, carpetaTrazo, piezasMolde, bies, prioridadDiseno, usuarioTrazo, fechaTrazo, trazoTerminado, trazos, prioridadTrazo, habilitacion, entregasTela, estatusTela, codigosDeBarras, faltanteTela, porcentajeTela);
 	}
 
 	public SerOrden toSerOrden(DatastoreService datastore, Transaction tx) throws ExcepcionControlada {
@@ -146,6 +152,14 @@ public class DbOrden extends ClsEntidad {
 
 	public void setRevisado(boolean revisado) throws ExcepcionControlada {
 		setBoolean(this.revisado, revisado);
+	}
+
+	public Boolean getTerminada() throws ExcepcionControlada {
+		return getBoolean(terminada);
+	}
+
+	public void setTerminada(boolean terminada) throws ExcepcionControlada {
+		setBoolean(this.terminada, terminada);
 	}
 
 	public String getUsuarioDiseno() throws ExcepcionControlada {
@@ -284,6 +298,22 @@ public class DbOrden extends ClsEntidad {
 				procesos.add(new DbOrdenProceso(proceso));
 		}
 		return procesos;
+	}
+
+	public Boolean getFaltanteTela() throws ExcepcionControlada {
+		return getBoolean(faltanteTela);
+	}
+
+	public void setFaltanteTela(boolean faltanteTela) throws ExcepcionControlada {
+		setBoolean(this.faltanteTela, faltanteTela);
+	}
+
+	public double getPorcentajeTela() throws ExcepcionControlada {
+		return getDouble(porcentajeTela);
+	}
+
+	public void setPorcentajeTela(double porcentajeTela) throws ExcepcionControlada {
+		setDouble(this.porcentajeTela, porcentajeTela);
 	}
 
 }

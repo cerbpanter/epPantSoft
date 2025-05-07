@@ -36,6 +36,14 @@ public class PmTelaHabilitacion {
 				dbTelaHabilitacion.setPrecios(serTelaHabilitacion.getPrecios());
 			if (dbTelaHabilitacion.getAncho() != serTelaHabilitacion.getAncho())
 				dbTelaHabilitacion.setAncho(serTelaHabilitacion.getAncho());
+			if (!ClsUtil.esIgualConNulo(dbTelaHabilitacion.getComposicion1(), serTelaHabilitacion.getComposicion1()))
+				dbTelaHabilitacion.setComposicion1(serTelaHabilitacion.getComposicion1());
+			if (!ClsUtil.esIgualConNulo(dbTelaHabilitacion.getComposicion2(), serTelaHabilitacion.getComposicion2()))
+				dbTelaHabilitacion.setComposicion2(serTelaHabilitacion.getComposicion2());
+			if (!ClsUtil.esIgualConNulo(dbTelaHabilitacion.getComposicion3(), serTelaHabilitacion.getComposicion3()))
+				dbTelaHabilitacion.setComposicion3(serTelaHabilitacion.getComposicion3());
+			if (!ClsUtil.esIgualConNulo(dbTelaHabilitacion.getComposicion4(), serTelaHabilitacion.getComposicion4()))
+				dbTelaHabilitacion.setComposicion4(serTelaHabilitacion.getComposicion4());
 			dbTelaHabilitacion.guardar(datastore);
 		} catch (EntityNotFoundException e) {
 			throw new Exception("La materia '" + serTelaHabilitacion.getMateria() + "' no existe.");

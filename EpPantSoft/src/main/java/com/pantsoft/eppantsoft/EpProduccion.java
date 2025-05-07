@@ -219,6 +219,24 @@ public class EpProduccion extends HttpServlet {
 				ep.objectEnBody(serOrden);
 				return;
 			}
+			if (ep.esMetodo("orden_actualizarModelo") && ep.esVersion("v1")) {
+				SerOrden serOrden = ep.getObjetFromBody(SerOrden.class);
+				serOrden = new PmOrden().actualizarModelo(serOrden);
+				ep.objectEnBody(serOrden);
+				return;
+			}
+			if (ep.esMetodo("orden_terminarOrden") && ep.esVersion("v1")) {
+				SerOrden serOrden = ep.getObjetFromBody(SerOrden.class);
+				serOrden = new PmOrden().terminarOrden(serOrden);
+				ep.objectEnBody(serOrden);
+				return;
+			}
+			if (ep.esMetodo("orden_actualizarFaltanteTela") && ep.esVersion("v1")) {
+				SerOrden serOrden = ep.getObjetFromBody(SerOrden.class);
+				serOrden = new PmOrden().actualizarFaltanteTela(serOrden);
+				ep.objectEnBody(serOrden);
+				return;
+			}
 
 			// ORDEN PROCESO
 			if (ep.esMetodo("ordenProceso_agregar") && ep.esVersion("v1")) {

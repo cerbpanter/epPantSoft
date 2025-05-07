@@ -11,6 +11,7 @@ public class SerOrden {
 	private String modelo;
 	private String referencia;
 	private boolean revisado;
+	private boolean terminada;
 	// Diseño
 	private String usuarioDiseno;
 	private Date fechaDiseno;
@@ -29,6 +30,8 @@ public class SerOrden {
 	// Telas
 	private String entregasTela;
 	private int estatusTela;
+	private boolean faltanteTela;
+	private double porcentajeTela;
 	// CodigosDeBarras
 	private String codigosDeBarras;
 
@@ -116,6 +119,14 @@ public class SerOrden {
 
 	public void setRevisado(boolean revisado) {
 		this.revisado = revisado;
+	}
+
+	public boolean getTerminada() {
+		return terminada;
+	}
+
+	public void setTerminada(boolean terminada) {
+		this.terminada = terminada;
 	}
 
 	public SerOrdenProceso[] getProcesos() {
@@ -244,6 +255,22 @@ public class SerOrden {
 
 	public void setEstatusTela(int estatusTela) {
 		this.estatusTela = estatusTela;
+	}
+
+	public boolean getFaltanteTela() {
+		return faltanteTela;
+	}
+
+	public void setFaltanteTela(boolean faltanteTela) {
+		this.faltanteTela = faltanteTela;
+	}
+
+	public double getPorcentajeTela() {
+		return porcentajeTela;
+	}
+
+	public void setPorcentajeTela(double porcentajeTela) {
+		this.porcentajeTela = porcentajeTela;
 	}
 
 	public String getCodigosDeBarras() {

@@ -18,6 +18,10 @@ public class DbTelaHabilitacion extends ClsEntidad {
 	private final ClsCampo tipo = new ClsCampo("tipo", Tipo.String, INDEXADO, NO_PERMITIR_NULL, 0, 1, TAM_NORMAL, "H", 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo precios = new ClsCampo("precios", Tipo.Text, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 	private final ClsCampo ancho = new ClsCampo("ancho", Tipo.Double, NO_INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo composicion1 = new ClsCampo("composicion1", Tipo.String, NO_INDEXADO, PERMITIR_NULL, 0, 20, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo composicion2 = new ClsCampo("composicion2", Tipo.String, NO_INDEXADO, PERMITIR_NULL, 0, 20, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo composicion3 = new ClsCampo("composicion3", Tipo.String, NO_INDEXADO, PERMITIR_NULL, 0, 20, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
+	private final ClsCampo composicion4 = new ClsCampo("composicion4", Tipo.String, NO_INDEXADO, PERMITIR_NULL, 0, 20, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL);
 
 	public DbTelaHabilitacion(SerTelaHabilitacion ser) throws ExcepcionControlada {
 		Key key = KeyFactory.createKey("DbTelaHabilitacion", ser.getEmpresa() + "-" + ser.getMateria());
@@ -29,6 +33,10 @@ public class DbTelaHabilitacion extends ClsEntidad {
 		setTipo(ser.getTipo());
 		setPrecios(ser.getPrecios());
 		setAncho(ser.getAncho());
+		setComposicion1(ser.getComposicion1());
+		setComposicion2(ser.getComposicion2());
+		setComposicion3(ser.getComposicion3());
+		setComposicion4(ser.getComposicion4());
 	}
 
 	public DbTelaHabilitacion(Entity entidad) throws ExcepcionControlada {
@@ -38,11 +46,11 @@ public class DbTelaHabilitacion extends ClsEntidad {
 
 	@Override
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, materia, tipo, precios, ancho);
+		return Arrays.asList(empresa, materia, tipo, precios, ancho, composicion1, composicion2, composicion3, composicion4);
 	}
 
 	public SerTelaHabilitacion toSerTelaHabilitacion() throws ExcepcionControlada {
-		return new SerTelaHabilitacion(getEmpresa(), getMateria(), getTipo(), getPrecios(), getAncho());
+		return new SerTelaHabilitacion(getEmpresa(), getMateria(), getTipo(), getPrecios(), getAncho(), getComposicion1(), getComposicion2(), getComposicion3(), getComposicion4());
 	}
 
 	@Override
@@ -81,4 +89,37 @@ public class DbTelaHabilitacion extends ClsEntidad {
 	public void setAncho(double ancho) throws ExcepcionControlada {
 		setDouble(this.ancho, ancho);
 	}
+
+	public String getComposicion1() throws ExcepcionControlada {
+		return getString(composicion1);
+	}
+
+	public void setComposicion1(String composicion) throws ExcepcionControlada {
+		setString(this.composicion1, composicion);
+	}
+
+	public String getComposicion2() throws ExcepcionControlada {
+		return getString(composicion2);
+	}
+
+	public void setComposicion2(String composicion) throws ExcepcionControlada {
+		setString(this.composicion2, composicion);
+	}
+
+	public String getComposicion3() throws ExcepcionControlada {
+		return getString(composicion3);
+	}
+
+	public void setComposicion3(String composicion) throws ExcepcionControlada {
+		setString(this.composicion3, composicion);
+	}
+
+	public String getComposicion4() throws ExcepcionControlada {
+		return getString(composicion4);
+	}
+
+	public void setComposicion4(String composicion) throws ExcepcionControlada {
+		setString(this.composicion4, composicion);
+	}
+
 }
