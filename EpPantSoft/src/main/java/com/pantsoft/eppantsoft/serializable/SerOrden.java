@@ -34,6 +34,7 @@ public class SerOrden {
 	private double porcentajeTela;
 	// CodigosDeBarras
 	private String codigosDeBarras;
+	private int estatusCodigosDeBarras;
 
 	private SerOrdenProceso procesos[];
 
@@ -279,6 +280,14 @@ public class SerOrden {
 
 	public void setCodigosDeBarras(String codigosDeBarras) {
 		this.codigosDeBarras = codigosDeBarras;
+	}
+
+	public int getEstatusCodigosDeBarras() {
+		return estatusCodigosDeBarras;
+	}
+
+	public void setEstatusCodigosDeBarras(int estatusCodigosDeBarras) {
+		this.estatusCodigosDeBarras = estatusCodigosDeBarras;
 	}
 
 }

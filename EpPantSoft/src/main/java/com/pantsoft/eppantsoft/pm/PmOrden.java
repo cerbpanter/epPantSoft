@@ -405,6 +405,7 @@ public class PmOrden {
 				throw new Exception("La orden " + serOrden.getFolioOrden() + " ya tiene entradas de almacén.");
 
 			dbOrden.setCodigosDeBarras(serOrden.getCodigosDeBarras());
+			dbOrden.setEstatusCodigosDeBarras(serOrden.getEstatusCodigosDeBarras());
 
 			dbOrden.guardar(datastore, tx);
 			tx.commit();

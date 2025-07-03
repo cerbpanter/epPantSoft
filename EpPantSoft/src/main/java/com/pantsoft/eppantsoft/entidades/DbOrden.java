@@ -48,6 +48,7 @@ public class DbOrden extends ClsEntidad {
 	private final ClsCampo porcentajeTela = new ClsCampo("porcentajeTela", Tipo.Double, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, NO_SUSTITUIR_NULL, "Porcentaje general entre todas las telas y colores");
 	// CodigosDeBarras
 	private final ClsCampo codigosDeBarras = new ClsCampo("codigosDeBarras", Tipo.Text, NO_INDEXADO, PERMITIR_NULL, 0, 0, TAM_NORMAL, VAL_NULL, 0, SUSTITUIR_NULL);
+	private final ClsCampo estatusCodigosDeBarras = new ClsCampo("estatusCodigosDeBarras", Tipo.Rating, INDEXADO, NO_PERMITIR_NULL, 0, 0, TAM_NORMAL, "0", 0, SUSTITUIR_NULL, "0:Sin captura,1:Captura parcial,2:Captura total");
 
 	// Dependencias
 	private List<DbOrdenProceso> procesos = null;
@@ -69,6 +70,7 @@ public class DbOrden extends ClsEntidad {
 		setUsuarioTrazo(serOrden.getUsuarioTrazo());
 		setFaltanteTela(true);
 		setPorcentajeTela(0D);
+		setEstatusCodigosDeBarras(0);
 	}
 
 	public DbOrden(Entity entidad) throws Exception {
@@ -81,7 +83,7 @@ public class DbOrden extends ClsEntidad {
 	}
 
 	public List<ClsCampo> getCampos() {
-		return Arrays.asList(empresa, folioOrden, temporada, folioPedido, renglonPedido, modelo, referencia, revisado, terminada, usuarioDiseno, fechaDiseno, disenoTerminado, carpetaTrazo, piezasMolde, bies, prioridadDiseno, usuarioTrazo, fechaTrazo, trazoTerminado, trazos, prioridadTrazo, habilitacion, entregasTela, estatusTela, codigosDeBarras, faltanteTela, porcentajeTela);
+		return Arrays.asList(empresa, folioOrden, temporada, folioPedido, renglonPedido, modelo, referencia, revisado, terminada, usuarioDiseno, fechaDiseno, disenoTerminado, carpetaTrazo, piezasMolde, bies, prioridadDiseno, usuarioTrazo, fechaTrazo, trazoTerminado, trazos, prioridadTrazo, habilitacion, entregasTela, estatusTela, codigosDeBarras, faltanteTela, porcentajeTela, estatusCodigosDeBarras);
 	}
 
 	public SerOrden toSerOrden(DatastoreService datastore, Transaction tx) throws ExcepcionControlada {
@@ -314,6 +316,14 @@ public class DbOrden extends ClsEntidad {
 
 	public void setPorcentajeTela(double porcentajeTela) throws ExcepcionControlada {
 		setDouble(this.porcentajeTela, porcentajeTela);
+	}
+
+	public int getEstatusCodigosDeBarras() throws ExcepcionControlada {
+		return getRating(estatusCodigosDeBarras);
+	}
+
+	public void setEstatusCodigosDeBarras(int estatusCodigosDeBarras) throws ExcepcionControlada {
+		setRating(this.estatusCodigosDeBarras, estatusCodigosDeBarras);
 	}
 
 }
